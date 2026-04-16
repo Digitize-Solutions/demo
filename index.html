@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Consistency & Commitment Challenge</title>
+<title>Miles & Meals Challenge</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
   :root {
@@ -163,8 +163,8 @@
   <div class="login-box">
     <div class="brand">
       <span class="brand-icon">🎯</span>
-      <h1>C&C Challenge</h1>
-      <p>Consistency & Commitment</p>
+      <h1>Miles & Meals</h1>
+      <p>Consistency & Commitment Challenge</p>
       <span class="event-pill">📅 17 Apr – 24 Apr 2026</span>
     </div>
     <p class="section-label">Select your team</p>
@@ -266,49 +266,49 @@ while (d <= new Date(CHALLENGE_END)) {
 
 
 const TEAMS = {
-  'Alpha': { color: 'var(--t1)', cls: 't1', emoji: '⚡' },
-  'Bravo': { color: 'var(--t2)', cls: 't2', emoji: '🔥' },
-  'Charlie': { color: 'var(--t3)', cls: 't3', emoji: '💫' }
+  'Nilam': { color: 'var(--t1)', cls: 't1', emoji: '🌍' },
+  'Neer': { color: 'var(--t2)', cls: 't2', emoji: '🌊' },
+  'Kaatru': { color: 'var(--t3)', cls: 't3', emoji: '🌬️' }
 };
 
 // 36 members split into 3 teams of 12
 const MEMBERS = [
-  {name:'Jaiganesh',team:'Alpha'},
-  {name:'Prashant',team:'Alpha'},
-  {name:'Manohar',team:'Alpha'},
-  {name:'Siva Kumar',team:'Alpha'},
-  {name:'Sharadha',team:'Alpha'},
-  {name:'Aarthi',team:'Alpha'},
-  {name:'Sathiesh Kumar',team:'Alpha'},
-  {name:'Boologaraja',team:'Alpha'},
-  {name:'Dinesh',team:'Alpha'},
-  {name:'Muthu Krishnan',team:'Alpha'},
-  {name:'Gauri',team:'Alpha'},
-  {name:'Tharani',team:'Alpha'},
-  {name:'Prasanna',team:'Bravo'},
-  {name:'Ram',team:'Bravo'},
-  {name:'Vaishnavi',team:'Bravo'},
-  {name:'Ashok',team:'Bravo'},
-  {name:'Arun',team:'Bravo'},
-  {name:'Kalaivani',team:'Bravo'},
-  {name:'Farah',team:'Bravo'},
-  {name:'Suriya',team:'Bravo'},
-  {name:'Khan',team:'Bravo'},
-  {name:'Uthra',team:'Bravo'},
-  {name:'Sudha',team:'Bravo'},
-  {name:'Deepti',team:'Bravo'},
-  {name:'Kalairani',team:'Charlie'},
-  {name:'Manimala',team:'Charlie'},
-  {name:'BalaKavitha',team:'Charlie'},
-  {name:'Srinivas',team:'Charlie'},
-  {name:'Harish',team:'Charlie'},
-  {name:'Dhivya',team:'Charlie'},
-  {name:'Christopher',team:'Charlie'},
-  {name:'Sajjayan',team:'Charlie'},
-  {name:'Kannan',team:'Charlie'},
-  {name:'Kaanchana',team:'Charlie'},
-  {name:'Shriram',team:'Charlie'},
-  {name:'Sathish',team:'Charlie'}
+  {name:'Jaiganesh',team:'Nilam'},
+  {name:'Prashant',team:'Nilam'},
+  {name:'Manohar',team:'Nilam'},
+  {name:'Siva Kumar',team:'Nilam'},
+  {name:'Sharadha',team:'Nilam'},
+  {name:'Aarthi',team:'Nilam'},
+  {name:'Sathiesh Kumar',team:'Nilam'},
+  {name:'Boologaraja',team:'Nilam'},
+  {name:'Dinesh',team:'Nilam'},
+  {name:'Muthu Krishnan',team:'Nilam'},
+  {name:'Gauri',team:'Nilam'},
+  {name:'Tharani',team:'Nilam'},
+  {name:'Prasanna',team:'Neer'},
+  {name:'Ram',team:'Neer'},
+  {name:'Vaishnavi',team:'Neer'},
+  {name:'Ashok',team:'Neer'},
+  {name:'Arun',team:'Neer'},
+  {name:'Kalaivani',team:'Neer'},
+  {name:'Farah',team:'Neer'},
+  {name:'Suriya',team:'Neer'},
+  {name:'Khan',team:'Neer'},
+  {name:'Uthra',team:'Neer'},
+  {name:'Sudha',team:'Neer'},
+  {name:'Deepti',team:'Neer'},
+  {name:'Kalairani',team:'Kaatru'},
+  {name:'Manimala',team:'Kaatru'},
+  {name:'BalaKavitha',team:'Kaatru'},
+  {name:'Srinivas',team:'Kaatru'},
+  {name:'Harish',team:'Kaatru'},
+  {name:'Dhivya',team:'Kaatru'},
+  {name:'Christopher',team:'Kaatru'},
+  {name:'Sajjayan',team:'Kaatru'},
+  {name:'Kannan',team:'Kaatru'},
+  {name:'Kaanchana',team:'Kaatru'},
+  {name:'Shriram',team:'Kaatru'},
+  {name:'Sathish',team:'Kaatru'}
 ];
 
 const REAL_NAMES = MEMBERS.map(m => m.name);
@@ -494,6 +494,7 @@ function doLogout() {
   isAdmin = false;
   document.getElementById('login-btn').disabled = true;
   document.getElementById('name-section').style.display = 'none';
+  renderLoginScores();  // refresh scores on login page
   document.getElementById('name-grid').innerHTML = '';
   document.querySelectorAll('#team-grid .name-btn').forEach(b => b.classList.remove('selected'));
   selTeam = null;
