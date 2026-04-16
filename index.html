@@ -273,6 +273,904 @@ const TEAMS = {
 
 // 36 members split into 3 teams of 12
 const MEMBERS = [
+  {name:'⚑ Vaishnavi',team:'Nilam'},
+  {name:'⚑ Prasanna',team:'Nilam'},
+  {name:'BalaKavitha',team:'Nilam'},
+  {name:'Ramprakash',team:'Nilam'},
+  {name:'Muthu Krishnan',team:'Nilam'},
+  {name:'Khan',team:'Nilam'},
+  {name:'Dhivya',team:'Nilam'},
+  {name:'Manimala',team:'Nilam'},
+  {name:'Kannan',team:'Nilam'},
+  {name:'Uthra',team:'Nilam'},
+  {name:'Deepti',team:'Nilam'},
+  {name:'Prashant',team:'Nilam'},
+  {name:'Sathish',team:'Nilam'},
+  {name:'Snega',team:'Nilam'},
+  {name:'⚑ Tharani',team:'Neer'},
+  {name:'⚑ Shriram',team:'Neer'},
+  {name:'Boologaraja',team:'Neer'},
+  {name:'Farah',team:'Neer'},
+  {name:'Arun',team:'Neer'},
+  {name:'Gauri',team:'Neer'},
+  {name:'Dinesh',team:'Neer'},
+  {name:'Sajjayan',team:'Neer'},
+  {name:'Kalairani',team:'Neer'},
+  {name:'Harish',team:'Neer'},
+  {name:'Saradha',team:'Neer'},
+  {name:'Deepa',team:'Neer'},
+  {name:'⚑ Ashok',team:'Kaatru'},
+  {name:'⚑ Christopher',team:'Kaatru'},
+  {name:'Jaiganesh',team:'Kaatru'},
+  {name:'Suriya',team:'Kaatru'},
+  {name:'Srinivas',team:'Kaatru'},
+  {name:'Manohar',team:'Kaatru'},
+  {name:'Aarthi',team:'Kaatru'},
+  {name:'Kalaivani',team:'Kaatru'},
+  {name:'Kaanchana',team:'Kaatru'},
+  {name:'Siva Kumar',team:'Kaatru'},
+  {name:'Sathiesh Kumar',team:'Kaatru'},
+  {name:'Sudha',team:'Kaatru'}
+];
+
+const REAL_NAMES = MEMBERS.map(m => m.name);
+
+let currentUser = null, currentTeam = null;
+let allEntries = [], allGoals = [];
+let refreshTimer = null;
+
+async function sb(method, path, body) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method,
+    headers: {
+      'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json', 'Cache-Control': 'no-cache',
+      'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=representation' : ''
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
+  const t = await res.text(); return t ? JSON.parse(t) : [];
+}
+
+async function loadAll() {
+  try {
+    [allEntries, allGoals] = await Promise.all([
+      sb('GET', 'cc_steps?select=*&order=date.desc'),
+      sb('GET', 'cc_goals?select=*')
+    ]);
+  } catch(e) { console.error('Load error:', e.message); allEntries = []; allGoals = []; }
+}
+
+function getUserGoal(user) {
+  const g = allGoals.find(g => g.user_name === user);
+  return g ? g.goal_steps : null;
+}
+
+function calcPoints(user) {
+  const goal = getUserGoal(user);
+  if (!goal) return { points: 0, days: [] };
+  const today = new Date().toISOString().split('T')[0];
+
+  // Build status for all 8 days
+  const days = CHALLENGE_DATES.map(date => {
+    const entry = allEntries.find(e => e.user_name === user && e.date === date);
+    if (!entry) return date <= today ? 'miss' : 'future';
+    return entry.steps >= goal ? 'hit' : 'miss';
+  });
+
+  // Count hits — max 7 days score (best 7 out of 8)
+  const hitCount = days.filter(d => d === 'hit').length;
+  const scoringHits = Math.min(hitCount, MAX_POINT_DAYS);
+  const points = scoringHits * POINTS_PER_DAY;
+
+  return { points, days };
+}
+
+const TEAM_BONUS_THRESHOLD = { 'Nilam': 12, 'Neer': 12, 'Kaatru': 12 };
+
+function calcTeamPoints(team) {
+  const members = MEMBERS.filter(m => m.team === team);
+  const maxPts = MAX_POINT_DAYS * POINTS_PER_DAY;
+  const threshold = TEAM_BONUS_THRESHOLD[team] || 12;
+  let total = 0;
+  let membersAtMax = 0;
+  members.forEach(m => {
+    const { points } = calcPoints(m.name);
+    total += points;
+    if (points >= maxPts) membersAtMax++;
+  });
+  // Bonus awarded when at least `threshold` members hit max points
+  const bonusEligible = membersAtMax >= threshold;
+  const today = new Date().toISOString().split('T')[0];
+  const challengeOver = today > CHALLENGE_END;
+  if (bonusEligible && challengeOver) total += BONUS_POINTS;
+  return { total, bonusEligible, membersAtMax, threshold };
+}
+
+// LOGIN
+const ADMIN_PASSWORD = 'vidial';
+let isAdmin = false;
+let selN = null, selTeam = null;
+
+function showAdminLogin() {
+  document.getElementById('admin-modal').style.display = 'flex';
+  document.getElementById('admin-pwd').value = '';
+  document.getElementById('admin-err').style.display = 'none';
+  setTimeout(() => document.getElementById('admin-pwd').focus(), 100);
+}
+
+function closeAdminModal() {
+  document.getElementById('admin-modal').style.display = 'none';
+}
+
+function doAdminLogin() {
+  const pwd = document.getElementById('admin-pwd').value;
+  if (pwd !== ADMIN_PASSWORD) {
+    document.getElementById('admin-err').style.display = 'block';
+    return;
+  }
+  isAdmin = true;
+  currentUser = 'Admin';
+  currentTeam = null;
+  closeAdminModal();
+  document.getElementById('login-page').classList.remove('active');
+  document.getElementById('dashboard-page').classList.add('active');
+  document.getElementById('dash-av').textContent = '🔐';
+  document.getElementById('dash-av').style.fontSize = '16px';
+  document.getElementById('dash-name').textContent = 'Admin';
+  document.getElementById('dash-team').textContent = 'All teams access';
+  // Show all tabs including admin board
+  document.getElementById('tb-board').textContent = '🏆 All Teams';
+  document.getElementById('tb-add').style.display = 'none';
+  document.getElementById('nav-add').style.display = 'none';
+  document.getElementById('tb-data').style.display = '';
+  document.getElementById('nav-data').style.display = '';
+  document.getElementById('nav-board').querySelector('.nlabel').textContent = 'All Teams';
+  switchTab('board');
+  refreshAll();
+  refreshTimer = setInterval(refreshAll, 30000);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('admin-modal').style.display === 'flex') doAdminLogin();
+});
+
+function buildGrid() {
+  renderTeamButtons();
+}
+
+function renderTeamButtons() {
+  const teamGrid = document.getElementById('team-grid');
+  if (!teamGrid) return;
+  teamGrid.innerHTML = Object.keys(TEAMS).map(team => {
+    const t = TEAMS[team];
+    const { total } = calcTeamPoints(team);
+    const sel = selTeam === team;
+    return `<button class="name-btn ${sel?'selected':''}" style="padding:12px 6px;" onclick="selTeamFn('${team}',this)">
+      <div style="font-size:22px;margin-bottom:4px;">${t.emoji}</div>
+      <div style="font-size:12px;font-weight:700;color:${sel?'var(--accent)':'var(--text2)'};">${team}</div>
+      <div style="font-size:16px;font-weight:800;font-family:'DM Mono',monospace;color:${sel?'var(--accent)':'var(--text)'};margin-top:3px;">${total}</div>
+      <div style="font-size:9px;color:var(--text3);margin-top:1px;">pts</div>
+    </button>`;
+  }).join('');
+}
+
+function selTeamFn(team, btn) {
+  selTeam = team;
+  selN = null;
+  renderTeamButtons();
+  document.getElementById('login-btn').disabled = true;
+  // Show names for selected team sorted alphabetically
+  const teamMembers = MEMBERS
+    .filter(m => m.team === team)
+    .map(m => m.name)
+    .sort((a, b) => a.localeCompare(b));
+  document.getElementById('name-grid').innerHTML = teamMembers.map(n =>
+    `<button class="name-btn" onclick="selName('${n}',this)">${n}</button>`).join('');
+  document.getElementById('name-section').style.display = 'block';
+}
+
+function selName(n, btn) {
+  selN = n;
+  document.querySelectorAll('#name-grid .name-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('login-btn').disabled = false;
+}
+function doLogin() {
+  if (!selN) return;
+  currentUser = selN;
+  currentTeam = MEMBERS.find(m => m.name === selN)?.team || 'Alpha';
+  const t = TEAMS[currentTeam];
+  document.getElementById('login-page').classList.remove('active');
+  document.getElementById('dashboard-page').classList.add('active');
+  document.getElementById('dash-av').textContent = selN.slice(0,2).toUpperCase();
+  document.getElementById('dash-name').textContent = selN;
+  document.getElementById('dash-team').textContent = `${t.emoji} Team ${currentTeam}`;
+  document.getElementById('step-date').value = new Date().toISOString().split('T')[0];
+  switchTab('add');
+  refreshAll();
+  refreshTimer = setInterval(refreshAll, 30000);
+}
+function doLogout() {
+  currentUser = null; currentTeam = null; selN = null;
+  if (refreshTimer) clearInterval(refreshTimer);
+  document.getElementById('dashboard-page').classList.remove('active');
+  document.getElementById('login-page').classList.add('active');
+  document.querySelectorAll('.name-btn').forEach(b => b.classList.remove('selected'));
+  isAdmin = false;
+  document.getElementById('login-btn').disabled = true;
+  document.getElementById('name-section').style.display = 'none';
+  renderLoginScores();  // refresh scores on login page
+  document.getElementById('name-grid').innerHTML = '';
+  document.querySelectorAll('#team-grid .name-btn').forEach(b => b.classList.remove('selected'));
+  selTeam = null;
+  document.getElementById('tb-add').style.display = '';
+  document.getElementById('nav-add').style.display = '';
+  document.getElementById('tb-data').style.display = 'none';
+  document.getElementById('nav-data').style.display = 'none';
+  document.getElementById('tb-board').textContent = '🏆 My Team';
+  document.getElementById('nav-board').querySelector('.nlabel').textContent = 'My Team';
+}
+
+async function refreshAll() {
+  try {
+    await loadAll();
+    renderGoalSetup();
+    renderPtsCard();
+    renderTeamScoresBar();
+    renderStepTiles();
+    renderMetrics();
+    renderMine();
+    renderTeamBoard();
+  } catch(e) { console.error('refreshAll:', e); }
+}
+
+// GOAL SETUP
+function renderGoalSetup() {
+  if (isAdmin) { document.getElementById('goal-setup-wrap').innerHTML = ''; return; }
+  const goal = getUserGoal(currentUser);
+  const el = document.getElementById('goal-setup-wrap');
+  if (goal) {
+    el.innerHTML = `<div class="goal-setup" style="display:flex;align-items:center;justify-content:space-between;gap:10px;" id="goal-display">
+      <div>
+        <div class="goal-setup-title" style="margin-bottom:1px;">🎯 Daily Goal: <span style="color:var(--accent)">${goal.toLocaleString('en-IN')} steps</span></div>
+        <div style="font-size:11px;color:var(--text3);">Hit this every day to earn 10 pts</div>
+      </div>
+      <button onclick="editGoal()" style="padding:7px 14px;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Edit</button>
+    </div>`;
+    return;
+  }
+  el.innerHTML = `<div class="goal-setup">
+    <div class="goal-setup-title">🎯 Set Your Daily Goal</div>
+    <div class="goal-setup-sub">Minimum ${MIN_GOAL.toLocaleString()} steps. You earn 10 pts every day you hit it!</div>
+    <div class="goal-row">
+      <input type="number" id="goal-input" placeholder="e.g. 8000" inputmode="numeric" min="${MIN_GOAL}"/>
+      <button class="goal-btn" onclick="saveGoal()">Set Goal</button>
+    </div>
+  </div>`;
+}
+
+function editGoal() {
+  const goal = getUserGoal(currentUser);
+  const el = document.getElementById('goal-setup-wrap');
+  el.innerHTML = `<div class="goal-setup">
+    <div class="goal-setup-title">✏️ Update Your Daily Goal</div>
+    <div class="goal-setup-sub">Current goal: <strong>${goal.toLocaleString('en-IN')} steps</strong> · Minimum ${MIN_GOAL.toLocaleString()}</div>
+    <div class="goal-row">
+      <input type="number" id="goal-input" value="${goal}" inputmode="numeric" min="${MIN_GOAL}"/>
+      <button class="goal-btn" onclick="saveGoal()">Update</button>
+      <button onclick="renderGoalSetup()" style="padding:10px 12px;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:13px;cursor:pointer;">Cancel</button>
+    </div>
+  </div>`;
+  document.getElementById('goal-input').focus();
+}
+
+async function saveGoal() {
+  const steps = parseInt(document.getElementById('goal-input')?.value);
+  if (!steps || steps < MIN_GOAL) { showToast(`Minimum goal is ${MIN_GOAL.toLocaleString()} steps`); return; }
+  try {
+    await sb('POST', 'cc_goals?on_conflict=user_name', { user_name: currentUser, goal_steps: steps });
+    showToast('Goal set! 🎯');
+    await refreshAll();
+  } catch(e) { showToast('Error: ' + e.message.slice(0,40)); }
+}
+
+// POINTS CARD
+function renderPtsCard() {
+  if (isAdmin) { document.getElementById('pts-card-wrap').innerHTML = ''; return; }
+  const goal = getUserGoal(currentUser);
+  const el = document.getElementById('pts-card-wrap');
+  if (!goal) { el.innerHTML = ''; return; }
+  const { points, days } = calcPoints(currentUser);
+  const today = new Date().toISOString().split('T')[0];
+  const dayDots = CHALLENGE_DATES.map((date, i) => {
+    const status = days[i];
+    const isToday = date === today;
+    const cls = isToday ? 'today' : status;
+    const icon = status === 'hit' ? '✓' : status === 'miss' ? '✗' : '·';
+    const pts = status === 'hit' ? '+10' : status === 'miss' ? '0' : '';
+    const d = parseInt(date.split('-')[2]);
+    return `<div class="pts-day ${cls}">
+      <div class="pd-date">${d} Apr</div>
+      <div class="pd-icon">${icon}</div>
+      <div class="pd-pts">${pts}</div>
+    </div>`;
+  }).join('');
+  el.innerHTML = `<div class="pts-card">
+    <div class="pts-top">
+      <div class="pts-title">My Points · Goal: ${goal.toLocaleString()} steps</div>
+      <div class="pts-badge">${points} pts</div>
+    </div>
+    <div class="pts-row">${dayDots}</div>
+  <div style="margin-top:8px;font-size:11px;color:var(--text3);text-align:center;">Best ${Math.min(days.filter(d=>d==='hit').length,MAX_POINT_DAYS)} of ${MAX_POINT_DAYS} days count · Max ${MAX_POINT_DAYS * POINTS_PER_DAY} pts</div>
+  </div>`;
+}
+
+// METRICS
+function renderMetrics() {
+  if (isAdmin) { document.getElementById('metrics').innerHTML = ''; return; }
+  const goal = getUserGoal(currentUser);
+  const myEntries = allEntries.filter(e => e.user_name === currentUser);
+  const today = new Date().toISOString().split('T')[0];
+  const todayEntry = myEntries.find(e => e.date === today);
+  const { points } = calcPoints(currentUser);
+  const { total: teamPts } = calcTeamPoints(currentTeam);
+  document.getElementById('metrics').innerHTML = `
+    <div class="metric"><div class="mv" style="color:var(--accent)">${points}</div><div class="ml">My pts</div></div>
+    <div class="metric"><div class="mv" style="color:var(--t${Object.keys(TEAMS).indexOf(currentTeam)+1})">${teamPts}</div><div class="ml">Team pts</div></div>
+    <div class="metric"><div class="mv" style="color:${todayEntry && goal && todayEntry.steps>=goal?'var(--green)':'var(--text2)'}">${todayEntry ? todayEntry.steps.toLocaleString('en-IN') : '—'}</div><div class="ml">Today</div></div>`;
+}
+
+// STEP ENTRY
+function onDateChange() {
+  const date = document.getElementById('step-date').value;
+  const hint = document.getElementById('step-hint');
+  const existing = allEntries.find(e => e.user_name === currentUser && e.date === date);
+  if (existing) {
+    hint.innerHTML = `<div class="hint">⚠️ Already logged <strong>${existing.steps.toLocaleString('en-IN')} steps</strong> on ${fd(date)}. Saving will update it.</div>`;
+    document.getElementById('step-count').value = existing.steps;
+  } else {
+    hint.innerHTML = '';
+    document.getElementById('step-count').value = '';
+  }
+}
+
+async function addSteps() {
+  const date = document.getElementById('step-date').value;
+  const steps = parseInt(document.getElementById('step-count').value);
+  if (!date || !CHALLENGE_DATES.includes(date)) { showToast('Date must be within challenge period (17–24 Apr)'); return; }
+
+  if (!steps || steps < 1) { showToast('Enter valid steps'); return; }
+  const goal = getUserGoal(currentUser);
+  try {
+    await sb('POST', 'cc_steps?on_conflict=user_name,date', { user_name: currentUser, date, steps });
+    document.getElementById('step-count').value = '';
+    document.getElementById('step-hint').innerHTML = '';
+    const hit = goal && steps >= goal;
+    const { points: newPts } = calcPoints(currentUser);
+    showToast(hit ? `Goal hit! 🎯 (Max ${MAX_POINT_DAYS * POINTS_PER_DAY} pts cap applies)` : `Saved — ${goal ? (goal-steps).toLocaleString('en-IN')+' more to hit goal' : 'set a goal to earn points'}`);
+    await refreshAll();
+  } catch(e) { showToast('Save failed: ' + e.message.slice(0,40)); }
+}
+
+async function deleteEntry(id) {
+  try {
+    await sb('DELETE', `cc_steps?id=eq.${id}`);
+    showToast('Removed');
+    await refreshAll();
+  } catch(e) { showToast('Delete failed'); }
+}
+
+function renderMine() {
+  const mine = allEntries.filter(e => e.user_name === currentUser).sort((a,b) => b.date.localeCompare(a.date));
+  const goal = getUserGoal(currentUser);
+  const el = document.getElementById('my-entries');
+  if (!mine.length) { el.innerHTML = '<div class="empty">No entries yet</div>'; return; }
+  el.innerHTML = mine.map(e => {
+    const hit = goal && e.steps >= goal;
+    return `<div class="eitem">
+      <div><div class="esteps ${hit?'hit':'miss'}">${e.steps.toLocaleString('en-IN')}<span class="epill ${hit?'hit':'miss'}">${hit?'✓ +10pts':'✗ 0pts'}</span></div><div class="edate">${fd(e.date)}</div></div>
+      <button class="delbtn" onclick="deleteEntry(${e.id})">×</button>
+    </div>`;
+  }).join('');
+}
+
+// TEAM BOARD
+let adminBoardTeam = null;
+
+function renderTeamBoard() {
+  const el = document.getElementById('team-board');
+  const tabsEl = document.getElementById('board-team-tabs');
+
+  if (isAdmin) {
+    // Show sub-tabs for each team
+    if (!adminBoardTeam) adminBoardTeam = Object.keys(TEAMS)[0];
+    tabsEl.style.display = 'flex';
+    tabsEl.style.gap = '6px';
+    tabsEl.innerHTML = Object.keys(TEAMS).map(team => {
+      const t = TEAMS[team];
+      const { total } = calcTeamPoints(team);
+      const sel = adminBoardTeam === team;
+      return `<button onclick="adminSwitchBoardTeam('${team}')"
+        style="flex:1;padding:9px 6px;border-radius:var(--radius-sm);border:1.5px solid ${sel?t.color:'var(--border)'};background:${sel?`rgba(${team==='Alpha'?'124,106,247':team==='Bravo'?'62,207,142':'240,164,41'},0.12)`:'var(--surface)'};color:${sel?t.color:'var(--text2)'};font-size:12px;font-weight:600;cursor:pointer;text-align:center;">
+        <div>${t.emoji} ${team}</div>
+        <div style="font-size:11px;font-family:'DM Mono',monospace;margin-top:2px;">${total}pts</div>
+      </button>`;
+    }).join('');
+  } else {
+    tabsEl.style.display = 'none';
+  }
+
+  // Show only selected team for admin, current team for user
+  const teamsToShow = isAdmin ? [adminBoardTeam] : [currentTeam];
+  const teamList = teamsToShow.map(team => {
+    const { total, bonusEligible } = calcTeamPoints(team);
+    return { team, total, bonusEligible };
+  });
+
+  el.innerHTML = teamList.map(({team, total, bonusEligible}, rank) => {
+    const t = TEAMS[team];
+    const members = MEMBERS.filter(m => m.team === team);
+    const today = new Date().toISOString().split('T')[0];
+    const challengeOver = today > CHALLENGE_END;
+    const maxPts = MAX_POINT_DAYS * POINTS_PER_DAY;
+    const { membersAtMax, threshold } = calcTeamPoints(team);
+    const bonusText = challengeOver
+      ? (bonusEligible ? `🎁 +${BONUS_POINTS} bonus earned! ${membersAtMax}/${threshold} hit ${maxPts}pts!` : `❌ Bonus missed — ${membersAtMax}/${threshold} hit ${maxPts} pts`)
+      : (bonusEligible ? `🎁 On track! ${membersAtMax}/${threshold} members at ${maxPts} pts!` : `⚡ ${membersAtMax}/${threshold} members hit ${maxPts} pts — keep pushing!`);
+    const bonusCls = bonusEligible ? 'on-track' : membersAtMax > 0 ? 'pending' : 'off-track';
+
+
+    const memberRows = members.map(m => {
+      const goal = getUserGoal(m.name);
+      const { points, days } = calcPoints(m.name);
+      const dots = days.map(s => `<div class="m-dot ${s}"></div>`).join('');
+      return `<div class="member-row">
+        <div class="m-av">${m.name.slice(0,2).toUpperCase()}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="m-name">${m.name}${m.name===currentUser?' (you)':''}</div>
+          <div class="m-goal">Goal: ${goal ? goal.toLocaleString('en-IN') : 'not set'}</div>
+        </div>
+        <div class="m-streak">${dots}</div>
+        <div class="m-pts">${points}pts</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="team-section">
+      <div class="team-hdr ${t.cls}">
+        <div class="team-name-lbl">${t.emoji} Team ${team} ${rank===0?'👑':''}</div>
+        <div class="team-pts-lbl">${total} pts</div>
+      </div>
+      <div class="team-body">
+        <div class="bonus-banner ${bonusCls}" style="margin:8px;border-radius:8px;">${bonusText}</div>
+        ${memberRows}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ALL MEMBERS
+function renderAllMembers() {
+  const el = document.getElementById('all-members');
+  const ranked = MEMBERS
+    .filter(m => !m.name.startsWith('Member'))
+    .map(m => ({ ...m, ...calcPoints(m.name), goal: getUserGoal(m.name) }))
+    .sort((a,b) => b.points - a.points);
+
+  el.innerHTML = `<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;">` +
+    ranked.map((m, i) => {
+      const t = TEAMS[m.team];
+      const dots = m.days.map(s => `<div class="m-dot ${s}"></div>`).join('');
+      return `<div class="member-row" style="border-bottom:1px solid var(--border);">
+        <div style="font-size:13px;font-weight:700;color:var(--text3);width:18px;">${i+1}</div>
+        <div class="m-av">${m.name.slice(0,2).toUpperCase()}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="m-name">${m.name}${m.name===currentUser?' (you)':''}</div>
+          <div style="font-size:10px;color:${t.color};">${t.emoji} ${m.team}</div>
+        </div>
+        <div class="m-streak">${dots}</div>
+        <div class="m-pts">${m.points}pts</div>
+      </div>`;
+    }).join('') + `</div>`;
+}
+
+function renderStepTiles() {
+  const el = document.getElementById('step-tiles');
+  if (!el) return;
+  if (isAdmin) {
+    const totalSteps = allEntries.reduce((s,e) => s+e.steps, 0);
+    const totalMembers = new Set(allEntries.map(e=>e.user_name)).size;
+    el.innerHTML = `
+      <div style="flex:1;padding:10px 12px;border-right:1px solid var(--border);background:var(--surface);">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Total steps</div>
+        <div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent);">${totalSteps.toLocaleString('en-IN')}</div>
+      </div>
+      <div style="flex:1;padding:10px 12px;background:var(--surface);">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Active members</div>
+        <div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green);">${totalMembers}</div>
+      </div>`;
+    return;
+  }
+  const mySteps = allEntries
+    .filter(e => e.user_name === currentUser)
+    .reduce((s, e) => s + e.steps, 0);
+  const teamSteps = allEntries
+    .filter(e => MEMBERS.find(m => m.name === e.user_name && m.team === currentTeam))
+    .reduce((s, e) => s + e.steps, 0);
+  const t = TEAMS[currentTeam];
+  el.innerHTML = `
+    <div style="flex:1;padding:10px 12px;border-right:1px solid var(--border);background:var(--surface);">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">My steps</div>
+      <div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text);">${mySteps.toLocaleString('en-IN')}</div>
+    </div>
+    <div style="flex:1;padding:10px 12px;background:var(--surface);">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${t.emoji} Team steps</div>
+      <div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:${t.color};">${teamSteps.toLocaleString('en-IN')}</div>
+    </div>`;
+}
+
+async function renderLoginScores() {
+  try {
+    await loadAll();
+    renderTeamButtons();
+  } catch(e) { console.error('login scores error:', e); }
+}
+
+function renderTeamScoresBar() {
+  // Scores now shown on login page only
+}
+
+// ── ADMIN DATA ENTRY ──
+let adminSelTeam = null, adminSelDate = null;
+
+function adminSwitchBoardTeam(team) {
+  adminBoardTeam = team;
+  renderTeamBoard();
+}
+
+function renderDataEntry() {
+  const el = document.getElementById('data-entry-wrap');
+  if (!el) return;
+
+  const teamButtons = Object.keys(TEAMS).map(team => {
+    const t = TEAMS[team];
+    const sel = adminSelTeam === team;
+    return `<button onclick="adminPickTeam('${team}')" style="flex:1;padding:10px 6px;border-radius:var(--radius-sm);border:1.5px solid ${sel?t.color:'var(--border)'};background:${sel?`rgba(${team==='Alpha'?'124,106,247':team==='Bravo'?'62,207,142':'240,164,41'},0.12)`:'var(--surface2)'};color:${sel?t.color:'var(--text2)'};font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;">
+      ${t.emoji} ${team}
+    </button>`;
+  }).join('');
+
+  const dateButtons = adminSelTeam ? CHALLENGE_DATES.map(date => {
+    const sel = adminSelDate === date;
+    const d = parseInt(date.split('-')[2]);
+    return `<button onclick="adminPickDate('${date}')" style="flex:1;padding:8px 4px;border-radius:var(--radius-sm);border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'var(--accent-dim)':'var(--surface2)'};color:${sel?'var(--accent)':'var(--text2)'};font-size:12px;font-weight:600;cursor:pointer;">${d} Apr</button>`;
+  }).join('') : '';
+
+  const memberRows = (adminSelTeam && adminSelDate) ? (() => {
+    const members = MEMBERS.filter(m => m.team === adminSelTeam && !m.name.startsWith('Member'));
+    return members.map(m => {
+      const entry = allEntries.find(e => e.user_name === m.name && e.date === adminSelDate);
+      const goal = getUserGoal(m.name);
+      const hit = entry && goal && entry.steps >= goal;
+      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text2);flex-shrink:0;">${m.name.slice(0,2).toUpperCase()}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);">${m.name}</div>
+          <div style="font-size:10px;color:var(--text3);">Goal: ${goal ? goal.toLocaleString('en-IN') : 'not set'}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input type="number" id="admin-steps-${m.name}" value="${entry ? entry.steps : ''}" placeholder="—" inputmode="numeric"
+            style="width:90px;padding:7px 10px;background:var(--surface2);border:1.5px solid ${hit?'rgba(62,207,142,0.4)':'var(--border)'};border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;text-align:right;"/>
+          <button onclick="adminSaveEntry('${m.name}','${adminSelDate}',${entry?entry.id:'null'})"
+            style="padding:7px 12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;">
+            ${entry ? 'Update' : 'Save'}
+          </button>
+        </div>
+      </div>`;
+    }).join('');
+  })() : '';
+
+  el.innerHTML = `
+    <div style="background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:12px;">
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Select Team</div>
+      <div style="display:flex;gap:6px;margin-bottom:${adminSelTeam?'14px':'0'};">${teamButtons}</div>
+      ${adminSelTeam ? `<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Select Date</div>
+      <div style="display:flex;gap:4px;">${dateButtons}</div>` : ''}
+    </div>
+    ${adminSelTeam && adminSelDate ? `
+    <div style="background:var(--surface);border-radius:var(--radius);padding:4px 14px;">
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;padding:10px 0 4px;">
+        ${TEAMS[adminSelTeam].emoji} ${adminSelTeam} · ${parseInt(adminSelDate.split('-')[2])} Apr
+      </div>
+      ${memberRows}
+    </div>` : ''}`;
+}
+
+function adminPickTeam(team) {
+  adminSelTeam = team;
+  adminSelDate = null;
+  renderDataEntry();
+}
+
+function adminPickDate(date) {
+  adminSelDate = date;
+  renderDataEntry();
+}
+
+async function adminSaveEntry(userName, date, existingId) {
+  const input = document.getElementById(`admin-steps-${userName}`);
+  const steps = parseInt(input?.value);
+  if (!steps || steps < 1) { showToast(`Enter valid steps for ${userName}`); return; }
+  try {
+    await sb('POST', 'cc_steps?on_conflict=user_name,date', { user_name: userName, date, steps });
+    showToast(`${userName} — ${steps.toLocaleString('en-IN')} steps saved ✓`);
+    await loadAll();
+    renderDataEntry();
+    renderTeamScoresBar();
+    renderTeamBoard();
+    renderStepTiles();
+  } catch(e) { showToast('Save failed: ' + e.message.slice(0,40)); }
+}
+
+function switchTab(tab) {
+  ['add','board','data'].forEach(t => {
+    const panel = document.getElementById(`panel-${t}`);
+    const tb = document.getElementById(`tb-${t}`);
+    const nav = document.getElementById(`nav-${t}`);
+    if (panel) panel.classList.toggle('active', t===tab);
+    if (tb) tb.classList.toggle('active', t===tab);
+    if (nav) nav.classList.toggle('active', t===tab);
+  });
+  if (tab === 'data') renderDataEntry();
+}
+function fmt(n){return Math.round(n).toLocaleString('en-IN');}
+function fd(d){return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'});}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+
+buildGrid();
+renderLoginScores();
+</script>
+</body>
+</html>  .name-btn{padding:11px 8px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;background:var(--surface);border:1.5px solid var(--border);color:var(--text2);cursor:pointer;text-align:center;transition:all 0.15s;}
+  .name-btn.selected{border-color:var(--accent);background:var(--accent-dim);color:var(--text);}
+  .login-btn{width:100%;padding:15px;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:15px;font-weight:600;border:none;cursor:pointer;opacity:0.35;transition:opacity 0.15s;}
+  .login-btn:not([disabled]){opacity:1;}
+
+  /* DASHBOARD */
+  #dashboard-page{background:var(--bg);}
+  .dash-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;gap:8px;}
+  .dash-left{display:flex;align-items:center;gap:10px;}
+  .av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;background:var(--accent-dim);border:1.5px solid var(--accent);color:var(--accent);}
+  .uname{font-weight:600;font-size:14px;}
+  .uteam{font-size:11px;color:var(--text3);}
+  .signout{padding:6px 12px;border-radius:999px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;cursor:pointer;}
+  .scroll{flex:1;overflow-y:auto;padding:14px 14px 90px;}
+
+  /* GOAL SETUP */
+  .goal-setup{background:var(--accent-dim);border:1px solid rgba(124,106,247,0.25);border-radius:var(--radius);padding:14px;margin-bottom:14px;}
+  .goal-setup-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;}
+  .goal-setup-sub{font-size:12px;color:var(--text2);margin-bottom:10px;}
+  .goal-row{display:flex;gap:8px;align-items:center;}
+  .goal-row input{flex:1;padding:10px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;}
+  .goal-row input:focus{border-color:var(--accent);}
+  .goal-btn{padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
+
+  /* POINTS CARD */
+  .pts-card{background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:12px;border:1px solid var(--border);}
+  .pts-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .pts-title{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;}
+  .pts-badge{background:var(--accent-dim);border:1px solid rgba(124,106,247,0.3);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;color:var(--accent);}
+  .pts-row{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+  .pts-day{border-radius:8px;padding:6px 4px;text-align:center;border:1px solid var(--border);}
+  .pts-day.hit{background:var(--green-dim);border-color:rgba(62,207,142,0.3);}
+  .pts-day.miss{background:var(--red-dim);border-color:rgba(240,82,82,0.15);}
+  .pts-day.future{background:var(--surface2);border-color:var(--border);}
+  .pts-day.today{border-color:var(--accent);background:var(--accent-dim);}
+  .pd-date{font-size:9px;color:var(--text3);margin-bottom:3px;}
+  .pd-icon{font-size:14px;line-height:1;}
+  .pd-pts{font-size:9px;font-weight:700;margin-top:2px;}
+  .pts-day.hit .pd-pts{color:var(--green);}
+  .pts-day.miss .pd-pts{color:var(--red);}
+  .pts-day.today .pd-pts{color:var(--accent);}
+
+  /* METRICS */
+  .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px;}
+  .metric{background:var(--surface);border-radius:var(--radius-sm);padding:11px 8px;text-align:center;}
+  .mv{font-size:18px;font-weight:600;color:var(--text);font-family:'DM Mono',monospace;}
+  .ml{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;}
+
+  /* TABS */
+  .tabs{display:flex;background:var(--surface);border-radius:var(--radius);padding:3px;gap:2px;margin-bottom:14px;}
+  .tab{flex:1;padding:9px 4px;border-radius:12px;border:none;font-size:12px;font-weight:500;background:none;color:var(--text2);cursor:pointer;transition:all 0.15s;}
+  .tab.active{background:var(--surface2);color:var(--text);}
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  /* ADD STEPS */
+  .add-card{background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
+  .frow{display:flex;gap:8px;align-items:flex-end;margin-bottom:12px;}
+  .frow .field{flex:1;}
+  .flabel{font-size:11px;color:var(--text2);font-weight:500;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em;}
+  input[type=date],input[type=number]{width:100%;padding:11px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none;}
+  input:focus{border-color:var(--accent);}
+  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+  .save-btn{padding:11px 16px;background:var(--green);color:#0a1f15;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  .hint{font-size:12px;color:var(--amber);margin:-4px 0 10px;padding:0 2px;}
+  .sh{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;}
+  .eitem{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+  .eitem:last-child{border-bottom:none;}
+  .edate{font-size:12px;color:var(--text2);margin-top:1px;}
+  .esteps{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;}
+  .esteps.hit{color:var(--green);}
+  .esteps.miss{color:var(--text2);}
+  .epill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;}
+  .epill.hit{background:var(--green-dim);color:var(--green);}
+  .epill.miss{background:var(--red-dim);color:var(--red);}
+  .delbtn{background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:0 0 0 8px;}
+  .empty{text-align:center;padding:24px;color:var(--text3);font-size:13px;}
+
+  /* LEADERBOARD */
+  .team-section{margin-bottom:14px;}
+  .team-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:var(--radius-sm) var(--radius-sm) 0 0;border:1px solid var(--border);border-bottom:none;}
+  .team-hdr.t1{background:var(--t1-dim);border-color:rgba(124,106,247,0.25);}
+  .team-hdr.t2{background:var(--t2-dim);border-color:rgba(62,207,142,0.25);}
+  .team-hdr.t3{background:var(--t3-dim);border-color:rgba(240,164,41,0.25);}
+  .team-name-lbl{font-size:13px;font-weight:700;}
+  .t1 .team-name-lbl{color:var(--t1);}
+  .t2 .team-name-lbl{color:var(--t2);}
+  .t3 .team-name-lbl{color:var(--t3);}
+  .team-pts-lbl{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;}
+  .t1 .team-pts-lbl{color:var(--t1);}
+  .t2 .team-pts-lbl{color:var(--t2);}
+  .t3 .team-pts-lbl{color:var(--t3);}
+  .team-body{background:var(--surface);border:1px solid var(--border);border-radius:0 0 var(--radius-sm) var(--radius-sm);overflow:hidden;}
+  .member-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);}
+  .member-row:last-child{border-bottom:none;}
+  .m-av{width:28px;height:28px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text2);flex-shrink:0;}
+  .m-name{font-size:13px;font-weight:500;flex:1;}
+  .m-goal{font-size:11px;color:var(--text3);}
+  .m-pts{font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);}
+  .m-streak{display:flex;gap:2px;margin-left:6px;}
+  .m-dot{width:7px;height:7px;border-radius:50%;}
+  .m-dot.hit{background:var(--green);}
+  .m-dot.miss{background:var(--red-dim);border:1px solid rgba(240,82,82,0.3);}
+  .m-dot.future{background:var(--surface3);}
+
+  /* BONUS BANNER */
+  .bonus-banner{border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;font-size:12px;}
+  .bonus-banner.on-track{background:var(--green-dim);border:1px solid rgba(62,207,142,0.2);color:var(--green);}
+  .bonus-banner.off-track{background:var(--red-dim);border:1px solid rgba(240,82,82,0.15);color:var(--red);}
+  .bonus-banner.pending{background:var(--amber-dim);border:1px solid rgba(240,164,41,0.2);color:var(--amber);}
+
+  /* BOTTOM NAV */
+  .bnav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding:6px 0 max(6px,env(safe-area-inset-bottom));flex-shrink:0;}
+  .nbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;padding:4px 0;}
+  .nicon{font-size:18px;}
+  .nlabel{font-size:10px;font-weight:500;color:var(--text3);}
+  .nbtn.active .nlabel{color:var(--accent);}
+
+  .toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;font-weight:500;opacity:0;transition:all 0.25s;pointer-events:none;z-index:100;white-space:nowrap;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-page" class="page active">
+  <div class="login-box">
+    <div class="brand">
+      <span class="brand-icon">🎯</span>
+      <h1>Miles & Meals</h1>
+      <p>Consistency & Commitment Challenge</p>
+      <span class="event-pill">📅 17 Apr – 24 Apr 2026</span>
+    </div>
+    <p class="section-label">Select your team</p>
+    <div id="team-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;"></div>
+    <button onclick="showAdminLogin()" style="width:100%;padding:11px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;">
+      <span style="font-size:14px;">🔐</span> Admin Access
+    </button>
+    <div id="name-section" style="display:none;">
+      <p class="section-label">Select your name</p>
+      <div class="name-grid" id="name-grid"></div>
+    </div>
+    <button class="login-btn" id="login-btn" disabled onclick="doLogin()">Let's Go →</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard-page" class="page">
+  <div class="dash-hdr">
+    <div class="dash-left">
+      <div class="av" id="dash-av"></div>
+      <div><div class="uname" id="dash-name"></div><div class="uteam" id="dash-team"></div></div>
+    </div>
+    <button class="signout" onclick="doLogout()">Sign out</button>
+  </div>
+  <div id="step-tiles" style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;"></div>
+  <div class="scroll">
+    <div id="goal-setup-wrap"></div>
+    <div id="pts-card-wrap"></div>
+    <div class="metrics" id="metrics"></div>
+    <div class="tabs">
+      <button class="tab active" id="tb-add" onclick="switchTab('add')">➕ Steps</button>
+      <button class="tab" id="tb-board" onclick="switchTab('board')">🏆 My Team</button>
+      <button class="tab" id="tb-data" onclick="switchTab('data')" style="display:none">📋 Data</button>
+    </div>
+    <div class="panel active" id="panel-add">
+      <div class="add-card">
+        <div class="frow">
+          <div class="field"><div class="flabel">Date</div><input type="date" id="step-date" onchange="onDateChange()"/></div>
+          <div class="field"><div class="flabel">Steps</div><input type="number" id="step-count" placeholder="e.g. 8000" inputmode="numeric"/></div>
+          <button class="save-btn" onclick="addSteps()">Save</button>
+        </div>
+        <div id="step-hint"></div>
+      </div>
+      <div class="sh">My entries</div>
+      <div id="my-entries" style="background:var(--surface);border-radius:var(--radius);padding:4px 12px;"><div class="empty">Loading...</div></div>
+    </div>
+    <div class="panel" id="panel-board">
+      <div id="board-team-tabs" style="display:none;margin-bottom:12px;"></div>
+      <div id="team-board"><div class="empty">Loading...</div></div>
+    </div>
+    <div class="panel" id="panel-data">
+      <div id="data-entry-wrap"></div>
+    </div>
+
+  </div>
+  <nav class="bnav">
+    <button class="nbtn active" id="nav-add" onclick="switchTab('add')"><span class="nicon">➕</span><span class="nlabel">Steps</span></button>
+    <button class="nbtn" id="nav-board" onclick="switchTab('board')"><span class="nicon">🏆</span><span class="nlabel">My Team</span></button>
+    <button class="nbtn" id="nav-data" onclick="switchTab('data')" style="display:none"><span class="nicon">📋</span><span class="nlabel">Data</span></button>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ADMIN PASSWORD MODAL -->
+<div id="admin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:50;align-items:flex-end;justify-content:center;">
+  <div style="background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;padding:24px 20px 36px;width:100%;max-width:480px;">
+    <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;">🔐 Admin Login</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:16px;">Enter admin password to access all team data</div>
+    <input type="password" id="admin-pwd" placeholder="Password" style="width:100%;padding:12px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:6px;"/>
+    <div id="admin-err" style="font-size:12px;color:var(--red);margin-bottom:10px;display:none;">Incorrect password. Try again.</div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="closeAdminModal()" style="flex:1;padding:13px;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:14px;cursor:pointer;">Cancel</button>
+      <button onclick="doAdminLogin()" style="flex:2;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;">Login as Admin</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://osunxzedvlpcmaplntub.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdW54emVkdmxwY21hcGxudHViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDE5MzAsImV4cCI6MjA5MDcxNzkzMH0.VgfNj_0LUfeTlT-07pSpf5lJk7uFQVuBW4VpE_PihAg';
+
+const CHALLENGE_START  = '2026-04-17';
+const CHALLENGE_END    = '2026-04-24';
+const POINTS_PER_DAY   = 10;
+const MAX_TEAM_POINTS  = 120;
+const BONUS_POINTS     = 500;
+const MIN_GOAL         = 5000;
+const MAX_POINT_DAYS   = 7;  // only first 7 days count for points (17-23 Apr)
+
+// All 8 dates shown in tracker
+const CHALLENGE_DATES = [];
+let d = new Date(CHALLENGE_START);
+while (d <= new Date(CHALLENGE_END)) {
+  CHALLENGE_DATES.push(d.toISOString().split('T')[0]);
+  d.setDate(d.getDate() + 1);
+}
+
+
+
+const TEAMS = {
+  'Nilam': { color: 'var(--t1)', cls: 't1', emoji: '🌍' },
+  'Neer': { color: 'var(--t2)', cls: 't2', emoji: '🌊' },
+  'Kaatru': { color: 'var(--t3)', cls: 't3', emoji: '🌬️' }
+};
+
+// 36 members split into 3 teams of 12
+const MEMBERS = [
   {name:'Jaiganesh',team:'Nilam'},
   {name:'Prashant',team:'Nilam'},
   {name:'Manohar',team:'Nilam'},
