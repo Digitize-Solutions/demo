@@ -189,7 +189,6 @@
     </div>
     <button class="signout" onclick="doLogout()">Sign out</button>
   </div>
-  <div id="team-scores-bar" style="display:flex;border-bottom:1px solid var(--border);flex-shrink:0;"></div>
   <div id="step-tiles" style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;"></div>
   <div class="scroll">
     <div id="goal-setup-wrap"></div>
@@ -431,13 +430,21 @@ document.addEventListener('keydown', e => {
 });
 
 function buildGrid() {
-  // Build team buttons
+  renderTeamButtons();
+}
+
+function renderTeamButtons() {
   const teamGrid = document.getElementById('team-grid');
+  if (!teamGrid) return;
   teamGrid.innerHTML = Object.keys(TEAMS).map(team => {
     const t = TEAMS[team];
-    return `<button class="name-btn" style="padding:14px 8px;" onclick="selTeamFn('${team}',this)">
+    const { total } = calcTeamPoints(team);
+    const sel = selTeam === team;
+    return `<button class="name-btn ${sel?'selected':''}" style="padding:12px 6px;" onclick="selTeamFn('${team}',this)">
       <div style="font-size:22px;margin-bottom:4px;">${t.emoji}</div>
-      <div style="font-size:13px;font-weight:600;">Team ${team}</div>
+      <div style="font-size:12px;font-weight:700;color:${sel?'var(--accent)':'var(--text2)'};">${team}</div>
+      <div style="font-size:16px;font-weight:800;font-family:'DM Mono',monospace;color:${sel?'var(--accent)':'var(--text)'};margin-top:3px;">${total}</div>
+      <div style="font-size:9px;color:var(--text3);margin-top:1px;">pts</div>
     </button>`;
   }).join('');
 }
@@ -445,11 +452,13 @@ function buildGrid() {
 function selTeamFn(team, btn) {
   selTeam = team;
   selN = null;
-  document.querySelectorAll('#team-grid .name-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
+  renderTeamButtons();
   document.getElementById('login-btn').disabled = true;
-  // Show names for selected team
-  const teamMembers = MEMBERS.filter(m => m.team === team && !m.name.startsWith('Member')).map(m => m.name);
+  // Show names for selected team sorted alphabetically
+  const teamMembers = MEMBERS
+    .filter(m => m.team === team)
+    .map(m => m.name)
+    .sort((a, b) => a.localeCompare(b));
   document.getElementById('name-grid').innerHTML = teamMembers.map(n =>
     `<button class="name-btn" onclick="selName('${n}',this)">${n}</button>`).join('');
   document.getElementById('name-section').style.display = 'block';
@@ -793,23 +802,15 @@ function renderStepTiles() {
     </div>`;
 }
 
+async function renderLoginScores() {
+  try {
+    await loadAll();
+    renderTeamButtons();
+  } catch(e) { console.error('login scores error:', e); }
+}
+
 function renderTeamScoresBar() {
-  const el = document.getElementById('team-scores-bar');
-  if (!el) return;
-  const teamData = Object.keys(TEAMS).map(team => {
-    const { total } = calcTeamPoints(team);
-    return { team, total, t: TEAMS[team] };
-  }).sort((a,b) => b.total - a.total);
-  const maxPts = teamData[0]?.total || 1;
-  el.innerHTML = teamData.map(({team, total, t}, i) => {
-    const isMyTeam = team === currentTeam;
-    const rank = i === 0 ? '👑' : i === 1 ? '2' : '3';
-    return `<div style="flex:1;padding:8px 6px;text-align:center;border-right:${i<2?'1px solid var(--border)':'none'};background:${isMyTeam?'rgba(255,255,255,0.03)':'transparent'};">
-      <div style="font-size:10px;font-weight:700;color:${t.color};letter-spacing:0.06em;margin-bottom:2px;">${t.emoji} ${team} ${isMyTeam?'(you)':''}</div>
-      <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:${isMyTeam?t.color:'var(--text)'};">${total}</div>
-      <div style="font-size:9px;color:var(--text3);margin-top:1px;">pts ${rank}</div>
-    </div>`;
-  }).join('');
+  // Scores now shown on login page only
 }
 
 // ── ADMIN DATA ENTRY ──
@@ -920,6 +921,7 @@ function fd(d){return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'n
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
 buildGrid();
+renderLoginScores();
 </script>
 </body>
 </html>
