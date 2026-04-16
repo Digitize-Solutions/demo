@@ -480,7 +480,7 @@ function selName(n, btn) {
 function doLogin() {
   if (!selN) return;
   currentUser = selN;
-  currentTeam = MEMBERS.find(m => m.name === selN)?.team || 'Alpha';
+  currentTeam = MEMBERS.find(m => m.name === selN)?.team || 'Nilam';
   const t = TEAMS[currentTeam];
   document.getElementById('login-page').classList.remove('active');
   document.getElementById('dashboard-page').classList.add('active');
@@ -692,8 +692,11 @@ function renderTeamBoard() {
       const t = TEAMS[team];
       const { total } = calcTeamPoints(team);
       const sel = adminBoardTeam === team;
+      const bg = sel ? 'var(--accent-dim)' : 'var(--surface)';
+      const bc = sel ? t.color : 'var(--border)';
+      const tc = sel ? t.color : 'var(--text2)';
       return `<button onclick="adminSwitchBoardTeam('${team}')"
-        style="flex:1;padding:9px 6px;border-radius:var(--radius-sm);border:1.5px solid ${sel?t.color:'var(--border)'};background:${sel?`rgba(${team==='Alpha'?'124,106,247':team==='Bravo'?'62,207,142':'240,164,41'},0.12)`:'var(--surface)'};color:${sel?t.color:'var(--text2)'};font-size:12px;font-weight:600;cursor:pointer;text-align:center;">
+        style="flex:1;padding:9px 6px;border-radius:var(--radius-sm);border:1.5px solid ${bc};background:${bg};color:${tc};font-size:12px;font-weight:600;cursor:pointer;text-align:center;">
         <div>${t.emoji} ${team}</div>
         <div style="font-size:11px;font-family:'DM Mono',monospace;margin-top:2px;">${total}pts</div>
       </button>`;
@@ -819,6 +822,11 @@ async function renderLoginScores() {
 
 function renderTeamScoresBar() {
   // Scores now shown on login page only
+}
+
+function adminSwitchBoardTeam(team) {
+  adminBoardTeam = team;
+  renderTeamBoard();
 }
 
 // ── ADMIN DATA ENTRY ──
