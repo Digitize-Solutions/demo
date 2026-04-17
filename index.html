@@ -310,11 +310,10 @@ function buildGrid(){
   const tg=document.getElementById('team-grid');
   tg.innerHTML=Object.keys(TEAMS).map(team=>{
     const t=TEAMS[team];
-    return `<button class="name-btn" style="padding:12px 6px;" onclick="selTeamFn('${team}',this)">
-      <div style="font-size:22px;margin-bottom:4px;">${t.emoji}</div>
+    return `<button class="name-btn" style="padding:14px 6px;" onclick="selTeamFn('${team}',this)">
+      <div style="font-size:36px;margin-bottom:6px;">${t.emoji}</div>
       <div style="font-size:12px;font-weight:700;">${team}</div>
       <div id="score-${team}" style="font-size:16px;font-weight:800;font-family:'DM Mono',monospace;margin-top:3px;">—</div>
-      <div style="font-size:9px;color:var(--text3);margin-top:1px;">pts</div>
     </button>`;
   }).join('');
 }
