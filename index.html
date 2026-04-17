@@ -258,13 +258,18 @@ async function sb(method,path,body){
 }
 async function loadAll(){
   try{
-    [allEntries,allGoals,allTwists,allTwistCompletions]=await Promise.all([
+    [allEntries,allGoals]=await Promise.all([
       sb('GET','cc_steps?select=*&order=date.desc'),
-      sb('GET','cc_goals?select=*'),
+      sb('GET','cc_goals?select=*')
+    ]);
+  }catch(e){console.error('Load error:',e.message);allEntries=[];allGoals=[];}
+  // Load twists separately so missing tables don't break the whole app
+  try{
+    [allTwists,allTwistCompletions]=await Promise.all([
       sb('GET','cc_twists?select=*&order=created_at.asc'),
       sb('GET','cc_twist_completions?select=*')
     ]);
-  }catch(e){console.error('Load error:',e.message);allEntries=[];allGoals=[];allTwists=[];allTwistCompletions=[];}
+  }catch(e){console.error('Twists not set up yet:',e.message);allTwists=[];allTwistCompletions=[];}
 }
 function getUserGoal(user){const clean=cleanName(user);const g=allGoals.find(g=>g.user_name===clean);return g?g.goal_steps:null;}
 function calcPoints(user){
