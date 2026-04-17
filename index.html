@@ -173,6 +173,7 @@
       <button class="tab active" id="tb-add" onclick="switchTab('add')">➕ Steps</button>
       <button class="tab" id="tb-board" onclick="switchTab('board')">🏆 My Team</button>
       <button class="tab" id="tb-data" onclick="switchTab('data')" style="display:none">📋 Data</button>
+      <button class="tab" id="tb-twists" onclick="switchTab('twists')" style="display:none">⚡ Twists</button>
     </div>
     <div class="panel active" id="panel-add">
       <div class="add-card">
@@ -193,11 +194,15 @@
     <div class="panel" id="panel-data">
       <div id="data-entry-wrap"></div>
     </div>
+    <div class="panel" id="panel-twists">
+      <div id="twists-wrap"></div>
+    </div>
   </div>
   <nav class="bnav">
     <button class="nbtn active" id="nav-add" onclick="switchTab('add')"><span class="nicon">➕</span><span class="nlabel">Steps</span></button>
     <button class="nbtn" id="nav-board" onclick="switchTab('board')"><span class="nicon">🏆</span><span class="nlabel">My Team</span></button>
     <button class="nbtn" id="nav-data" onclick="switchTab('data')" style="display:none"><span class="nicon">📋</span><span class="nlabel">Data</span></button>
+    <button class="nbtn" id="nav-twists" onclick="switchTab('twists')" style="display:none"><span class="nicon">⚡</span><span class="nlabel">Twists</span></button>
   </nav>
 </div>
 <div class="toast" id="toast"></div>
@@ -242,7 +247,7 @@ const MEMBERS=[
   {name:'Siva Kumar',team:'Kaatru'},{name:'Sathiesh Kumar',team:'Kaatru'},{name:'Sudha',team:'Kaatru'}
 ];
 const TEAM_BONUS_THRESHOLD={'Nilam':12,'Neer':12,'Kaatru':12};
-let currentUser=null,currentTeam=null,allEntries=[],allGoals=[],refreshTimer=null;
+let currentUser=null,currentTeam=null,allEntries=[],allGoals=[],allTwists=[],allTwistCompletions=[],refreshTimer=null;
 
 function cleanName(n){return n.replace(/^⚑\s*/,'').trim();}
 
@@ -252,8 +257,14 @@ async function sb(method,path,body){
   const t=await res.text();return t?JSON.parse(t):[];
 }
 async function loadAll(){
-  try{[allEntries,allGoals]=await Promise.all([sb('GET','cc_steps?select=*&order=date.desc'),sb('GET','cc_goals?select=*')]);}
-  catch(e){console.error('Load error:',e.message);allEntries=[];allGoals=[];}
+  try{
+    [allEntries,allGoals,allTwists,allTwistCompletions]=await Promise.all([
+      sb('GET','cc_steps?select=*&order=date.desc'),
+      sb('GET','cc_goals?select=*'),
+      sb('GET','cc_twists?select=*&order=created_at.asc'),
+      sb('GET','cc_twist_completions?select=*')
+    ]);
+  }catch(e){console.error('Load error:',e.message);allEntries=[];allGoals=[];allTwists=[];allTwistCompletions=[];}
 }
 function getUserGoal(user){const clean=cleanName(user);const g=allGoals.find(g=>g.user_name===clean);return g?g.goal_steps:null;}
 function calcPoints(user){
@@ -279,7 +290,12 @@ function calcTeamPoints(team){
   const bonusEligible=membersAtMax>=threshold;
   const today=new Date().toISOString().split('T')[0];
   if(bonusEligible&&today>CHALLENGE_END)total+=BONUS_POINTS;
-  return{total,bonusEligible,membersAtMax,threshold};
+  // Add twist bonus points
+  const twistPts=allTwistCompletions
+    .filter(c=>c.team===team)
+    .reduce((s,c)=>{const tw=allTwists.find(t=>t.id===c.twist_id);return s+(tw?tw.bonus_points:0);},0);
+  total+=twistPts;
+  return{total,bonusEligible,membersAtMax,threshold,twistPts};
 }
 
 const ADMIN_PASSWORD='vidial';
@@ -302,6 +318,8 @@ function doAdminLogin(){
   document.getElementById('nav-add').style.display='none';
   document.getElementById('tb-data').style.display='';
   document.getElementById('nav-data').style.display='';
+  document.getElementById('tb-twists').style.display='';
+  document.getElementById('nav-twists').style.display='';
   document.getElementById('nav-board').querySelector('.nlabel').textContent='All Teams';
   switchTab('board');refreshAll();refreshTimer=setInterval(refreshAll,30000);
 }
@@ -348,6 +366,8 @@ function doLogin(){
   if(isCaptain(selN)){
     document.getElementById('tb-data').style.display='';
     document.getElementById('nav-data').style.display='';
+    document.getElementById('tb-twists').style.display='';
+    document.getElementById('nav-twists').style.display='';
   }
   refreshAll();refreshTimer=setInterval(refreshAll,30000);
 }
@@ -364,6 +384,8 @@ function doLogout(){
   document.getElementById('nav-add').style.display='';
   document.getElementById('tb-data').style.display='none';
   document.getElementById('nav-data').style.display='none';
+  document.getElementById('tb-twists').style.display='none';
+  document.getElementById('nav-twists').style.display='none';
   document.getElementById('tb-board').textContent='🏆 My Team';
   document.getElementById('nav-board').querySelector('.nlabel').textContent='My Team';
   renderLoginScores();
@@ -538,7 +560,7 @@ function renderTeamBoard(){
       </div>`;
     }).join('');
     return `<div class="team-section">
-      <div class="team-hdr ${t.cls}"><div class="team-name-lbl">${t.emoji} Team ${team}</div><div class="team-pts-lbl">${total} pts</div></div>
+      <div class="team-hdr ${t.cls}"><div class="team-name-lbl">${t.emoji} Team ${team}</div><div class="team-pts-lbl">${total} pts${twistPts?` <span style="font-size:10px;color:var(--amber);">(+${twistPts} ⚡)</span>`:''}</div></div>
       <div class="team-body">
         <div class="bonus-banner ${bonusCls}" style="margin:8px;border-radius:8px;">${bonusText}</div>
         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:8px;">${memberRows}</div>
@@ -621,12 +643,140 @@ async function renderLoginScores(){
   }catch(e){console.error('login scores:',e);}
 }
 
+// ── TWISTS ──
+async function loadTwists(){
+  try{
+    const [twists, completions] = await Promise.all([
+      sb('GET','cc_twists?select=*&order=created_at.asc'),
+      sb('GET','cc_twist_completions?select=*')
+    ]);
+    return {twists, completions};
+  }catch(e){console.error('loadTwists:',e);return{twists:[],completions:[]};}
+}
+
+async function renderTwists(){
+  const el=document.getElementById('twists-wrap');
+  if(!el)return;
+  el.innerHTML='<div class="empty">Loading...</div>';
+  await loadAll();
+  const twists=allTwists;
+  const completions=allTwistCompletions;
+
+  const canCreate=isAdmin;
+  const canComplete=isAdmin||isCaptain(currentUser);
+
+  // Add twist form (admin only)
+  const addForm=canCreate?`
+    <div style="background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:12px;border:1px solid var(--border);">
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;">⚡ Add New Twist</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <input type="text" id="twist-title" placeholder="Twist title e.g. Walk to work today!" style="width:100%;padding:10px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;"/>
+        <textarea id="twist-desc" placeholder="Description (optional)" rows="2" style="width:100%;padding:10px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;resize:none;"></textarea>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="number" id="twist-pts" placeholder="Bonus pts e.g. 50" inputmode="numeric" style="flex:1;padding:10px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;"/>
+          <button onclick="createTwist()" style="padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">Add Twist</button>
+        </div>
+      </div>
+    </div>`:''
+
+  if(!twists.length){
+    el.innerHTML=addForm+`<div class="empty">${isAdmin?'No twists yet — add the first one!':'No surprise twists yet — stay tuned! ⚡'}</div>`;
+    return;
+  }
+
+  const twistCards=twists.map((tw,i)=>{
+    const teamCompletions={};
+    completions.filter(c=>c.twist_id===tw.id).forEach(c=>teamCompletions[c.team]=true);
+    const myTeamDone=teamCompletions[currentTeam]||false;
+    const doneCount=Object.keys(teamCompletions).length;
+
+    const teamPills=Object.keys(TEAMS).map(team=>{
+      const done=teamCompletions[team];
+      const t=TEAMS[team];
+      return `<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;background:${done?'rgba(62,207,142,0.15)':'var(--surface2)'};color:${done?'var(--green)':'var(--text3)'};border:1px solid ${done?'rgba(62,207,142,0.3)':'var(--border)'};">${t.emoji} ${team} ${done?'✓':''}</span>`;
+    }).join('');
+
+    const myTeam=currentTeam||adminBoardTeam||Object.keys(TEAMS)[0];
+    const canMark=(isAdmin||isCaptain(currentUser))&&!teamCompletions[myTeam];
+    const markBtn=canMark?`<button onclick="markTwistDone(${tw.id},'${myTeam}')" style="padding:8px 14px;background:var(--green);color:#0a1f15;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">✓ Mark Done</button>`:
+      (teamCompletions[myTeam]?`<span style="font-size:12px;color:var(--green);font-weight:600;">✓ Completed!</span>`:'');
+
+    const deletBtn=isAdmin?`<button onclick="deleteTwist(${tw.id})" style="padding:6px 10px;background:none;border:1px solid rgba(240,82,82,0.3);border-radius:var(--radius-sm);color:var(--red);font-size:11px;cursor:pointer;">Delete</button>`:'';
+
+    return `<div style="background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:10px;border:1px solid ${myTeamDone?'rgba(62,207,142,0.25)':'var(--border)'};">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--accent);flex-shrink:0;">${i+1}</div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);">${tw.title}</div>
+            ${tw.description?`<div style="font-size:12px;color:var(--text2);margin-top:2px;">${tw.description}</div>`:''}
+          </div>
+        </div>
+        <div style="background:var(--amber-dim);border:1px solid rgba(240,164,41,0.3);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800;color:var(--amber);white-space:nowrap;flex-shrink:0;">+${tw.bonus_points} pts</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">${teamPills}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div style="font-size:11px;color:var(--text3);">${doneCount}/3 teams completed</div>
+        <div style="display:flex;gap:6px;">${deletBtn}${markBtn}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML=addForm+twistCards;
+}
+
+async function createTwist(){
+  const title=document.getElementById('twist-title')?.value.trim();
+  const desc=document.getElementById('twist-desc')?.value.trim();
+  const pts=parseInt(document.getElementById('twist-pts')?.value);
+  if(!title){showToast('Enter a twist title');return;}
+  if(!pts||pts<1){showToast('Enter bonus points');return;}
+  const allTwists=await sb('GET','cc_twists?select=*');
+  if(allTwists.length>=7){showToast('Max 7 twists allowed!');return;}
+  try{
+    await sb('POST','cc_twists',{title,description:desc||null,bonus_points:pts});
+    showToast('Twist added! ⚡');
+    renderTwists();
+  }catch(e){showToast('Error: '+e.message.slice(0,40));}
+}
+
+async function markTwistDone(twistId,team){
+  try{
+    await sb('POST','cc_twist_completions',{twist_id:twistId,team});
+    showToast(`✓ Twist completed for ${team}! Points added!`);
+    renderTwists();
+  }catch(e){showToast('Error: '+e.message.slice(0,40));}
+}
+
+async function deleteTwist(twistId){
+  try{
+    await sb('DELETE',`cc_twist_completions?twist_id=eq.${twistId}`);
+    await sb('DELETE',`cc_twists?id=eq.${twistId}`);
+    showToast('Twist deleted');
+    renderTwists();
+  }catch(e){showToast('Error: '+e.message.slice(0,40));}
+}
+
+// Include twist bonus in team points
+async function calcTeamPointsWithTwists(team){
+  const base=calcTeamPoints(team);
+  try{
+    const completions=await sb('GET',`cc_twist_completions?team=eq.${team}&select=*`);
+    const twistIds=completions.map(c=>c.twist_id);
+    if(!twistIds.length)return base;
+    const twists=await sb('GET',`cc_twists?id=in.(${twistIds.join(',')})&select=bonus_points`);
+    const twistPts=twists.reduce((s,t)=>s+t.bonus_points,0);
+    return{...base,total:base.total+twistPts,twistPts};
+  }catch(e){return base;}
+}
+
 function switchTab(tab){
-  ['add','board','data'].forEach(t=>{
+  ['add','board','data','twists'].forEach(t=>{
     const p=document.getElementById(`panel-${t}`);const tb=document.getElementById(`tb-${t}`);const nav=document.getElementById(`nav-${t}`);
     if(p)p.classList.toggle('active',t===tab);if(tb)tb.classList.toggle('active',t===tab);if(nav)nav.classList.toggle('active',t===tab);
   });
   if(tab==='data')renderDataEntry();
+  if(tab==='twists')renderTwists();
 }
 function fmt(n){return Math.round(n).toLocaleString('en-IN');}
 function fd(d){return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'});}
