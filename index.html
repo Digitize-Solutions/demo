@@ -698,8 +698,10 @@ async function renderTwists(){
 
     const myTeam=currentTeam||adminBoardTeam||Object.keys(TEAMS)[0];
     const canMark=(isAdmin||isCaptain(currentUser))&&!teamCompletions[myTeam];
+    const canRevert=(isAdmin||isCaptain(currentUser))&&teamCompletions[myTeam];
     const markBtn=canMark?`<button onclick="markTwistDone(${tw.id},'${myTeam}')" style="padding:8px 14px;background:var(--green);color:#0a1f15;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">✓ Mark Done</button>`:
-      (teamCompletions[myTeam]?`<span style="font-size:12px;color:var(--green);font-weight:600;">✓ Completed!</span>`:'');
+      (canRevert?`<button onclick="revertTwist(${tw.id},'${myTeam}')" style="padding:8px 14px;background:none;border:1px solid rgba(240,82,82,0.4);border-radius:var(--radius-sm);color:var(--red);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;">↩ Revert</button>`:
+      (teamCompletions[myTeam]?`<span style="font-size:12px;color:var(--green);font-weight:600;">✓ Completed!</span>`:'')));
 
     const deletBtn=isAdmin?`<button onclick="deleteTwist(${tw.id})" style="padding:6px 10px;background:none;border:1px solid rgba(240,82,82,0.3);border-radius:var(--radius-sm);color:var(--red);font-size:11px;cursor:pointer;">Delete</button>`:'';
 
@@ -744,7 +746,15 @@ async function markTwistDone(twistId,team){
   try{
     await sb('POST','cc_twist_completions',{twist_id:twistId,team});
     showToast(`✓ Twist completed for ${team}! Points added!`);
-    renderTwists();
+    await loadAll();renderTwists();renderTeamBoard();renderMetrics();
+  }catch(e){showToast('Error: '+e.message.slice(0,40));}
+}
+
+async function revertTwist(twistId,team){
+  try{
+    await sb('DELETE',`cc_twist_completions?twist_id=eq.${twistId}&team=eq.${team}`);
+    showToast(`↩ Reverted for ${team} — points removed`);
+    await loadAll();renderTwists();renderTeamBoard();renderMetrics();
   }catch(e){showToast('Error: '+e.message.slice(0,40));}
 }
 
