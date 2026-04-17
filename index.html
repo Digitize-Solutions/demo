@@ -283,6 +283,7 @@ function calcTeamPoints(team){
 }
 
 const ADMIN_PASSWORD='vidial';
+function isCaptain(user){ return user && user.startsWith('⚑'); }
 let isAdmin=false,selN=null,selTeam=null;
 
 function showAdminLogin(){document.getElementById('admin-modal').style.display='flex';document.getElementById('admin-pwd').value='';document.getElementById('admin-err').style.display='none';setTimeout(()=>document.getElementById('admin-pwd').focus(),100);}
@@ -343,7 +344,12 @@ function doLogin(){
   document.getElementById('dash-name').textContent=selN;
   document.getElementById('dash-team').textContent=`${t.emoji} Team ${currentTeam}`;
   document.getElementById('step-date').value=new Date().toISOString().split('T')[0];
-  switchTab('add');refreshAll();refreshTimer=setInterval(refreshAll,30000);
+  switchTab('add');
+  if(isCaptain(selN)){
+    document.getElementById('tb-data').style.display='';
+    document.getElementById('nav-data').style.display='';
+  }
+  refreshAll();refreshTimer=setInterval(refreshAll,30000);
 }
 function doLogout(){
   currentUser=null;currentTeam=null;selN=null;selTeam=null;isAdmin=false;
@@ -544,7 +550,11 @@ function adminSwitchBoardTeam(team){adminBoardTeam=team;renderTeamBoard();}
 let adminSelTeam=null,adminSelDate=null;
 function renderDataEntry(){
   const el=document.getElementById('data-entry-wrap');if(!el)return;
-  const teamBtns=Object.keys(TEAMS).map(team=>{
+  // Captains can only see their own team - auto-select it
+  if(isCaptain(currentUser) && !adminSelTeam){
+    adminSelTeam = currentTeam;
+  }
+  const teamBtns=!isAdmin ? '' : Object.keys(TEAMS).map(team=>{
     const t=TEAMS[team];const sel=adminSelTeam===team;
     const bg=sel?'var(--accent-dim)':'var(--surface2)';const bc=sel?t.color:'var(--border)';const tc=sel?t.color:'var(--text2)';
     return `<button onclick="adminPickTeam('${team}')" style="flex:1;padding:10px 6px;border-radius:var(--radius-sm);border:1.5px solid ${bc};background:${bg};color:${tc};font-size:13px;font-weight:600;cursor:pointer;text-align:center;">${t.emoji} ${team}</button>`;
@@ -570,9 +580,17 @@ function renderDataEntry(){
         </div></div>`;
     }).join('');
   }
+  const t=TEAMS[adminSelTeam]||TEAMS[Object.keys(TEAMS)[0]];
+  const teamHeader = isAdmin
+    ? `<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Select Team</div>
+       <div style="display:flex;gap:6px;margin-bottom:${adminSelTeam?'14px':'0'};">${teamBtns}</div>`
+    : `<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:20px;">${t.emoji}</span>
+        <span style="font-size:14px;font-weight:700;color:${t.color};">Team ${adminSelTeam}</span>
+        <span style="font-size:11px;color:var(--text3);">— your team</span>
+       </div>`;
   el.innerHTML=`<div style="background:var(--surface);border-radius:var(--radius);padding:14px;">
-    <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Select Team</div>
-    <div style="display:flex;gap:6px;margin-bottom:${adminSelTeam?'14px':'0'};">${teamBtns}</div>
+    ${teamHeader}
     ${adminSelTeam?`<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Select Date</div><div style="display:flex;gap:4px;">${dateBtns}</div>`:''}
   </div>
   ${adminSelTeam&&adminSelDate?`<div style="background:var(--surface);border-radius:var(--radius);padding:4px 14px;margin-top:12px;">
