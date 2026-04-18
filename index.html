@@ -621,7 +621,7 @@ async function createTwist(){
   if(!title){showToast('Enter a twist title');return;}
   if(!pts||pts<1){showToast('Enter bonus points');return;}
   const existing=await sb('GET','cc_twists?select=id');
-  if(existing.length>=7){showToast('Max 7 twists allowed!');return;}
+  if(existing.length>=100){showToast('Max 100 twists allowed!');return;}
   try{await sb('POST','cc_twists',{title,description:desc||null,bonus_points:pts});showToast('Twist added! ⚡');renderTwists();}
   catch(e){showToast('Error: '+e.message.slice(0,40));}
 }
