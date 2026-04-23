@@ -25,7 +25,7 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
 #login-page{align-items:center;justify-content:center;padding:24px;}
 .login-box{width:100%;max-width:380px;}
 .brand{text-align:center;margin-bottom:24px;}
-.brand-icon{font-size:44px;display:block;margin-bottom:10px;animation:bounce 2s infinite;}
+.brand-icon{font-size:52px;display:block;margin-bottom:10px;animation:bounce 2s infinite;}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .brand h1{font-size:22px;font-weight:600;letter-spacing:-0.5px;}
 .brand p{font-size:13px;color:var(--text2);margin-top:4px;}
@@ -144,8 +144,9 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 <p>Consistency & Commitment Challenge</p>
 <span class="event-pill">📅 17 Apr – 24 Apr 2026</span>
 </div>
-<p class="section-label">Select your team</p>
+<p class="section-label">⚔️ Pick your side</p>
 <div id="team-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;"></div>
+<div style="text-align:center;font-size:11px;color:var(--text3);margin-bottom:10px;letter-spacing:0.03em;">👆 Tap your team to join the race!</div>
 <button onclick="showAdminLogin()" style="width:100%;padding:11px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;">
 <span style="font-size:14px;">🔐</span> Admin Access
 </button>
@@ -153,7 +154,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 <p class="section-label">Select your name</p>
 <div class="name-grid" id="name-grid"></div>
 </div>
-<button class="login-btn" id="login-btn" disabled onclick="doLogin()">Let's Go →</button>
+<button class="login-btn" id="login-btn" disabled onclick="doLogin()">🚀 Let's Go!</button>
 </div>
 </div>
 <div id="dashboard-page" class="page">
@@ -225,7 +226,7 @@ const CHALLENGE_START='2026-04-17';
 const CHALLENGE_END='2026-04-24';
 const POINTS_PER_DAY=10;
 const BONUS_POINTS=500;
-const MIN_GOAL=5000;
+const MIN_GOAL=1;
 const MAX_POINT_DAYS=7;
 const CHALLENGE_DATES=[];
 let d=new Date(CHALLENGE_START);
@@ -326,10 +327,11 @@ function buildGrid(){
   const tg=document.getElementById('team-grid');
   tg.innerHTML=Object.keys(TEAMS).map(team=>{
     const t=TEAMS[team];
-    return `<button class="name-btn" style="padding:14px 6px;" onclick="selTeamFn('${team}',this)">
+    return `<button class="name-btn" style="padding:14px 6px;position:relative;" onclick="selTeamFn('${team}',this)">
+      <div id="rank-${team}" style="position:absolute;top:6px;right:8px;font-size:14px;"></div>
       <div style="font-size:36px;margin-bottom:6px;">${t.emoji}</div>
       <div style="font-size:12px;font-weight:700;">${team}</div>
-      <div id="score-${team}" style="font-size:16px;font-weight:800;font-family:'DM Mono',monospace;margin-top:3px;">—</div>
+      <div id="score-${team}" style="font-size:18px;font-weight:800;font-family:'DM Mono',monospace;margin-top:3px;">—</div>
     </button>`;
   }).join('');
 }
@@ -400,16 +402,16 @@ function renderGoalSetup(){
   if(goal){
     el.innerHTML=`<div class="goal-setup" style="display:flex;align-items:center;justify-content:space-between;gap:10px;"><div><div class="goal-setup-title" style="margin-bottom:1px;">🎯 Daily Goal: <span style="color:var(--accent)">${goal.toLocaleString('en-IN')} steps</span></div><div style="font-size:11px;color:var(--text3);">Hit this every day to earn 10 pts</div></div><button onclick="editGoal()" style="padding:7px 14px;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Edit</button></div>`;return;
   }
-  el.innerHTML=`<div class="goal-setup"><div class="goal-setup-title">🎯 Set Your Daily Goal</div><div class="goal-setup-sub">Minimum ${MIN_GOAL.toLocaleString()} steps. You earn 10 pts every day you hit it!</div><div class="goal-row"><input type="number" id="goal-input" placeholder="e.g. 8000" inputmode="numeric" min="${MIN_GOAL}"/><button class="goal-btn" onclick="saveGoal()">Set Goal</button></div></div>`;
+  el.innerHTML=`<div class="goal-setup"><div class="goal-setup-title">🎯 Set Your Daily Goal</div><div class="goal-setup-sub">Set your daily step goal. You earn 10 pts every day you hit it!</div><div class="goal-row"><input type="number" id="goal-input" placeholder="e.g. 8000" inputmode="numeric" min="${MIN_GOAL}"/><button class="goal-btn" onclick="saveGoal()">Set Goal</button></div></div>`;
 }
 function editGoal(){
   const goal=getUserGoal(currentUser);
-  document.getElementById('goal-setup-wrap').innerHTML=`<div class="goal-setup"><div class="goal-setup-title">✏️ Update Your Daily Goal</div><div class="goal-setup-sub">Current: <strong>${goal.toLocaleString('en-IN')} steps</strong> · Min ${MIN_GOAL.toLocaleString()}</div><div class="goal-row"><input type="number" id="goal-input" value="${goal}" inputmode="numeric" min="${MIN_GOAL}"/><button class="goal-btn" onclick="saveGoal()">Update</button><button onclick="renderGoalSetup()" style="padding:10px 12px;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:13px;cursor:pointer;">Cancel</button></div></div>`;
+  document.getElementById('goal-setup-wrap').innerHTML=`<div class="goal-setup"><div class="goal-setup-title">✏️ Update Your Daily Goal</div><div class="goal-setup-sub">Current: <strong>${goal.toLocaleString('en-IN')} steps</strong></div><div class="goal-row"><input type="number" id="goal-input" value="${goal}" inputmode="numeric" min="${MIN_GOAL}"/><button class="goal-btn" onclick="saveGoal()">Update</button><button onclick="renderGoalSetup()" style="padding:10px 12px;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:13px;cursor:pointer;">Cancel</button></div></div>`;
   document.getElementById('goal-input').focus();
 }
 async function saveGoal(){
   const steps=parseInt(document.getElementById('goal-input')?.value);
-  if(!steps||steps<MIN_GOAL){showToast(`Minimum goal is ${MIN_GOAL.toLocaleString()} steps`);return;}
+  if(!steps||steps<1){showToast('Please enter a valid goal');return;}
   try{await sb('POST','cc_goals?on_conflict=user_name',{user_name:cleanName(currentUser),goal_steps:steps});showToast('Goal set! 🎯');await refreshAll();}
   catch(e){showToast('Error: '+e.message.slice(0,40));}
 }
@@ -578,7 +580,16 @@ async function adminSaveEntry(userName,date){
 async function renderLoginScores(){
   try{
     await loadAll();
-    Object.keys(TEAMS).forEach(team=>{const el=document.getElementById('score-'+team);if(el)el.textContent=calcTeamPoints(team).total;});
+    const scores=Object.keys(TEAMS).map(team=>({team,total:calcTeamPoints(team).total}));
+    const sorted=[...scores].sort((a,b)=>b.total-a.total);
+    const ranks=['👑','🥈','🥉'];
+    scores.forEach(({team,total})=>{
+      const el=document.getElementById('score-'+team);
+      const rank=ranks[sorted.findIndex(s=>s.team===team)];
+      if(el)el.textContent=total;
+      const rankEl=document.getElementById('rank-'+team);
+      if(rankEl)rankEl.textContent=rank;
+    });
   }catch(e){console.error('login scores:',e);}
 }
 
