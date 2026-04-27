@@ -2,245 +2,363 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Asanas N Reps — Yoga Studio, Faridabad</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+/* ── RESET & BASE ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 :root {
   --forest:#1A3A35; --teal:#2D7D6F; --teal-light:#9BCFC7;
   --cream:#F5F0E8; --warm:#E8E0D0; --muted:#5a7a74;
+  --nav-h: 60px;
 }
-html { scroll-behavior:smooth; }
-body { font-family:'Jost',sans-serif; background:var(--cream); color:var(--forest); overflow-x:hidden; }
+html { scroll-behavior:smooth; font-size:16px; }
+body { font-family:'Jost',sans-serif; background:var(--cream); color:var(--forest); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+img { max-width:100%; }
+a { -webkit-tap-highlight-color:transparent; }
 
 /* ── NAV ── */
 nav {
-  position:fixed; top:0; left:0; right:0; z-index:200;
+  position:fixed; top:0; left:0; right:0; z-index:300;
+  height:var(--nav-h);
   display:flex; align-items:center; justify-content:space-between;
-  padding:1rem 2.5rem;
-  background:rgba(245,240,232,0.96); backdrop-filter:blur(14px);
+  padding:0 1.5rem;
+  background:rgba(245,240,232,0.97); backdrop-filter:blur(16px);
   border-bottom:1px solid rgba(45,125,111,0.15);
 }
-.nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.35rem; font-weight:600; color:var(--forest); text-decoration:none; }
-.nav-links { display:flex; gap:2rem; list-style:none; }
-.nav-links a { font-size:0.72rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color .2s; }
+.nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:600; color:var(--forest); text-decoration:none; flex-shrink:0; }
+.nav-links { display:flex; gap:1.8rem; list-style:none; }
+.nav-links a { font-size:.7rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color .2s; white-space:nowrap; }
 .nav-links a:hover { color:var(--teal); }
-.nav-cta { font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; padding:.55rem 1.2rem; border:1px solid var(--teal); color:var(--teal); text-decoration:none; border-radius:2px; transition:all .25s; }
+.nav-cta { font-size:.68rem; letter-spacing:2px; text-transform:uppercase; padding:.5rem 1.1rem; border:1px solid var(--teal); color:var(--teal); text-decoration:none; border-radius:2px; transition:all .25s; white-space:nowrap; flex-shrink:0; }
 .nav-cta:hover { background:var(--teal); color:var(--cream); }
-.hamburger { display:none; flex-direction:column; gap:5px; width:44px; height:44px; cursor:pointer; background:none; border:none; padding:10px; -webkit-tap-highlight-color:transparent; }
-.hamburger span { display:block; width:22px; height:1.5px; background:var(--forest); border-radius:2px; transition:all .3s; }
+
+/* Hamburger */
+.hamburger { display:none; flex-direction:column; justify-content:center; gap:5px; width:44px; height:44px; cursor:pointer; background:none; border:none; padding:11px; flex-shrink:0; }
+.hamburger span { display:block; width:22px; height:1.5px; background:var(--forest); border-radius:2px; transition:all .3s ease; transform-origin:center; }
 .hamburger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
-.hamburger.open span:nth-child(2) { opacity:0; }
+.hamburger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
 .hamburger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
+
+/* Mobile full-screen menu */
 .mobile-menu {
-  display:none; position:fixed; inset:0; background:var(--cream); z-index:150;
-  flex-direction:column; align-items:center; justify-content:center; gap:2rem;
+  display:none; position:fixed; inset:0; z-index:250;
+  background:var(--cream);
+  flex-direction:column; align-items:center; justify-content:center; gap:0;
   opacity:0; pointer-events:none; transition:opacity .3s;
+  padding-top:var(--nav-h);
 }
 .mobile-menu.open { opacity:1; pointer-events:all; }
-.mobile-menu a { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; color:var(--forest); text-decoration:none; }
-.mobile-menu .m-cta { font-family:'Jost',sans-serif; font-size:.8rem; letter-spacing:2px; text-transform:uppercase; padding:1rem 2.5rem; background:var(--forest); color:var(--cream); border-radius:2px; margin-top:.5rem; }
+.mobile-menu nav-link {display:block;}
+.mobile-menu a {
+  display:block; width:100%; text-align:center;
+  font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300;
+  color:var(--forest); text-decoration:none; padding:1rem 2rem;
+  border-bottom:1px solid rgba(45,125,111,0.08);
+  transition:background .2s, color .2s;
+}
+.mobile-menu a:last-child { border-bottom:none; }
+.mobile-menu a:active { background:rgba(45,125,111,0.06); }
+.mobile-menu .m-cta {
+  font-family:'Jost',sans-serif; font-size:.85rem; letter-spacing:2px;
+  text-transform:uppercase; background:var(--forest); color:var(--cream) !important;
+  margin:1.5rem 2rem 0; border-radius:4px; width:auto;
+  padding:1.1rem 2rem; border-bottom:none !important;
+}
 
 /* ── HERO ── */
-.hero { min-height:100svh; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; padding:100px 1.5rem 5rem; }
-.hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 80% 60% at 65% 40%,rgba(45,125,111,.09) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 15% 80%,rgba(45,125,111,.06) 0%,transparent 60%); }
-.ring { position:absolute; border-radius:50%; border:1px solid rgba(45,125,111,.14); animation:pulse 6s ease-in-out infinite; }
-.ring:nth-child(1){width:520px;height:520px;top:5%;right:-120px;}
-.ring:nth-child(2){width:350px;height:350px;top:18%;right:-50px;animation-delay:.8s;}
-.ring:nth-child(3){width:180px;height:180px;bottom:18%;left:4%;animation-delay:1.6s;}
-@keyframes pulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.9;transform:scale(1.03)}}
-.hero-content { text-align:center; position:relative; z-index:2; max-width:780px; width:100%; }
-@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-.hero-eyebrow { font-size:.68rem; letter-spacing:3px; text-transform:uppercase; color:var(--teal); margin-bottom:1.4rem; animation:fadeUp 1s .1s both; }
-.hero-title { font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,11vw,6.5rem); font-weight:300; line-height:1.05; color:var(--forest); margin-bottom:1.2rem; animation:fadeUp 1s .2s both; }
+.hero {
+  min-height:100svh; min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+  padding:calc(var(--nav-h) + 2rem) 1.5rem 5rem;
+}
+.hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 80% 60% at 65% 40%,rgba(45,125,111,.09) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 15% 80%,rgba(45,125,111,.06) 0%,transparent 60%); pointer-events:none; }
+.ring { position:absolute; border-radius:50%; border:1px solid rgba(45,125,111,.14); animation:pulse 6s ease-in-out infinite; pointer-events:none; }
+.ring:nth-child(1){width:480px;height:480px;top:5%;right:-130px;}
+.ring:nth-child(2){width:320px;height:320px;top:20%;right:-60px;animation-delay:.8s;}
+.ring:nth-child(3){width:160px;height:160px;bottom:20%;left:3%;animation-delay:1.6s;}
+@keyframes pulse{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:.8;transform:scale(1.03)}}
+.hero-content { text-align:center; position:relative; z-index:2; max-width:760px; width:100%; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.hero-eyebrow { font-size:.65rem; letter-spacing:3px; text-transform:uppercase; color:var(--teal); margin-bottom:1.2rem; animation:fadeUp 1s .1s both; }
+.hero-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2.8rem,10vw,6rem); font-weight:300; line-height:1.05; color:var(--forest); margin-bottom:1rem; animation:fadeUp 1s .2s both; }
 .hero-title em { font-style:italic; color:var(--teal); }
-.hero-sub { font-size:clamp(.9rem,3vw,1.05rem); font-weight:300; color:var(--muted); line-height:1.85; max-width:440px; margin:0 auto 2.5rem; animation:fadeUp 1s .3s both; }
-.hero-tagline { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-style:italic; color:var(--teal); margin-bottom:2rem; animation:fadeUp 1s .35s both; }
+.hero-tagline { font-family:'Cormorant Garamond',serif; font-size:clamp(1rem,3vw,1.15rem); font-style:italic; color:var(--teal); margin-bottom:1rem; animation:fadeUp 1s .3s both; }
+.hero-sub { font-size:clamp(.88rem,2.5vw,1rem); font-weight:300; color:var(--muted); line-height:1.85; max-width:420px; margin:0 auto 2.2rem; animation:fadeUp 1s .35s both; }
 .hero-actions { display:flex; gap:.75rem; justify-content:center; flex-wrap:wrap; animation:fadeUp 1s .4s both; }
-.btn { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:1rem 2rem; font-family:'Jost',sans-serif; font-size:.75rem; letter-spacing:2px; text-transform:uppercase; text-decoration:none; border-radius:2px; transition:all .25s; }
+.btn { display:inline-flex; align-items:center; justify-content:center; min-height:52px; padding:1rem 1.8rem; font-family:'Jost',sans-serif; font-size:.75rem; letter-spacing:2px; text-transform:uppercase; text-decoration:none; border-radius:3px; transition:all .25s; cursor:pointer; border:none; }
 .btn-primary { background:var(--forest); color:var(--cream); }
-.btn-primary:hover { background:var(--teal); transform:translateY(-1px); }
-.btn-ghost { border:1px solid var(--forest); color:var(--forest); }
+.btn-primary:hover { background:var(--teal); }
+.btn-ghost { border:1.5px solid var(--forest); color:var(--forest); background:transparent; }
 .btn-ghost:hover { background:rgba(26,58,53,.06); }
 .btn-teal { background:var(--teal); color:var(--cream); }
 .btn-teal:hover { background:var(--forest); }
-.scroll-hint { position:absolute; bottom:2rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:.5rem; animation:fadeUp 1s .8s both; }
-.scroll-hint span { font-size:.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted); }
-.scroll-line { width:1px; height:36px; background:var(--teal); animation:drop 2s ease-in-out infinite; }
+.btn-full { width:100%; }
+.scroll-hint { position:absolute; bottom:1.5rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:.4rem; animation:fadeUp 1s .8s both; }
+.scroll-hint span { font-size:.58rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted); }
+.scroll-line { width:1px; height:32px; background:var(--teal); animation:drop 2s ease-in-out infinite; }
 @keyframes drop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
 /* ── OFFER STRIP ── */
-.offer-strip { background:var(--teal); padding:1rem 2rem; display:flex; align-items:center; justify-content:center; gap:2rem; flex-wrap:wrap; text-align:center; }
-.offer-item { display:flex; align-items:center; gap:.5rem; color:var(--cream); font-size:.8rem; letter-spacing:1px; }
-.offer-item span.icon { font-size:1.1rem; }
+.offer-strip {
+  background:var(--teal); padding:.9rem 1.5rem;
+  display:flex; align-items:center; justify-content:center;
+  gap:1rem 2rem; flex-wrap:wrap; text-align:center;
+}
+.offer-item { display:flex; align-items:center; gap:.4rem; color:var(--cream); font-size:.78rem; line-height:1.4; }
+.offer-item .icon { font-size:1rem; flex-shrink:0; }
 
-/* ── SECTIONS ── */
-section { padding:5rem 2rem; }
-.sec-label { font-size:.65rem; letter-spacing:4px; text-transform:uppercase; color:var(--teal); margin-bottom:.75rem; }
-.sec-title { font-family:'Cormorant Garamond',serif; font-size:clamp(1.9rem,5vw,3rem); font-weight:300; color:var(--forest); line-height:1.2; margin-bottom:1rem; }
+/* ── SECTION BASE ── */
+section { padding:4rem 1.5rem; }
 .inner { max-width:1100px; margin:0 auto; }
+.sec-label { font-size:.62rem; letter-spacing:4px; text-transform:uppercase; color:var(--teal); margin-bottom:.6rem; display:block; }
+.sec-title { font-family:'Cormorant Garamond',serif; font-size:clamp(1.75rem,5vw,2.8rem); font-weight:300; color:var(--forest); line-height:1.2; margin-bottom:1rem; }
 
 /* ── ABOUT ── */
 #about { background:var(--cream); }
-.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; }
-.about-visual { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-.about-card { background:var(--forest); border-radius:4px; padding:2rem 1.5rem; text-align:center; }
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; }
+.about-stats { display:grid; grid-template-columns:1fr 1fr; gap:.85rem; }
+.about-card { background:var(--forest); border-radius:6px; padding:1.8rem 1.2rem; text-align:center; }
 .about-card.teal { background:var(--teal); }
-.about-card-num { font-family:'Cormorant Garamond',serif; font-size:2.8rem; font-weight:600; color:var(--cream); display:block; }
-.about-card-lbl { font-size:.62rem; letter-spacing:2px; text-transform:uppercase; color:var(--teal-light); }
-.about-card.teal .about-card-lbl { color:rgba(245,240,232,.7); }
-.about-text p { font-size:1rem; line-height:1.9; color:var(--muted); margin-bottom:1.2rem; font-weight:300; }
-.provides-list { margin-top:1.5rem; display:flex; flex-direction:column; gap:.7rem; }
-.provides-item { display:flex; gap:.75rem; align-items:flex-start; font-size:.92rem; line-height:1.7; color:var(--muted); font-weight:300; }
-.provides-item::before { content:'—'; color:var(--teal); flex-shrink:0; margin-top:.1rem; }
+.about-card-num { font-family:'Cormorant Garamond',serif; font-size:2.6rem; font-weight:600; color:var(--cream); display:block; line-height:1; margin-bottom:.3rem; }
+.about-card-lbl { font-size:.58rem; letter-spacing:2px; text-transform:uppercase; color:var(--teal-light); }
+.about-card.teal .about-card-lbl { color:rgba(245,240,232,.75); }
+.about-text p { font-size:.95rem; line-height:1.9; color:var(--muted); margin-bottom:1rem; font-weight:300; }
+.provides-list { margin-top:1.2rem; display:flex; flex-direction:column; gap:.6rem; }
+.provides-item { display:flex; gap:.7rem; align-items:flex-start; font-size:.9rem; line-height:1.7; color:var(--muted); font-weight:300; }
+.provides-item::before { content:'—'; color:var(--teal); flex-shrink:0; margin-top:.15rem; }
 
 /* ── CLASSES ── */
-#classes { background:var(--forest); }
+#classes { background:var(--forest); padding:4rem 1.5rem; }
 #classes .sec-label { color:var(--teal-light); }
 #classes .sec-title { color:var(--cream); }
-.classes-intro { color:rgba(245,240,232,.6); font-size:1rem; font-weight:300; margin-bottom:2.5rem; max-width:480px; line-height:1.8; }
-.classes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(175px,1fr)); gap:1px; border:1px solid rgba(255,255,255,.08); }
-.class-card { padding:1.6rem 1.2rem; border:1px solid rgba(255,255,255,.06); position:relative; overflow:hidden; transition:all .3s; }
-.class-card::before { content:''; position:absolute; bottom:0; left:0; right:0; height:0; background:var(--teal); transition:height .3s; z-index:0; }
-.class-card:hover::before { height:100%; }
-.class-icon { font-size:1.4rem; margin-bottom:.75rem; display:block; position:relative; z-index:1; }
-.class-name { font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--cream); margin-bottom:.4rem; position:relative; z-index:1; }
-.class-desc { font-size:.75rem; color:rgba(245,240,232,.45); line-height:1.7; position:relative; z-index:1; transition:color .3s; }
-.class-card:hover .class-desc { color:rgba(245,240,232,.85); }
+.classes-intro { color:rgba(245,240,232,.6); font-size:.95rem; font-weight:300; margin-bottom:2rem; max-width:480px; line-height:1.8; }
+.classes-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; border:1px solid rgba(255,255,255,.07); }
+.class-card { padding:1.5rem 1.2rem; border:1px solid rgba(255,255,255,.05); position:relative; overflow:hidden; }
+.class-icon { font-size:1.4rem; margin-bottom:.6rem; display:block; }
+.class-name { font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:var(--cream); margin-bottom:.3rem; }
+.class-desc { font-size:.73rem; color:rgba(245,240,232,.55); line-height:1.65; }
+
+/* ── TIMING STRIP ── */
+.timing-strip { background:var(--teal); padding:2rem 1.5rem; display:flex; align-items:center; justify-content:center; gap:2rem; flex-wrap:wrap; text-align:center; }
+.t-item { text-align:center; min-width:120px; }
+.t-label { font-size:.58rem; letter-spacing:3px; text-transform:uppercase; color:var(--teal-light); margin-bottom:.35rem; display:block; }
+.t-value { font-family:'Cormorant Garamond',serif; font-size:1.3rem; color:var(--cream); line-height:1.3; }
+.t-divider { width:1px; height:44px; background:rgba(245,240,232,.2); flex-shrink:0; }
 
 /* ── SCHEDULE ── */
 #schedule { background:var(--warm); }
-.schedule-tabs { display:flex; gap:0; margin-bottom:2.5rem; border:1px solid rgba(45,125,111,.25); border-radius:2px; overflow:hidden; width:fit-content; }
-.tab-btn { padding:.7rem 2rem; font-family:'Jost',sans-serif; font-size:.72rem; letter-spacing:2px; text-transform:uppercase; background:transparent; border:none; cursor:pointer; color:var(--muted); transition:all .25s; min-height:44px; }
+.schedule-tabs { display:flex; width:100%; max-width:400px; border:1px solid rgba(45,125,111,.25); border-radius:3px; overflow:hidden; margin-bottom:2rem; }
+.tab-btn { flex:1; padding:.8rem .5rem; font-family:'Jost',sans-serif; font-size:.68rem; letter-spacing:1.5px; text-transform:uppercase; background:transparent; border:none; cursor:pointer; color:var(--muted); transition:all .25s; min-height:48px; }
 .tab-btn.active { background:var(--forest); color:var(--cream); }
 .tab-panel { display:none; }
 .tab-panel.active { display:block; }
-.schedule-block { margin-bottom:2rem; }
-.schedule-block-title { font-size:.68rem; letter-spacing:3px; text-transform:uppercase; color:var(--teal); margin-bottom:1rem; padding-bottom:.5rem; border-bottom:1px solid rgba(45,125,111,.2); }
-.schedule-rows { display:flex; flex-direction:column; gap:.6rem; }
-.schedule-row { display:flex; justify-content:space-between; align-items:center; padding:.75rem 1rem; background:rgba(255,255,255,.5); border-radius:2px; font-size:.88rem; flex-wrap:wrap; gap:.5rem; }
-.schedule-row .time { font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--forest); font-weight:400; }
+.schedule-block { margin-bottom:1.8rem; }
+.schedule-block-title { font-size:.62rem; letter-spacing:3px; text-transform:uppercase; color:var(--teal); margin-bottom:.85rem; padding-bottom:.5rem; border-bottom:1px solid rgba(45,125,111,.18); }
+.schedule-rows { display:flex; flex-direction:column; gap:.5rem; }
+.schedule-row { display:flex; justify-content:space-between; align-items:center; padding:.8rem 1rem; background:rgba(255,255,255,.55); border-radius:3px; gap:.5rem; flex-wrap:wrap; }
+.schedule-row .time { font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--forest); font-weight:400; white-space:nowrap; }
 .schedule-row .cls { color:var(--muted); font-size:.8rem; }
+.schedule-note { font-size:.76rem; color:var(--muted); margin-top:1rem; font-style:italic; line-height:1.6; }
 
 /* ── PRICING ── */
 #pricing { background:var(--cream); }
-.pricing-category { margin-bottom:3.5rem; }
-.pricing-category-title { font-family:'Cormorant Garamond',serif; font-size:1.5rem; color:var(--forest); margin-bottom:1.5rem; padding-bottom:.75rem; border-bottom:1px solid rgba(45,125,111,.2); }
-.pricing-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1.2rem; }
-.price-card { background:var(--warm); border-radius:4px; padding:1.8rem 1.5rem; border:1px solid transparent; transition:all .3s; position:relative; overflow:hidden; }
-.price-card:hover { border-color:var(--teal); transform:translateY(-3px); box-shadow:0 12px 40px rgba(45,125,111,.12); }
+.pricing-category { margin-bottom:3rem; }
+.pricing-category-title { font-family:'Cormorant Garamond',serif; font-size:clamp(1.1rem,3vw,1.45rem); color:var(--forest); margin-bottom:1.2rem; padding-bottom:.65rem; border-bottom:1px solid rgba(45,125,111,.18); }
+.pricing-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1rem; }
+.price-card { background:var(--warm); border-radius:6px; padding:1.6rem 1.3rem; border:1.5px solid transparent; transition:all .3s; position:relative; overflow:hidden; }
+.price-card:hover { border-color:var(--teal); box-shadow:0 8px 30px rgba(45,125,111,.1); }
 .price-card.featured { background:var(--forest); }
-.price-card.featured::after { content:'POPULAR'; position:absolute; top:1rem; right:-1.5rem; background:var(--teal); color:var(--cream); font-size:.55rem; letter-spacing:2px; padding:.3rem 2rem; transform:rotate(45deg) translate(10px,-5px); }
-.price-card-plan { font-size:.65rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:.5rem; }
+.price-card.featured::after { content:'POPULAR'; position:absolute; top:1.1rem; right:-1.8rem; background:var(--teal); color:var(--cream); font-size:.5rem; letter-spacing:2px; padding:.3rem 2.2rem; transform:rotate(45deg) translate(8px,-4px); }
+.price-card-plan { font-size:.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:.4rem; }
 .price-card.featured .price-card-plan { color:var(--teal-light); }
-.price-card-name { font-family:'Cormorant Garamond',serif; font-size:1.25rem; color:var(--forest); margin-bottom:1.2rem; font-weight:400; }
+.price-card-name { font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--forest); margin-bottom:1rem; }
 .price-card.featured .price-card-name { color:var(--cream); }
-.price-row { display:flex; justify-content:space-between; align-items:center; padding:.45rem 0; border-bottom:1px solid rgba(45,125,111,.1); font-size:.85rem; }
+.price-row { display:flex; justify-content:space-between; align-items:center; padding:.4rem 0; border-bottom:1px solid rgba(45,125,111,.1); }
 .price-card.featured .price-row { border-bottom-color:rgba(245,240,232,.1); }
-.price-row:last-child { border-bottom:none; }
+.price-row:last-of-type { border-bottom:none; }
 .price-duration { color:var(--muted); font-size:.75rem; }
 .price-card.featured .price-duration { color:var(--teal-light); }
-.price-amount { font-family:'Cormorant Garamond',serif; font-size:1.1rem; color:var(--forest); }
+.price-amount { font-family:'Cormorant Garamond',serif; font-size:1.1rem; color:var(--forest); font-weight:400; }
 .price-card.featured .price-amount { color:var(--cream); }
-.price-note { font-size:.72rem; color:var(--muted); margin-top:1rem; font-style:italic; }
+.price-note { font-size:.7rem; color:var(--muted); margin-top:.9rem; font-style:italic; }
 .price-card.featured .price-note { color:rgba(245,240,232,.5); }
-
-/* Personal training special */
-.pt-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1.2rem; }
-.pt-card { background:var(--forest); color:var(--cream); border-radius:4px; padding:1.8rem 1.5rem; }
-.pt-card-freq { font-size:.65rem; letter-spacing:3px; text-transform:uppercase; color:var(--teal-light); margin-bottom:.4rem; }
-.pt-card-price { font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:300; color:var(--cream); }
-.pt-card-period { font-size:.72rem; color:var(--teal-light); }
-
-/* ── SCHEDULE TIMING STRIP ── */
-.timing-strip { background:var(--teal); padding:2.5rem 2rem; display:flex; align-items:center; justify-content:center; gap:3rem; flex-wrap:wrap; }
-.t-item { text-align:center; }
-.t-label { font-size:.62rem; letter-spacing:3px; text-transform:uppercase; color:var(--teal-light); margin-bottom:.4rem; }
-.t-value { font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--cream); }
-.t-divider { width:1px; height:48px; background:rgba(245,240,232,.2); }
+.pt-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; }
+.pt-card { background:var(--forest); border-radius:6px; padding:1.6rem 1.3rem; }
+.pt-card-freq { font-size:.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--teal-light); margin-bottom:.4rem; }
+.pt-card-price { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; color:var(--cream); line-height:1.1; }
+.pt-card-period { font-size:.7rem; color:var(--teal-light); margin-top:.2rem; }
+.pricing-cta { text-align:center; margin-top:1.5rem; }
 
 /* ── TESTIMONIALS ── */
 #testimonials { background:var(--warm); }
-.testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:2.5rem; }
-.testi-card { padding:1.8rem 1.5rem; background:var(--cream); border-radius:4px; position:relative; }
-.testi-card::before { content:'"'; font-family:'Cormorant Garamond',serif; font-size:5rem; color:var(--teal); opacity:.2; position:absolute; top:.2rem; left:1.2rem; line-height:1; }
-.testi-text { font-size:.9rem; line-height:1.8; color:var(--muted); margin-bottom:1.2rem; font-style:italic; font-weight:300; }
-.testi-author { font-size:.72rem; letter-spacing:2px; text-transform:uppercase; color:var(--teal); }
+.testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin-top:2rem; }
+.testi-card { padding:1.6rem 1.3rem; background:var(--cream); border-radius:6px; position:relative; }
+.testi-card::before { content:'"'; font-family:'Cormorant Garamond',serif; font-size:4.5rem; color:var(--teal); opacity:.2; position:absolute; top:.1rem; left:1rem; line-height:1; pointer-events:none; }
+.testi-text { font-size:.88rem; line-height:1.8; color:var(--muted); margin-bottom:1rem; font-style:italic; font-weight:300; padding-top:.5rem; }
+.testi-author { font-size:.68rem; letter-spacing:2px; text-transform:uppercase; color:var(--teal); }
 
 /* ── CONTACT ── */
 #contact { background:var(--cream); text-align:center; }
-.contact-inner { max-width:600px; margin:0 auto; }
-.contact-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin:2.5rem 0; }
-.contact-card { background:var(--warm); border-radius:4px; padding:1.5rem 1rem; text-align:center; }
-.contact-card-icon { font-size:1.5rem; margin-bottom:.5rem; }
-.contact-card-label { font-size:.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:.4rem; }
-.contact-card-value { font-family:'Cormorant Garamond',serif; font-size:1.05rem; color:var(--forest); }
+.contact-inner { max-width:580px; margin:0 auto; }
+.contact-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:2rem 0; }
+.contact-card { background:var(--warm); border-radius:6px; padding:1.3rem 1rem; }
+.contact-card-icon { font-size:1.4rem; margin-bottom:.4rem; }
+.contact-card-label { font-size:.58rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:.3rem; }
+.contact-card-value { font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--forest); line-height:1.5; }
 .contact-card-value a { color:inherit; text-decoration:none; }
 .contact-card-value a:hover { color:var(--teal); }
-.policy-note { background:var(--warm); border-radius:4px; padding:1.2rem 1.5rem; font-size:.8rem; color:var(--muted); line-height:1.7; margin:2rem 0; font-style:italic; border-left:3px solid var(--teal); text-align:left; }
+.policy-note { background:var(--warm); border-radius:4px; padding:1rem 1.3rem; font-size:.78rem; color:var(--muted); line-height:1.7; margin:1.5rem 0; font-style:italic; border-left:3px solid var(--teal); text-align:left; }
 .call-btn-mobile { display:none; }
 
 /* ── FOOTER ── */
-footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem; }
-.footer-logo { font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--cream); font-weight:300; }
-.footer-tagline { font-size:.7rem; color:var(--teal-light); letter-spacing:1px; font-style:italic; }
-.footer-copy { font-size:.65rem; color:rgba(245,240,232,.35); letter-spacing:1px; }
+footer { background:var(--forest); padding:1.8rem 1.5rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.6rem; }
+.footer-logo { font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:var(--cream); font-weight:300; }
+.footer-tagline { font-size:.68rem; color:var(--teal-light); letter-spacing:1px; font-style:italic; }
+.footer-copy { font-size:.62rem; color:rgba(245,240,232,.32); letter-spacing:.5px; }
 
-/* ════ TABLET ════ */
+/* ══════════════════════════════════
+   TABLET  ≤ 900px
+══════════════════════════════════ */
 @media(max-width:900px){
-  nav { padding:1rem 1.5rem; }
+  nav { padding:0 1.2rem; }
   .nav-links,.nav-cta { display:none; }
   .hamburger { display:flex; }
   .mobile-menu { display:flex; }
-  section { padding:4rem 1.5rem; }
+
+  section { padding:3.5rem 1.5rem; }
+  #classes { padding:3.5rem 1.5rem; }
+
   .about-grid { grid-template-columns:1fr; gap:2.5rem; }
+  .about-stats { grid-template-columns:repeat(4,1fr); }
+  .about-card { padding:1.2rem .8rem; }
+  .about-card-num { font-size:2rem; }
+
+  .classes-grid { grid-template-columns:repeat(3,1fr); }
+
   .testi-grid { grid-template-columns:1fr 1fr; }
-  .contact-cards { grid-template-columns:1fr; }
-  .timing-strip { gap:1.5rem; }
+
+  .contact-cards { grid-template-columns:repeat(3,1fr); }
+
+  .timing-strip { gap:1.5rem 3rem; }
   .t-divider { display:none; }
-  footer { flex-direction:column; text-align:center; padding:2rem 1.5rem; }
+
+  .pricing-grid { grid-template-columns:repeat(2,1fr); }
+
+  footer { flex-direction:column; text-align:center; }
 }
 
-/* ════ MOBILE ════ */
-@media(max-width:480px){
-  .hero { padding:90px 1.2rem 4rem; }
-  .hero-title { font-size:clamp(2.8rem,14vw,4rem); }
-  .hero-actions { flex-direction:column; align-items:center; }
-  .btn { width:100%; max-width:280px; }
-  .about-visual { grid-template-columns:1fr 1fr; }
-  .about-card-num { font-size:2rem; }
+/* ══════════════════════════════════
+   MOBILE  ≤ 600px
+══════════════════════════════════ */
+@media(max-width:600px){
+  :root { --nav-h:56px; }
+
+  /* Hero */
+  .hero { padding:calc(var(--nav-h) + 1.5rem) 1.2rem 4rem; }
+  .hero-eyebrow { font-size:.6rem; letter-spacing:2px; }
+  .hero-title { font-size:clamp(2.5rem,12vw,3.5rem); }
+  .hero-actions { flex-direction:column; align-items:stretch; }
+  .btn { width:100%; font-size:.78rem; }
+  .ring:nth-child(1) { width:280px; height:280px; right:-80px; }
+  .ring:nth-child(2) { width:200px; height:200px; right:-40px; }
+  .ring:nth-child(3) { width:120px; height:120px; }
+
+  /* Offer strip */
+  .offer-strip { flex-direction:column; gap:.6rem; padding:.9rem 1.2rem; align-items:flex-start; }
+  .offer-item { font-size:.8rem; }
+
+  /* About */
+  .about-stats { grid-template-columns:1fr 1fr; gap:.7rem; }
+  .about-card { padding:1.2rem 1rem; }
+  .about-card-num { font-size:2.2rem; }
+
+  /* Classes */
   .classes-grid { grid-template-columns:1fr 1fr; }
+  .class-card { padding:1.2rem 1rem; }
+  .class-name { font-size:1.05rem; }
+  .class-desc { font-size:.7rem; }
+
+  /* Timing strip */
+  .timing-strip { flex-direction:column; gap:.8rem; padding:1.8rem 1.2rem; }
+  .t-item { width:100%; display:flex; justify-content:space-between; align-items:center; min-width:0; }
+  .t-label { margin-bottom:0; }
+  .t-value { font-size:1.1rem; }
+
+  /* Schedule */
+  .schedule-tabs { max-width:100%; }
+  .tab-btn { font-size:.62rem; letter-spacing:1px; min-height:48px; }
+  .schedule-row { flex-direction:column; align-items:flex-start; gap:.25rem; padding:.75rem .9rem; }
+  .schedule-row .time { font-size:.95rem; }
+  .schedule-row .cls { font-size:.78rem; }
+
+  /* Pricing */
   .pricing-grid { grid-template-columns:1fr; }
-  .pt-grid { grid-template-columns:1fr 1fr; }
+  .pricing-category-title { font-size:1.05rem; }
+  .pt-grid { grid-template-columns:1fr; }
+  .pt-card-price { font-size:1.8rem; }
+
+  /* Testimonials */
   .testi-grid { grid-template-columns:1fr; }
-  .schedule-tabs { width:100%; }
-  .tab-btn { flex:1; padding:.7rem .5rem; font-size:.65rem; }
-  .timing-strip { flex-direction:column; gap:1rem; padding:2rem 1.5rem; }
+
+  /* Contact */
+  .contact-cards { grid-template-columns:1fr; gap:.8rem; }
+  .contact-card { display:flex; align-items:center; gap:1rem; text-align:left; padding:1rem 1.2rem; }
+  .contact-card-icon { font-size:1.6rem; flex-shrink:0; margin-bottom:0; }
+  .contact-card-label { margin-bottom:.15rem; }
   #contact .btn-primary { display:none; }
-  .call-btn-mobile { display:block; width:100%; padding:1.1rem; background:var(--forest); color:var(--cream); font-family:'Jost',sans-serif; font-size:.85rem; letter-spacing:2px; text-transform:uppercase; text-decoration:none; border-radius:4px; margin-top:1rem; text-align:center; }
-  .offer-strip { gap:1rem; }
-  .contact-cards { grid-template-columns:1fr; }
-  .sec-title { font-size:1.8rem; }
+  .call-btn-mobile {
+    display:flex; width:100%; align-items:center; justify-content:center;
+    gap:.6rem; padding:1.1rem; background:var(--forest); color:var(--cream);
+    font-family:'Jost',sans-serif; font-size:.85rem; letter-spacing:2px;
+    text-transform:uppercase; text-decoration:none; border-radius:4px;
+    margin-top:1rem; min-height:56px;
+  }
+
+  /* Section spacing */
+  section { padding:3rem 1.2rem; }
+  #classes { padding:3rem 1.2rem; }
+  .sec-title { font-size:1.75rem; }
+
+  /* Footer */
+  footer { padding:1.5rem 1.2rem; gap:.5rem; }
+  .footer-copy { font-size:.6rem; }
 }
-@media(hover:none){ .class-card::before{display:none} .class-desc{color:rgba(245,240,232,.6)} }
+
+/* ══════════════════════════════════
+   SMALL  ≤ 380px  (iPhone SE etc.)
+══════════════════════════════════ */
+@media(max-width:380px){
+  .hero-title { font-size:2.4rem; }
+  .classes-grid { grid-template-columns:1fr; }
+  .about-stats { grid-template-columns:1fr 1fr; }
+  .offer-item { font-size:.75rem; }
+}
+
+/* Touch: disable hover effects on touchscreens */
+@media(hover:none) and (pointer:coarse){
+  .price-card:hover { transform:none; box-shadow:none; border-color:transparent; }
+  .btn-primary:hover { background:var(--forest); transform:none; }
+}
 </style>
 </head>
 <body>
 
-<!-- MOBILE MENU -->
-<div class="mobile-menu" id="mobileMenu">
-  <a href="#about" onclick="closeMenu()">About</a>
-  <a href="#classes" onclick="closeMenu()">Classes</a>
-  <a href="#schedule" onclick="closeMenu()">Schedule</a>
-  <a href="#pricing" onclick="closeMenu()">Pricing</a>
-  <a href="#contact" onclick="closeMenu()">Contact</a>
+<!-- MOBILE MENU OVERLAY -->
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true" role="dialog">
+  <a href="#about"        onclick="closeMenu()">About</a>
+  <a href="#classes"      onclick="closeMenu()">Classes</a>
+  <a href="#schedule"     onclick="closeMenu()">Schedule</a>
+  <a href="#pricing"      onclick="closeMenu()">Pricing</a>
+  <a href="#contact"      onclick="closeMenu()">Contact</a>
   <a href="tel:+919289676766" class="m-cta" onclick="closeMenu()">📞 Book a Class</a>
 </div>
 
 <!-- NAV -->
-<nav>
-  <a href="#" class="nav-logo">asanas n reps</a>
+<nav role="navigation" aria-label="Main navigation">
+  <a href="#home" class="nav-logo">asanas n reps</a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#classes">Classes</a></li>
@@ -249,41 +367,43 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
     <li><a href="#contact">Contact</a></li>
   </ul>
   <a href="tel:+919289676766" class="nav-cta">Book a Class</a>
-  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
     <span></span><span></span><span></span>
   </button>
 </nav>
 
 <!-- HERO -->
-<section class="hero" id="home">
-  <div class="hero-bg"></div>
-  <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+<section class="hero" id="home" aria-label="Hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="ring" aria-hidden="true"></div>
+  <div class="ring" aria-hidden="true"></div>
+  <div class="ring" aria-hidden="true"></div>
   <div class="hero-content">
     <p class="hero-eyebrow">✦ Now open · Sector 16A, Faridabad</p>
     <h1 class="hero-title">Where<br/><em>Strength</em><br/>Meets Stillness</h1>
     <p class="hero-tagline">Find your flow. Feel alive.</p>
-    <p class="hero-sub">A thoughtfully designed yoga studio for every body — beginner to advanced, morning to evening.</p>
+    <p class="hero-sub">A thoughtfully designed studio for every body — beginner to advanced, morning to evening.</p>
     <div class="hero-actions">
       <a href="#pricing" class="btn btn-primary">View Membership Plans</a>
       <a href="#schedule" class="btn btn-ghost">See Schedule</a>
     </div>
   </div>
-  <div class="scroll-hint"><span>scroll</span><div class="scroll-line"></div></div>
+  <div class="scroll-hint" aria-hidden="true"><span>scroll</span><div class="scroll-line"></div></div>
 </section>
 
 <!-- OFFER STRIP -->
-<div class="offer-strip">
-  <div class="offer-item"><span class="icon">🎁</span> 10% off for new members</div>
-  <div class="offer-item"><span class="icon">🧘</span> Free trial class available</div>
-  <div class="offer-item"><span class="icon">🪢</span> Free yoga mat with yearly membership</div>
-  <div class="offer-item"><span class="icon">📞</span> Call: +91 92896 76766</div>
+<div class="offer-strip" role="banner">
+  <div class="offer-item"><span class="icon">🎁</span><span>10% off for new members</span></div>
+  <div class="offer-item"><span class="icon">🧘</span><span>Free trial class available</span></div>
+  <div class="offer-item"><span class="icon">🪢</span><span>Free yoga mat with yearly membership</span></div>
+  <div class="offer-item"><span class="icon">📞</span><span>+91 92896 76766</span></div>
 </div>
 
 <!-- ABOUT -->
 <section id="about">
   <div class="inner">
     <div class="about-grid">
-      <div class="about-visual">
+      <div class="about-stats">
         <div class="about-card">
           <span class="about-card-num">9+</span>
           <span class="about-card-lbl">Class types</span>
@@ -293,7 +413,7 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
           <span class="about-card-lbl">Days a week</span>
         </div>
         <div class="about-card teal">
-          <span class="about-card-num">3</span>
+          <span class="about-card-num">4</span>
           <span class="about-card-lbl">Morning slots</span>
         </div>
         <div class="about-card">
@@ -302,14 +422,14 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
         </div>
       </div>
       <div class="about-text">
-        <p class="sec-label">What We Provide</p>
+        <span class="sec-label">What We Provide</span>
         <h2 class="sec-title">Every class. Every level. One studio.</h2>
         <div class="provides-list">
-          <div class="provides-item">Guided Yoga Asanas (Postures) for strength and flexibility</div>
+          <div class="provides-item">Guided Yoga Asanas for strength and flexibility</div>
           <div class="provides-item">Breathwork (Pranayama) for better energy and focus</div>
           <div class="provides-item">Meditation &amp; Mindfulness for mental calm</div>
           <div class="provides-item">Strength &amp; Mobility Training for overall fitness</div>
-          <div class="provides-item">Yoga disciplines: Chair Yoga, Wall Rope Yoga, Vinyasa, Ashtanga, Aerial Yoga</div>
+          <div class="provides-item">Chair Yoga, Wall Rope Yoga, Vinyasa, Ashtanga &amp; Aerial Yoga</div>
           <div class="provides-item">Beginner-friendly to advanced variations</div>
           <div class="provides-item">Small group attention for proper alignment</div>
           <div class="provides-item">Relaxation techniques for stress relief</div>
@@ -323,82 +443,95 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
 <!-- CLASSES -->
 <section id="classes">
   <div class="inner">
-    <p class="sec-label">What we offer</p>
+    <span class="sec-label">What we offer</span>
     <h2 class="sec-title">Nine paths to wellness</h2>
     <p class="classes-intro">Whether you're seeking stillness, strength, or something joyful — there's a class here for you.</p>
     <div class="classes-grid">
-      <div class="class-card"><span class="class-icon">🌿</span><div class="class-name">Yoga</div><div class="class-desc">Traditional asanas for balance, flexibility and inner calm.</div></div>
-      <div class="class-card"><span class="class-icon">🌬️</span><div class="class-name">Aerial Yoga</div><div class="class-desc">Defy gravity with silk hammocks for a full-body experience.</div></div>
-      <div class="class-card"><span class="class-icon">🌸</span><div class="class-name">Kids Yoga</div><div class="class-desc">Fun, playful sessions to build focus and flexibility in children.</div></div>
-      <div class="class-card"><span class="class-icon">🎵</span><div class="class-name">Zumba</div><div class="class-desc">Dance your way fit with Latin-inspired rhythms and energy.</div></div>
-      <div class="class-card"><span class="class-icon">🥁</span><div class="class-name">Bhangra</div><div class="class-desc">High-energy Punjabi dance fitness for pure joy.</div></div>
-      <div class="class-card"><span class="class-icon">🔥</span><div class="class-name">Power Yoga</div><div class="class-desc">Strength-focused flow for building muscle and endurance.</div></div>
-      <div class="class-card"><span class="class-icon">💨</span><div class="class-name">Pranayam</div><div class="class-desc">Breathwork techniques for mental clarity and vitality.</div></div>
-      <div class="class-card"><span class="class-icon">🧘</span><div class="class-name">Meditation</div><div class="class-desc">Guided sessions to quiet the mind and restore inner peace.</div></div>
-      <div class="class-card"><span class="class-icon">💚</span><div class="class-name">Therapeutic Yoga</div><div class="class-desc">Gentle, healing practice for recovery and chronic wellness.</div></div>
+      <div class="class-card"><span class="class-icon">🌿</span><div class="class-name">Yoga</div><div class="class-desc">Traditional asanas for balance &amp; flexibility.</div></div>
+      <div class="class-card"><span class="class-icon">🌬️</span><div class="class-name">Aerial Yoga</div><div class="class-desc">Silk hammocks for a full-body experience.</div></div>
+      <div class="class-card"><span class="class-icon">🌸</span><div class="class-name">Kids Yoga</div><div class="class-desc">Fun sessions to build focus in children.</div></div>
+      <div class="class-card"><span class="class-icon">🎵</span><div class="class-name">Zumba</div><div class="class-desc">Dance your way fit with Latin rhythms.</div></div>
+      <div class="class-card"><span class="class-icon">🥁</span><div class="class-name">Bhangra</div><div class="class-desc">High-energy Punjabi dance fitness.</div></div>
+      <div class="class-card"><span class="class-icon">🔥</span><div class="class-name">Power Yoga</div><div class="class-desc">Strength-focused flow for endurance.</div></div>
+      <div class="class-card"><span class="class-icon">💨</span><div class="class-name">Pranayam</div><div class="class-desc">Breathwork for clarity &amp; vitality.</div></div>
+      <div class="class-card"><span class="class-icon">🧘</span><div class="class-name">Meditation</div><div class="class-desc">Guided sessions for inner peace.</div></div>
+      <div class="class-card"><span class="class-icon">💚</span><div class="class-name">Therapeutic Yoga</div><div class="class-desc">Gentle healing for recovery &amp; wellness.</div></div>
     </div>
   </div>
 </section>
 
 <!-- TIMING STRIP -->
 <div class="timing-strip">
-  <div class="t-item"><div class="t-label">Studio days</div><div class="t-value">Monday – Sunday</div></div>
-  <div class="t-divider"></div>
-  <div class="t-item"><div class="t-label">First batch</div><div class="t-value">6:30 AM</div></div>
-  <div class="t-divider"></div>
-  <div class="t-item"><div class="t-label">Last batch</div><div class="t-value">8:00 PM</div></div>
-  <div class="t-divider"></div>
-  <div class="t-item"><div class="t-label">Location</div><div class="t-value">SCO-69, Sector 16A, Faridabad</div></div>
+  <div class="t-item">
+    <span class="t-label">Studio days</span>
+    <span class="t-value">Monday – Sunday</span>
+  </div>
+  <div class="t-divider" aria-hidden="true"></div>
+  <div class="t-item">
+    <span class="t-label">First batch</span>
+    <span class="t-value">6:30 AM</span>
+  </div>
+  <div class="t-divider" aria-hidden="true"></div>
+  <div class="t-item">
+    <span class="t-label">Last batch</span>
+    <span class="t-value">8:00 PM</span>
+  </div>
+  <div class="t-divider" aria-hidden="true"></div>
+  <div class="t-item">
+    <span class="t-label">Location</span>
+    <span class="t-value">SCO-69, Sector 16A</span>
+  </div>
 </div>
 
 <!-- SCHEDULE -->
 <section id="schedule">
   <div class="inner">
-    <p class="sec-label">Class timings</p>
+    <span class="sec-label">Class timings</span>
     <h2 class="sec-title">Weekly Schedule</h2>
-    <div class="schedule-tabs">
-      <button class="tab-btn active" onclick="showTab('weekday',this)">Weekdays</button>
-      <button class="tab-btn" onclick="showTab('saturday',this)">Saturday</button>
-      <button class="tab-btn" onclick="showTab('sunday',this)">Sunday</button>
+    <div class="schedule-tabs" role="tablist">
+      <button class="tab-btn active" role="tab" aria-selected="true"  onclick="showTab('weekday',this)">Weekdays</button>
+      <button class="tab-btn"        role="tab" aria-selected="false" onclick="showTab('saturday',this)">Saturday</button>
+      <button class="tab-btn"        role="tab" aria-selected="false" onclick="showTab('sunday',this)">Sunday</button>
     </div>
 
-    <div class="tab-panel active" id="tab-weekday">
+    <div class="tab-panel active" id="tab-weekday" role="tabpanel">
       <div class="schedule-block">
-        <div class="schedule-block-title">Morning Sessions</div>
+        <div class="schedule-block-title">Morning Sessions — Diverse Yoga Disciplines</div>
         <div class="schedule-rows">
-          <div class="schedule-row"><span class="time">6:30 – 7:30 AM</span><span class="cls">Yoga / Power Yoga / Aerial Yoga</span></div>
-          <div class="schedule-row"><span class="time">7:30 – 8:30 AM</span><span class="cls">Yoga / Pranayam / Therapeutic Yoga</span></div>
-          <div class="schedule-row"><span class="time">8:30 – 9:30 AM</span><span class="cls">Yoga / Meditation / Kids Yoga</span></div>
-          <div class="schedule-row"><span class="time">11:00 – 12:00 PM</span><span class="cls">Yoga / Therapeutic / Chair Yoga</span></div>
+          <div class="schedule-row"><span class="time">6:30 – 7:30 AM</span><span class="cls">Yoga</span></div>
+          <div class="schedule-row"><span class="time">7:30 – 8:30 AM</span><span class="cls">Yoga</span></div>
+          <div class="schedule-row"><span class="time">8:30 – 9:30 AM</span><span class="cls">Yoga</span></div>
+          <div class="schedule-row"><span class="time">11:00 AM – 12:00 PM</span><span class="cls">Yoga</span></div>
         </div>
       </div>
       <div class="schedule-block">
-        <div class="schedule-block-title">Evening Sessions</div>
+        <div class="schedule-block-title">Evening Sessions — Diverse Yoga Disciplines</div>
         <div class="schedule-rows">
-          <div class="schedule-row"><span class="time">5:00 – 6:00 PM</span><span class="cls">Yoga / Vinyasa / Ashtanga</span></div>
-          <div class="schedule-row"><span class="time">7:00 – 8:00 PM</span><span class="cls">Yoga / Power Yoga / Zumba</span></div>
+          <div class="schedule-row"><span class="time">5:00 – 6:00 PM</span><span class="cls">Yoga</span></div>
+          <div class="schedule-row"><span class="time">7:00 – 8:00 PM</span><span class="cls">Yoga</span></div>
         </div>
       </div>
+      <p class="schedule-note">* Call us to find out which yoga discipline runs in each slot — we'll match you to the right class.</p>
     </div>
 
-    <div class="tab-panel" id="tab-saturday">
+    <div class="tab-panel" id="tab-saturday" role="tabpanel">
       <div class="schedule-block">
         <div class="schedule-block-title">Saturday Classes</div>
         <div class="schedule-rows">
           <div class="schedule-row"><span class="time">7:30 – 8:30 AM</span><span class="cls">Breathings &amp; Meditation</span></div>
           <div class="schedule-row"><span class="time">8:30 – 9:30 AM</span><span class="cls">Zumba</span></div>
-          <div class="schedule-row"><span class="time">6:00 – 7:00 PM</span><span class="cls">Zumba (Evening)</span></div>
+          <div class="schedule-row"><span class="time">7:00 – 8:00 PM</span><span class="cls">Bhangra</span></div>
         </div>
       </div>
     </div>
 
-    <div class="tab-panel" id="tab-sunday">
+    <div class="tab-panel" id="tab-sunday" role="tabpanel">
       <div class="schedule-block">
         <div class="schedule-block-title">Sunday Classes</div>
         <div class="schedule-rows">
           <div class="schedule-row"><span class="time">7:30 – 8:30 AM</span><span class="cls">Breathings &amp; Meditation</span></div>
           <div class="schedule-row"><span class="time">8:30 – 9:30 AM</span><span class="cls">Bhangra</span></div>
-          <div class="schedule-row"><span class="time">6:00 – 7:00 PM</span><span class="cls">Bhangra (Evening)</span></div>
+          <div class="schedule-row"><span class="time">7:00 – 8:00 PM</span><span class="cls">Zumba</span></div>
         </div>
       </div>
     </div>
@@ -408,16 +541,15 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
 <!-- PRICING -->
 <section id="pricing">
   <div class="inner">
-    <p class="sec-label">Membership plans</p>
+    <span class="sec-label">Membership plans</span>
     <h2 class="sec-title">Find your perfect plan</h2>
-    <p style="color:var(--muted);font-weight:300;line-height:1.8;margin-bottom:3rem;max-width:500px;">All plans include access to our full class schedule. First-time members get 10% off + a free trial class.</p>
+    <p style="color:var(--muted);font-weight:300;line-height:1.8;margin-bottom:2.5rem;max-width:480px;font-size:.95rem;">All plans include access to our full class schedule. First-time members get 10% off and a free trial class.</p>
 
-    <!-- Weekday Plans -->
     <div class="pricing-category">
       <div class="pricing-category-title">📅 Weekday Plans — 5 Days a Week</div>
       <div class="pricing-grid">
         <div class="price-card">
-          <div class="price-card-plan">Monthly</div>
+          <div class="price-card-plan">Weekday</div>
           <div class="price-card-name">5 Days / Week</div>
           <div class="price-row"><span class="price-duration">Monthly</span><span class="price-amount">₹3,500</span></div>
           <div class="price-row"><span class="price-duration">Quarterly</span><span class="price-amount">₹9,500</span></div>
@@ -435,7 +567,6 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
       </div>
     </div>
 
-    <!-- Full Access Plans -->
     <div class="pricing-category">
       <div class="pricing-category-title">🌟 Full Access Plans — Mon to Sun (28–30 sessions/month)</div>
       <div class="pricing-grid">
@@ -451,7 +582,6 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
       </div>
     </div>
 
-    <!-- Weekend Plans -->
     <div class="pricing-category">
       <div class="pricing-category-title">🗓️ Weekend Plans — Sat &amp; Sun (8 sessions/month)</div>
       <div class="pricing-grid">
@@ -466,7 +596,6 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
       </div>
     </div>
 
-    <!-- Personal Training -->
     <div class="pricing-category">
       <div class="pricing-category-title">🏆 Personal Training Program</div>
       <div class="pt-grid">
@@ -488,7 +617,7 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
       </div>
     </div>
 
-    <div style="text-align:center;margin-top:1rem;">
+    <div class="pricing-cta">
       <a href="tel:+919289676766" class="btn btn-teal">📞 Call to Enroll — +91 92896 76766</a>
     </div>
   </div>
@@ -497,7 +626,7 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
 <!-- TESTIMONIALS -->
 <section id="testimonials">
   <div class="inner">
-    <p class="sec-label">From our community</p>
+    <span class="sec-label">From our community</span>
     <h2 class="sec-title">What students say</h2>
     <div class="testi-grid">
       <div class="testi-card">
@@ -505,11 +634,11 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
         <span class="testi-author">— Priya S., Faridabad</span>
       </div>
       <div class="testi-card">
-        <p class="testi-text">I started with Zumba and now I attend Power Yoga too. The energy in this studio is contagious. Best decision I made this year!</p>
+        <p class="testi-text">I started with Zumba and now attend Power Yoga too. The energy in this studio is contagious. Best decision I made this year!</p>
         <span class="testi-author">— Rahul M., Faridabad</span>
       </div>
       <div class="testi-card">
-        <p class="testi-text">Therapeutic yoga has helped my back pain tremendously. The new studio is so calming and clean. I look forward to every session.</p>
+        <p class="testi-text">Therapeutic yoga has helped my back pain tremendously. The studio is so calming and clean. I look forward to every session.</p>
         <span class="testi-author">— Sunita K., Faridabad</span>
       </div>
     </div>
@@ -519,24 +648,30 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
 <!-- CONTACT -->
 <section id="contact">
   <div class="contact-inner">
-    <p class="sec-label">Come breathe with us</p>
+    <span class="sec-label">Come breathe with us</span>
     <h2 class="sec-title">Book your <em style="font-family:'Cormorant Garamond',serif;font-style:italic;">free trial</em></h2>
-    <p style="color:var(--muted);font-weight:300;line-height:1.8;">Walk in, call us, or send a DM. First-timers always welcome — your first class is on us.</p>
+    <p style="color:var(--muted);font-weight:300;line-height:1.8;font-size:.95rem;">Walk in, call us, or send a DM. First-timers always welcome — your first class is on us.</p>
     <div class="contact-cards">
       <div class="contact-card">
         <div class="contact-card-icon">📍</div>
-        <div class="contact-card-label">Address</div>
-        <div class="contact-card-value">SCO-69, First Floor<br/>Sector 16A, Faridabad</div>
+        <div>
+          <div class="contact-card-label">Address</div>
+          <div class="contact-card-value">SCO-69, First Floor<br/>Sector 16A, Faridabad</div>
+        </div>
       </div>
       <div class="contact-card">
         <div class="contact-card-icon">📞</div>
-        <div class="contact-card-label">Call / DM</div>
-        <div class="contact-card-value"><a href="tel:+919289676766">+91 92896 76766</a></div>
+        <div>
+          <div class="contact-card-label">Call / DM</div>
+          <div class="contact-card-value"><a href="tel:+919289676766">+91 92896 76766</a></div>
+        </div>
       </div>
       <div class="contact-card">
         <div class="contact-card-icon">🕐</div>
-        <div class="contact-card-label">Studio Hours</div>
-        <div class="contact-card-value">Mon–Sun<br/>6:30 AM – 8:00 PM</div>
+        <div>
+          <div class="contact-card-label">Studio Hours</div>
+          <div class="contact-card-value">Mon–Sun<br/>6:30 AM – 8:00 PM</div>
+        </div>
       </div>
     </div>
     <div class="policy-note">
@@ -557,20 +692,38 @@ footer { background:var(--forest); padding:2rem 2.5rem; display:flex; align-item
 </footer>
 
 <script>
-  // Hamburger
-  const ham = document.getElementById('hamburger');
+  // ── Hamburger menu ──
+  const ham  = document.getElementById('hamburger');
   const menu = document.getElementById('mobileMenu');
-  function closeMenu(){ ham.classList.remove('open'); menu.classList.remove('open'); document.body.style.overflow=''; }
-  ham.addEventListener('click',()=>{ const o=ham.classList.toggle('open'); menu.classList.toggle('open',o); document.body.style.overflow=o?'hidden':''; });
-  menu.addEventListener('click',e=>{ if(e.target===menu) closeMenu(); });
-  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMenu(); });
 
-  // Tabs
+  function openMenu(){
+    ham.classList.add('open');
+    ham.setAttribute('aria-expanded','true');
+    menu.classList.add('open');
+    menu.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu(){
+    ham.classList.remove('open');
+    ham.setAttribute('aria-expanded','false');
+    menu.classList.remove('open');
+    menu.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+  ham.addEventListener('click', () => ham.classList.contains('open') ? closeMenu() : openMenu());
+  menu.addEventListener('click', e => { if(e.target === menu) closeMenu(); });
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeMenu(); });
+
+  // Close menu on resize to desktop
+  window.addEventListener('resize', () => { if(window.innerWidth > 900) closeMenu(); });
+
+  // ── Schedule tabs ──
   function showTab(id, btn){
-    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => { p.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
     document.getElementById('tab-'+id).classList.add('active');
     btn.classList.add('active');
+    btn.setAttribute('aria-selected','true');
   }
 </script>
 </body>
