@@ -954,10 +954,16 @@ footer { background:var(--forest); padding:1.8rem 1.5rem; display:flex; align-it
   }
 
   // ── Scroll to top ──
+  // ── Scroll to top ──
   const scrollTopBtn = document.getElementById('scrollTop');
-  scrollTopBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+  if(scrollTopBtn){
+    scrollTopBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 
 </script>
 
@@ -978,7 +984,7 @@ footer { background:var(--forest); padding:1.8rem 1.5rem; display:flex; align-it
     </svg>
   </a>
   <!-- Scroll to top -->
-  <button class="float-btn totop" id="scrollTop" aria-label="Scroll to top">↑</button>
+  <button class="float-btn totop" id="scrollTop" aria-label="Scroll to top" onclick="window.scrollTo({top:0,behavior:'smooth'});document.body.scrollTop=0;document.documentElement.scrollTop=0;">↑</button>
 </div>
 
 </body>
