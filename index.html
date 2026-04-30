@@ -3,666 +3,440 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Miles & Meals Challenge</title>
+<title>Vidial Monthly King & Queen</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-:root {
---bg:#071318; --surface:#0d1f26; --surface2:#142a33; --surface3:#1a3540;
---border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
---text:#e0f4f8; --text2:#6bb8c8; --text3:#3d7a88;
---accent:#00c4cc; --accent-dim:rgba(0,196,204,0.15);
---green:#3ecf8e; --green-dim:rgba(62,207,142,0.15);
---amber:#f0a429; --amber-dim:rgba(240,164,41,0.12);
---red:#f05252; --red-dim:rgba(240,82,82,0.12);
---t1:#00c4cc; --t2:#3ecf8e; --t3:#f0a429;
---t1-dim:rgba(0,196,204,0.15); --t2-dim:rgba(62,207,142,0.15); --t3-dim:rgba(240,164,41,0.12);
---radius:16px; --radius-sm:10px;
+:root{
+  --bg:#07111a;--surface:#0d1f26;--surface2:#142a33;--surface3:#1a3540;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e0f4f8;--text2:#6bb8c8;--text3:#3d7a88;
+  --accent:#00c4cc;--accent-dim:rgba(0,196,204,0.15);
+  --green:#3ecf8e;--green-dim:rgba(62,207,142,0.15);
+  --amber:#f0a429;--amber-dim:rgba(240,164,41,0.12);
+  --red:#f05252;--red-dim:rgba(240,82,82,0.12);
+  --purple:#a855f7;--purple-dim:rgba(168,85,247,0.12);
+  --radius:16px;--radius-sm:10px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);}
-.page{display:none;min-height:100vh;flex-direction:column;}
-.page.active{display:flex;}
-#login-page{align-items:center;justify-content:center;padding:24px;}
-.login-box{width:100%;max-width:380px;}
-.brand{text-align:center;margin-bottom:24px;}
-.brand-icon{font-size:52px;display:block;margin-bottom:10px;animation:bounce 2s infinite;}
+#home-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px;overflow-y:auto;}
+.home-box{width:100%;max-width:400px;margin:0 auto;}
+.brand{text-align:center;margin-bottom:20px;}
+.brand-icon{font-size:48px;display:block;margin-bottom:8px;animation:bounce 2s infinite;}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .brand h1{font-size:22px;font-weight:600;letter-spacing:-0.5px;}
 .brand p{font-size:13px;color:var(--text2);margin-top:4px;}
-.event-pill{display:inline-block;background:var(--accent-dim);border:1px solid rgba(124,106,247,0.3);border-radius:999px;padding:4px 14px;font-size:11px;font-weight:600;color:var(--accent);margin-top:8px;letter-spacing:0.04em;}
-.section-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500;margin-bottom:8px;}
-.name-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px;}
-.name-btn{padding:11px 8px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;background:var(--surface);border:1.5px solid var(--border);color:var(--text2);cursor:pointer;text-align:center;transition:all 0.15s;}
-.name-btn.selected{border-color:var(--accent);background:var(--accent-dim);color:var(--text);}
-.login-btn{width:100%;padding:15px;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:15px;font-weight:600;border:none;cursor:pointer;opacity:0.35;transition:opacity 0.15s;}
-.login-btn:not([disabled]){opacity:1;}
-#dashboard-page{background:var(--bg);}
-.dash-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;gap:8px;}
-.dash-left{display:flex;align-items:center;gap:10px;}
-.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;background:var(--accent-dim);border:1.5px solid var(--accent);color:var(--accent);}
-.uname{font-weight:600;font-size:14px;}
-.uteam{font-size:11px;color:var(--text3);}
-.signout{padding:6px 12px;border-radius:999px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;cursor:pointer;}
-.scroll{flex:1;overflow-y:auto;padding:14px 14px 90px;}
-.goal-setup{background:var(--accent-dim);border:1px solid rgba(124,106,247,0.25);border-radius:var(--radius);padding:14px;margin-bottom:14px;}
-.goal-setup-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;}
-.goal-setup-sub{font-size:12px;color:var(--text2);margin-bottom:10px;}
-.goal-row{display:flex;gap:8px;align-items:center;}
-.goal-row input{flex:1;padding:10px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;}
-.goal-row input:focus{border-color:var(--accent);}
-.goal-btn{padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
-.pts-card{background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:12px;border:1px solid var(--border);}
-.pts-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.pts-title{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;}
-.pts-badge{background:var(--accent-dim);border:1px solid rgba(124,106,247,0.3);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;color:var(--accent);}
-.pts-row{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;}
-.pts-day{border-radius:8px;padding:6px 4px;text-align:center;border:1px solid var(--border);}
-.pts-day.hit{background:var(--green-dim);border-color:rgba(62,207,142,0.3);}
-.pts-day.miss{background:var(--red-dim);border-color:rgba(240,82,82,0.15);}
-.pts-day.future{background:var(--surface2);border-color:var(--border);}
-.pts-day.today{border-color:var(--accent);background:var(--accent-dim);}
-.pd-date{font-size:9px;color:var(--text3);margin-bottom:3px;}
-.pd-icon{font-size:14px;line-height:1;}
-.pd-pts{font-size:9px;font-weight:700;margin-top:2px;}
-.pts-day.hit .pd-pts{color:var(--green);}
-.pts-day.miss .pd-pts{color:var(--red);}
-.pts-day.today .pd-pts{color:var(--accent);}
-.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px;}
-.metric{background:var(--surface);border-radius:var(--radius-sm);padding:11px 8px;text-align:center;}
-.mv{font-size:18px;font-weight:600;color:var(--text);font-family:'DM Mono',monospace;}
-.ml{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;}
-.tabs{display:flex;background:var(--surface);border-radius:var(--radius);padding:3px;gap:2px;margin-bottom:14px;}
-.tab{flex:1;padding:9px 4px;border-radius:12px;border:none;font-size:12px;font-weight:500;background:none;color:var(--text2);cursor:pointer;transition:all 0.15s;}
-.tab.active{background:var(--surface2);color:var(--text);}
-.panel{display:none;}
-.panel.active{display:block;}
-.add-card{background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
-.frow{display:flex;gap:8px;align-items:flex-end;margin-bottom:12px;}
-.frow .field{flex:1;}
-.flabel{font-size:11px;color:var(--text2);font-weight:500;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em;}
-input[type=date],input[type=number]{width:100%;padding:11px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none;}
-input:focus{border-color:var(--accent);}
-input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
-.save-btn{padding:11px 16px;background:var(--green);color:#0a1f15;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
-.hint{font-size:12px;color:var(--amber);margin:-4px 0 10px;padding:0 2px;}
-.sh{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;}
-.eitem{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
-.eitem:last-child{border-bottom:none;}
-.edate{font-size:12px;color:var(--text2);margin-top:1px;}
-.esteps{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;}
-.esteps.hit{color:var(--green);}
-.esteps.miss{color:var(--text2);}
-.epill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;}
-.epill.hit{background:var(--green-dim);color:var(--green);}
-.epill.miss{background:var(--red-dim);color:var(--red);}
-.delbtn{background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:0 0 0 8px;}
+.crown-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.crown-card{border-radius:var(--radius);padding:14px;text-align:center;border:1px solid rgba(255,255,255,0.06);}
+.crown-card.king{background:linear-gradient(135deg,rgba(240,164,41,0.1),rgba(240,164,41,0.04));border-color:rgba(240,164,41,0.25);}
+.crown-card.queen{background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(168,85,247,0.04));border-color:rgba(168,85,247,0.25);}
+.crown-icon{font-size:28px;margin-bottom:6px;}
+.crown-title{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;}
+.king .crown-title{color:var(--amber);}
+.queen .crown-title{color:var(--purple);}
+.crown-name{font-size:14px;font-weight:700;color:#fff;margin-bottom:2px;}
+.crown-steps{font-size:12px;font-family:'DM Mono',monospace;color:var(--text2);}
+.crown-month{font-size:10px;color:var(--text3);margin-top:2px;}
+.month-bar{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;border:1px solid var(--border);}
+.month-nav{background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:0 4px;}
+.month-label{font-size:14px;font-weight:600;color:var(--text);}
+.lb-card{background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;}
+.lb-hdr{padding:10px 14px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;}
+.lb-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);}
+.lb-row:last-child{border-bottom:none;}
+.lb-rank{font-size:13px;font-weight:700;width:22px;text-align:center;flex-shrink:0;}
+.lb-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.lb-info{flex:1;min-width:0;}
+.lb-name{font-size:13px;font-weight:600;color:var(--text);}
+.lb-gender{font-size:10px;color:var(--text3);}
+.lb-steps{font-size:14px;font-weight:700;font-family:'DM Mono',monospace;}
 .empty{text-align:center;padding:24px;color:var(--text3);font-size:13px;}
-.team-section{margin-bottom:14px;}
-.team-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:var(--radius-sm) var(--radius-sm) 0 0;border:1px solid var(--border);border-bottom:none;}
-.team-hdr.t1{background:var(--t1-dim);border-color:rgba(0,196,204,0.25);}
-.team-hdr.t2{background:var(--t2-dim);border-color:rgba(62,207,142,0.25);}
-.team-hdr.t3{background:var(--t3-dim);border-color:rgba(240,164,41,0.25);}
-.team-name-lbl{font-size:13px;font-weight:700;}
-.t1 .team-name-lbl{color:var(--t1);}
-.t2 .team-name-lbl{color:var(--t2);}
-.t3 .team-name-lbl{color:var(--t3);}
-.team-pts-lbl{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;}
-.t1 .team-pts-lbl{color:var(--t1);}
-.t2 .team-pts-lbl{color:var(--t2);}
-.t3 .team-pts-lbl{color:var(--t3);}
-.team-body{background:var(--surface);border:1px solid var(--border);border-radius:0 0 var(--radius-sm) var(--radius-sm);overflow:hidden;}
-.member-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);}
-.member-row:last-child{border-bottom:none;}
-.m-av{width:28px;height:28px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text2);flex-shrink:0;}
-.m-name{font-size:13px;font-weight:500;flex:1;}
-.m-goal{font-size:11px;color:var(--text3);}
-.m-pts{font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);}
-.m-streak{display:flex;gap:2px;margin-left:6px;}
-.m-dot{width:7px;height:7px;border-radius:50%;}
-.m-dot.hit{background:var(--green);}
-.m-dot.miss{background:var(--red-dim);border:1px solid rgba(240,82,82,0.3);}
-.m-dot.future{background:var(--surface3);}
-.bonus-banner{border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;font-size:12px;}
-.bonus-banner.on-track{background:var(--green-dim);border:1px solid rgba(62,207,142,0.2);color:var(--green);}
-.bonus-banner.off-track{background:var(--red-dim);border:1px solid rgba(240,82,82,0.15);color:var(--red);}
-.bonus-banner.pending{background:var(--amber-dim);border:1px solid rgba(240,164,41,0.2);color:var(--amber);}
-.bnav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding:6px 0 max(6px,env(safe-area-inset-bottom));flex-shrink:0;}
-.nbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;padding:4px 0;}
-.nicon{font-size:18px;}
-.nlabel{font-size:10px;font-weight:500;color:var(--text3);}
-.nbtn.active .nlabel{color:var(--accent);}
-.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;font-weight:500;opacity:0;transition:all 0.25s;pointer-events:none;z-index:100;white-space:nowrap;}
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.action-btn{padding:12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;text-align:center;}
+.action-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.action-btn.adm{background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.2);color:var(--purple);}
+.hist-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+.hist-row{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:6px;border:1px solid var(--border);}
+.hist-month{font-size:13px;font-weight:600;color:var(--text);}
+.hist-winners{font-size:12px;color:var(--text2);}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:50;align-items:flex-end;justify-content:center;}
+.modal.active{display:flex;}
+.modal-box{background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;padding:20px 20px 36px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;}
+.modal-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--text2);margin-bottom:16px;}
+.flabel{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;}
+.finput{width:100%;padding:12px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;}
+.finput:focus{border-color:var(--accent);}
+.name-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;max-height:180px;overflow-y:auto;}
+.name-btn{padding:9px 8px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;background:var(--surface2);border:1.5px solid var(--border);color:var(--text2);cursor:pointer;text-align:center;}
+.name-btn.selected{border-color:var(--accent);background:var(--accent-dim);color:var(--text);}
+.modal-btns{display:flex;gap:8px;margin-top:4px;}
+.modal-btn{flex:1;padding:13px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;border:none;}
+.modal-btn.cancel{background:none;border:1px solid var(--border2);color:var(--text2);}
+.modal-btn.submit{background:var(--accent);color:#fff;}
+.err{font-size:12px;color:var(--red);margin-bottom:8px;display:none;}
+.sec-div{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin:14px 0 8px;padding-top:14px;border-top:1px solid var(--border);}
+.gender-row{display:flex;gap:8px;margin-bottom:12px;}
+.gbtn{flex:1;padding:9px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;}
+.tab-row{display:flex;gap:6px;margin-bottom:16px;}
+.tab-btn{flex:1;padding:9px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;}
+.tab-btn.on{border-color:var(--accent);background:var(--accent-dim);color:var(--accent);}
+.mem-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);}
+.mem-row:last-child{border-bottom:none;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;font-weight:500;opacity:0;transition:all 0.25s;pointer-events:none;z-index:200;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
-<div id="login-page" class="page active">
-<div class="login-box">
-<div class="brand">
-<span class="brand-icon">🎯</span>
-<h1>Miles & Meals</h1>
-<p>Consistency & Commitment Challenge</p>
-<span class="event-pill">📅 17 Apr – 24 Apr 2026</span>
+<div id="home-page">
+  <div class="home-box">
+    <div class="brand">
+      <span class="brand-icon">👑</span>
+      <h1>Monthly King & Queen</h1>
+      <p>Vidial Wellness · Highest steps wins the crown</p>
+    </div>
+    <div class="crown-row">
+      <div class="crown-card king"><div class="crown-icon">🤴</div><div class="crown-title">King of Steps</div><div class="crown-name" id="king-name">—</div><div class="crown-steps" id="king-steps"></div><div class="crown-month" id="king-month"></div></div>
+      <div class="crown-card queen"><div class="crown-icon">👸</div><div class="crown-title">Queen of Steps</div><div class="crown-name" id="queen-name">—</div><div class="crown-steps" id="queen-steps"></div><div class="crown-month" id="queen-month"></div></div>
+    </div>
+    <div class="month-bar">
+      <button class="month-nav" onclick="changeMonth(-1)">‹</button>
+      <div class="month-label" id="month-label">—</div>
+      <button class="month-nav" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="lb-card">
+      <div class="lb-hdr">Leaderboard</div>
+      <div id="leaderboard"><div class="empty">Loading...</div></div>
+    </div>
+    <div class="action-grid">
+      <button class="action-btn primary" onclick="openEntryModal()">➕ Enter My Steps</button>
+      <button class="action-btn adm" onclick="openAdminModal()">🔐 Admin</button>
+    </div>
+    <div style="margin-bottom:60px;">
+      <div class="hist-title">👑 Hall of Fame</div>
+      <div id="history-list"><div class="empty">Loading...</div></div>
+    </div>
+  </div>
 </div>
-<p class="section-label">⚔️ Pick your side</p>
-<div id="team-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;"></div>
-<div style="text-align:center;font-size:11px;color:var(--text3);margin-bottom:10px;letter-spacing:0.03em;">👆 Tap your team to join the race!</div>
-<button onclick="showAdminLogin()" style="width:100%;padding:11px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;">
-<span style="font-size:14px;">🔐</span> Admin Access
-</button>
-<div id="name-section" style="display:none;">
-<p class="section-label">Select your name</p>
-<div class="name-grid" id="name-grid"></div>
-</div>
-<button class="login-btn" id="login-btn" disabled onclick="doLogin()">🚀 Let's Go!</button>
-</div>
-</div>
-<div id="dashboard-page" class="page">
-<div class="dash-hdr">
-<div class="dash-left">
-<div class="av" id="dash-av"></div>
-<div><div class="uname" id="dash-name"></div><div class="uteam" id="dash-team"></div></div>
-</div>
-<button class="signout" onclick="doLogout()">Sign out</button>
-</div>
-<div id="step-tiles" style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;"></div>
-<div class="scroll">
-<div id="goal-setup-wrap"></div>
-<div id="pts-card-wrap"></div>
-<div class="metrics" id="metrics"></div>
-<div class="tabs">
-<button class="tab active" id="tb-add" onclick="switchTab('add')">➕ Steps</button>
-<button class="tab" id="tb-board" onclick="switchTab('board')">🏆 My Team</button>
-<button class="tab" id="tb-data" onclick="switchTab('data')" style="display:none">📋 Data</button>
-<button class="tab" id="tb-twists" onclick="switchTab('twists')" style="display:none">⚡ Twists</button>
-</div>
-<div class="panel active" id="panel-add">
-<div class="add-card">
-<div class="frow">
-<div class="field"><div class="flabel">Date</div><input type="date" id="step-date" onchange="onDateChange()"/></div>
-<div class="field"><div class="flabel">Steps</div><input type="number" id="step-count" placeholder="e.g. 8000" inputmode="numeric"/></div>
-<button class="save-btn" onclick="addSteps()">Save</button>
-</div>
-<div id="step-hint"></div>
-</div>
-<div class="sh">My entries</div>
-<div id="my-entries" style="background:var(--surface);border-radius:var(--radius);padding:4px 12px;"><div class="empty">Loading...</div></div>
-</div>
-<div class="panel" id="panel-board">
-<div id="board-team-tabs" style="display:none;margin-bottom:12px;"></div>
-<div id="team-board"><div class="empty">Loading...</div></div>
-</div>
-<div class="panel" id="panel-data">
-<div id="data-entry-wrap"></div>
-</div>
-<div class="panel" id="panel-twists">
-<div id="twists-wrap"></div>
-</div>
-</div>
-<nav class="bnav">
-<button class="nbtn active" id="nav-add" onclick="switchTab('add')"><span class="nicon">➕</span><span class="nlabel">Steps</span></button>
-<button class="nbtn" id="nav-board" onclick="switchTab('board')"><span class="nicon">🏆</span><span class="nlabel">My Team</span></button>
-<button class="nbtn" id="nav-data" onclick="switchTab('data')" style="display:none"><span class="nicon">📋</span><span class="nlabel">Data</span></button>
-<button class="nbtn" id="nav-twists" onclick="switchTab('twists')" style="display:none"><span class="nicon">⚡</span><span class="nlabel">Twists</span></button>
-</nav>
-</div>
+
 <div class="toast" id="toast"></div>
-<div id="admin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:50;align-items:flex-end;justify-content:center;">
-<div style="background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;padding:24px 20px 36px;width:100%;max-width:480px;">
-<div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;">🔐 Admin Login</div>
-<div style="font-size:12px;color:var(--text2);margin-bottom:16px;">Enter admin password to access all team data</div>
-<input type="password" id="admin-pwd" placeholder="Password" style="width:100%;padding:12px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:6px;"/>
-<div id="admin-err" style="font-size:12px;color:var(--red);margin-bottom:10px;display:none;">Incorrect password. Try again.</div>
-<div style="display:flex;gap:8px;">
-<button onclick="closeAdminModal()" style="flex:1;padding:13px;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:14px;cursor:pointer;">Cancel</button>
-<button onclick="doAdminLogin()" style="flex:2;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;">Login as Admin</button>
+
+<!-- Self Entry Modal -->
+<div class="modal" id="entry-modal">
+  <div class="modal-box">
+    <div class="modal-title">➕ Enter Your Steps</div>
+    <div class="modal-sub">Pick your name · month: <span id="entry-month-lbl" style="color:var(--accent);font-weight:600;"></span></div>
+    <div class="flabel">Your Name</div>
+    <div class="name-grid" id="entry-name-grid"></div>
+    <div class="flabel">Total Steps This Month</div>
+    <input type="number" class="finput" id="entry-steps" placeholder="e.g. 250000" inputmode="numeric"/>
+    <div class="err" id="entry-err"></div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="closeModal('entry-modal')">Cancel</button>
+      <button class="modal-btn submit" onclick="submitEntry()">Save Steps</button>
+    </div>
+  </div>
 </div>
+
+<!-- Admin Modal -->
+<div class="modal" id="admin-modal">
+  <div class="modal-box">
+    <div class="modal-title">🔐 Admin</div>
+    <div class="modal-sub">Manage steps and members</div>
+    <div id="a-pwd-sec">
+      <div class="flabel">Password</div>
+      <input type="password" class="finput" id="admin-pwd" placeholder="Admin password"/>
+      <div class="err" id="admin-err">Incorrect password</div>
+      <div class="modal-btns">
+        <button class="modal-btn cancel" onclick="closeModal('admin-modal')">Cancel</button>
+        <button class="modal-btn submit" onclick="verifyAdmin()">Verify</button>
+      </div>
+    </div>
+    <div id="a-main" style="display:none;">
+      <div class="tab-row">
+        <button class="tab-btn on" id="t-entry-btn" onclick="switchTab('entry')">📋 Enter Steps</button>
+        <button class="tab-btn" id="t-members-btn" onclick="switchTab('members')">👥 Members</button>
+      </div>
+      <!-- ENTRY TAB -->
+      <div id="t-entry">
+        <div class="flabel">Select Month</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;" id="a-month-grid"></div>
+        <div class="flabel">Select Member</div>
+        <div class="name-grid" id="a-name-grid"></div>
+        <div class="flabel">Total Steps</div>
+        <input type="number" class="finput" id="a-steps" placeholder="e.g. 250000" inputmode="numeric"/>
+        <div class="err" id="a-steps-err"></div>
+        <div class="modal-btns">
+          <button class="modal-btn cancel" onclick="closeModal('admin-modal')">Close</button>
+          <button class="modal-btn submit" onclick="saveAdminSteps()">Save Steps</button>
+        </div>
+      </div>
+      <!-- MEMBERS TAB -->
+      <div id="t-members" style="display:none;">
+        <div class="sec-div" style="margin-top:0;padding-top:0;border-top:none;">➕ Add New Member</div>
+        <div class="flabel">Full Name</div>
+        <input type="text" class="finput" id="new-name" placeholder="e.g. Ramesh Kumar"/>
+        <div class="flabel">Gender</div>
+        <div class="gender-row">
+          <button class="gbtn" id="gm-btn" onclick="setGender('new','M')">♂ Male</button>
+          <button class="gbtn" id="gf-btn" onclick="setGender('new','F')">♀ Female</button>
+        </div>
+        <div class="err" id="add-err"></div>
+        <button onclick="addMember()" style="width:100%;padding:10px;background:var(--green);color:#0a1f15;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:4px;">✓ Add Member</button>
+        <div class="sec-div">✏️ Edit Existing Members</div>
+        <div id="mem-list"><div class="empty">Loading...</div></div>
+        <div class="modal-btns" style="margin-top:12px;">
+          <button class="modal-btn cancel" onclick="closeModal('admin-modal')">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Edit Modal -->
+<div class="modal" id="edit-modal">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Edit Member</div>
+    <div class="modal-sub" id="edit-sub"></div>
+    <div class="flabel">Name</div>
+    <input type="text" class="finput" id="edit-name"/>
+    <div class="flabel">Gender</div>
+    <div class="gender-row">
+      <button class="gbtn" id="egm-btn" onclick="setGender('edit','M')">♂ Male</button>
+      <button class="gbtn" id="egf-btn" onclick="setGender('edit','F')">♀ Female</button>
+    </div>
+    <div class="err" id="edit-err"></div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="closeModal('edit-modal')">Cancel</button>
+      <button class="modal-btn submit" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
 </div>
+
 <script>
-const SUPABASE_URL='https://osunxzedvlpcmaplntub.supabase.co';
-const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdW54emVkdmxwY21hcGxudHViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDE5MzAsImV4cCI6MjA5MDcxNzkzMH0.VgfNj_0LUfeTlT-07pSpf5lJk7uFQVuBW4VpE_PihAg';
-const CHALLENGE_START='2026-04-17';
-const CHALLENGE_END='2026-04-24';
-const POINTS_PER_DAY=10;
-const BONUS_POINTS=500;
-const MIN_GOAL=1;
-const MAX_POINT_DAYS=7;
-const CHALLENGE_DATES=[];
-let d=new Date(CHALLENGE_START);
-while(d<=new Date(CHALLENGE_END)){CHALLENGE_DATES.push(d.toISOString().split('T')[0]);d.setDate(d.getDate()+1);}
-const TEAMS={'Nilam':{color:'var(--t1)',cls:'t1',emoji:'🌍'},'Neer':{color:'var(--t2)',cls:'t2',emoji:'🌊'},'Kaatru':{color:'var(--t3)',cls:'t3',emoji:'🌬️'}};
-const MEMBERS=[
-  {name:'⚑ Vaishnavi',team:'Nilam'},{name:'⚑ Prasanna',team:'Nilam'},{name:'BalaKavitha',team:'Nilam'},
-  {name:'Ramprasath',team:'Nilam'},{name:'Muthu Krishnan',team:'Nilam'},{name:'Khan',team:'Nilam'},
-  {name:'Dhivya',team:'Nilam'},{name:'Manimala',team:'Nilam'},{name:'Kannan',team:'Nilam'},
-  {name:'Uthra',team:'Nilam'},{name:'Deepti',team:'Nilam'},{name:'Prashant',team:'Nilam'},
-  {name:'Sathish',team:'Nilam'},{name:'Snega',team:'Nilam'},
-  {name:'⚑ Tharani',team:'Neer'},{name:'⚑ Shriram',team:'Neer'},{name:'Boologaraja',team:'Neer'},
-  {name:'Farah',team:'Neer'},{name:'Arun',team:'Neer'},{name:'Gauri',team:'Neer'},
-  {name:'Dinesh',team:'Neer'},{name:'Sajjayan',team:'Neer'},{name:'Kalairani',team:'Neer'},
-  {name:'Harish',team:'Neer'},{name:'Saradha',team:'Neer'},{name:'Deepa',team:'Neer'},
-  {name:'⚑ Ashok',team:'Kaatru'},{name:'⚑ Christopher',team:'Kaatru'},{name:'Jaiganesh',team:'Kaatru'},
-  {name:'Suriya',team:'Kaatru'},{name:'Srinivas',team:'Kaatru'},{name:'Manohar',team:'Kaatru'},
-  {name:'Aarthi',team:'Kaatru'},{name:'Kalaivani',team:'Kaatru'},{name:'Kaanchana',team:'Kaatru'},
-  {name:'Siva Kumar',team:'Kaatru'},{name:'Sathiesh Kumar',team:'Kaatru'},{name:'Sudha',team:'Kaatru'}
-];
-const TEAM_BONUS_THRESHOLD={'Nilam':12,'Neer':12,'Kaatru':12};
-let currentUser=null,currentTeam=null,allEntries=[],allGoals=[],allTwists=[],allTwistCompletions=[],refreshTimer=null;
-function cleanName(n){return n.replace(/^⚑\s*/,'').trim();}
-function isCaptain(u){return u&&u.startsWith('⚑');}
-const ADMIN_PASSWORD='vidial';
-let isAdmin=false,selN=null,selTeam=null;
+const SB_URL='https://osunxzedvlpcmaplntub.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdW54emVkdmxwY21hcGxudHViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDE5MzAsImV4cCI6MjA5MDcxNzkzMH0.VgfNj_0LUfeTlT-07pSpf5lJk7uFQVuBW4VpE_PihAg';
+const ADMIN_PW='vidial';
+
+const MONTHS=[];
+let _d=new Date(2026,0,1);const _n=new Date();
+while(_d<=_n){MONTHS.push(_d.toISOString().slice(0,7));_d.setMonth(_d.getMonth()+1);}
+
+let curMonth=new Date().toISOString().slice(0,7);
+let allMembers=[];let gMap={};
+let selEntry=null,selAdmin=null,selAdminMonth=curMonth;
+let newG=null,editG=null,editId=null;
 
 async function sb(method,path,body){
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{method,headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':`Bearer ${SUPABASE_ANON_KEY}`,'Content-Type':'application/json','Cache-Control':'no-cache','Prefer':method==='POST'?'resolution=merge-duplicates,return=representation':''},body:body?JSON.stringify(body):undefined});
-  if(!res.ok)throw new Error(`${res.status}: ${await res.text()}`);
-  const t=await res.text();return t?JSON.parse(t):[];
+  const r=await fetch(`${SB_URL}/rest/v1/${path}`,{method,headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':'application/json','Cache-Control':'no-cache','Prefer':method==='POST'?'resolution=merge-duplicates,return=representation':''},body:body?JSON.stringify(body):undefined});
+  if(!r.ok)throw new Error(`${r.status}: ${await r.text()}`);
+  const t=await r.text();return t?JSON.parse(t):[];
 }
 
-async function loadAll(){
+function mLabel(m){if(!m)return '';const[y,mo]=m.split('-');return new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'long',year:'numeric'});}
+
+function changeMonth(dir){
+  const[y,mo]=curMonth.split('-').map(Number);
+  const d=new Date(y,mo-1+dir,1);
+  const nm=d.toISOString().slice(0,7);
+  if(nm<'2026-01'||nm>new Date().toISOString().slice(0,7))return;
+  curMonth=nm;document.getElementById('month-label').textContent=mLabel(curMonth);
+  loadLB();
+}
+
+async function loadMembers(){
+  try{const d=await sb('GET','vidial_members?select=*&order=name.asc');allMembers=d;gMap={};d.forEach(m=>gMap[m.name]=m.gender);}
+  catch(e){console.error(e);}
+}
+
+async function loadLB(){
+  document.getElementById('month-label').textContent=mLabel(curMonth);
   try{
-    [allEntries,allGoals]=await Promise.all([sb('GET','cc_steps?select=*&order=date.desc'),sb('GET','cc_goals?select=*')]);
-  }catch(e){console.error('Load error:',e.message);allEntries=[];allGoals=[];}
-  try{
-    [allTwists,allTwistCompletions]=await Promise.all([sb('GET','cc_twists?select=*&order=created_at.asc'),sb('GET','cc_twist_completions?select=*')]);
-  }catch(e){console.warn('Twists tables not ready:',e.message);allTwists=[];allTwistCompletions=[];}
-}
-
-function getUserGoal(user){const clean=cleanName(user);const g=allGoals.find(g=>g.user_name===clean);return g?g.goal_steps:null;}
-
-function calcPoints(user){
-  const goal=getUserGoal(user);
-  if(!goal)return{points:0,days:[]};
-  const today=new Date().toISOString().split('T')[0];
-  const dbName=cleanName(user);
-  const days=CHALLENGE_DATES.map(date=>{
-    const entry=allEntries.find(e=>e.user_name===dbName&&e.date===date);
-    if(!entry)return date<=today?'miss':'future';
-    return entry.steps>=goal?'hit':'miss';
-  });
-  const hitCount=days.filter(d=>d==='hit').length;
-  const points=Math.min(hitCount,MAX_POINT_DAYS)*POINTS_PER_DAY;
-  return{points,days};
-}
-
-function calcTeamPoints(team){
-  const members=MEMBERS.filter(m=>m.team===team);
-  const maxPts=MAX_POINT_DAYS*POINTS_PER_DAY;
-  const threshold=TEAM_BONUS_THRESHOLD[team]||12;
-  let total=0,membersAtMax=0;
-  members.forEach(m=>{const{points}=calcPoints(m.name);total+=points;if(points>=maxPts)membersAtMax++;});
-  const bonusEligible=membersAtMax>=threshold;
-  const today=new Date().toISOString().split('T')[0];
-  if(bonusEligible&&today>CHALLENGE_END)total+=BONUS_POINTS;
-  const twistPts=allTwistCompletions.filter(c=>c.team===team).reduce((s,c)=>{const tw=allTwists.find(t=>t.id===c.twist_id);return s+(tw?tw.bonus_points:0);},0);
-  total+=twistPts;
-  return{total,bonusEligible,membersAtMax,threshold,twistPts};
-}
-
-function showAdminLogin(){document.getElementById('admin-modal').style.display='flex';document.getElementById('admin-pwd').value='';document.getElementById('admin-err').style.display='none';setTimeout(()=>document.getElementById('admin-pwd').focus(),100);}
-function closeAdminModal(){document.getElementById('admin-modal').style.display='none';}
-function doAdminLogin(){
-  if(document.getElementById('admin-pwd').value!==ADMIN_PASSWORD){document.getElementById('admin-err').style.display='block';return;}
-  isAdmin=true;currentUser='Admin';currentTeam=null;closeAdminModal();
-  document.getElementById('login-page').classList.remove('active');
-  document.getElementById('dashboard-page').classList.add('active');
-  document.getElementById('dash-av').textContent='🔐';
-  document.getElementById('dash-av').style.fontSize='16px';
-  document.getElementById('dash-name').textContent='Admin';
-  document.getElementById('dash-team').textContent='All teams access';
-  document.getElementById('tb-board').textContent='🏆 All Teams';
-  document.getElementById('tb-add').style.display='none';
-  document.getElementById('nav-add').style.display='none';
-  document.getElementById('tb-data').style.display='';
-  document.getElementById('nav-data').style.display='';
-  document.getElementById('tb-twists').style.display='';
-  document.getElementById('nav-twists').style.display='';
-  document.getElementById('nav-board').querySelector('.nlabel').textContent='All Teams';
-  switchTab('board');refreshAll();refreshTimer=setInterval(refreshAll,30000);
-}
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('admin-modal').style.display==='flex')doAdminLogin();});
-
-function buildGrid(){
-  const tg=document.getElementById('team-grid');
-  tg.innerHTML=Object.keys(TEAMS).map(team=>{
-    const t=TEAMS[team];
-    return `<button class="name-btn" style="padding:14px 6px;position:relative;" onclick="selTeamFn('${team}',this)">
-      <div id="rank-${team}" style="position:absolute;top:6px;right:8px;font-size:14px;"></div>
-      <div style="font-size:36px;margin-bottom:6px;">${t.emoji}</div>
-      <div style="font-size:12px;font-weight:700;">${team}</div>
-      <div id="score-${team}" style="font-size:18px;font-weight:800;font-family:'DM Mono',monospace;margin-top:3px;">—</div>
-    </button>`;
-  }).join('');
-}
-
-function selTeamFn(team,btn){
-  selTeam=team;selN=null;
-  document.querySelectorAll('#team-grid .name-btn').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');
-  document.getElementById('login-btn').disabled=true;
-  const teamMembers=MEMBERS.filter(m=>m.team===team).map(m=>m.name).sort((a,b)=>a.localeCompare(b));
-  document.getElementById('name-grid').innerHTML=teamMembers.map(n=>`<button class="name-btn" onclick="selName('${n}',this)">${n}</button>`).join('');
-  document.getElementById('name-section').style.display='block';
-}
-function selName(n,btn){
-  selN=n;
-  document.querySelectorAll('#name-grid .name-btn').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');
-  document.getElementById('login-btn').disabled=false;
-}
-function doLogin(){
-  if(!selN)return;
-  currentUser=selN;currentTeam=MEMBERS.find(m=>m.name===selN)?.team||'Nilam';
-  const t=TEAMS[currentTeam];
-  document.getElementById('login-page').classList.remove('active');
-  document.getElementById('dashboard-page').classList.add('active');
-  document.getElementById('dash-av').textContent=cleanName(selN).slice(0,2).toUpperCase();
-  document.getElementById('dash-name').textContent=selN;
-  document.getElementById('dash-team').textContent=`${t.emoji} Team ${currentTeam}`;
-  document.getElementById('step-date').value=new Date().toISOString().split('T')[0];
-  switchTab('add');
-  if(isCaptain(selN)){
-    document.getElementById('tb-data').style.display='';
-    document.getElementById('nav-data').style.display='';
-    document.getElementById('tb-twists').style.display='';
-    document.getElementById('nav-twists').style.display='';
-  }
-  refreshAll();refreshTimer=setInterval(refreshAll,30000);
-}
-function doLogout(){
-  currentUser=null;currentTeam=null;selN=null;selTeam=null;isAdmin=false;
-  if(refreshTimer)clearInterval(refreshTimer);
-  document.getElementById('dashboard-page').classList.remove('active');
-  document.getElementById('login-page').classList.add('active');
-  document.querySelectorAll('.name-btn').forEach(b=>b.classList.remove('selected'));
-  document.getElementById('login-btn').disabled=true;
-  document.getElementById('name-section').style.display='none';
-  document.getElementById('name-grid').innerHTML='';
-  document.getElementById('tb-add').style.display='';
-  document.getElementById('nav-add').style.display='';
-  document.getElementById('tb-data').style.display='none';
-  document.getElementById('nav-data').style.display='none';
-  document.getElementById('tb-twists').style.display='none';
-  document.getElementById('nav-twists').style.display='none';
-  document.getElementById('tb-board').textContent='🏆 My Team';
-  document.getElementById('nav-board').querySelector('.nlabel').textContent='My Team';
-  renderLoginScores();
-}
-
-async function refreshAll(){
-  try{await loadAll();renderGoalSetup();renderPtsCard();renderStepTiles();renderMetrics();renderMine();renderTeamBoard();}
-  catch(e){console.error('refreshAll:',e);}
-}
-
-function renderGoalSetup(){
-  if(isAdmin){document.getElementById('goal-setup-wrap').innerHTML='';return;}
-  const goal=getUserGoal(currentUser);
-  const el=document.getElementById('goal-setup-wrap');
-  if(goal){
-    el.innerHTML=`<div class="goal-setup" style="display:flex;align-items:center;justify-content:space-between;gap:10px;"><div><div class="goal-setup-title" style="margin-bottom:1px;">🎯 Daily Goal: <span style="color:var(--accent)">${goal.toLocaleString('en-IN')} steps</span></div><div style="font-size:11px;color:var(--text3);">Hit this every day to earn 10 pts</div></div><button onclick="editGoal()" style="padding:7px 14px;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Edit</button></div>`;return;
-  }
-  el.innerHTML=`<div class="goal-setup"><div class="goal-setup-title">🎯 Set Your Daily Goal</div><div class="goal-setup-sub">Set your daily step goal. You earn 10 pts every day you hit it!</div><div class="goal-row"><input type="number" id="goal-input" placeholder="e.g. 8000" inputmode="numeric" min="${MIN_GOAL}"/><button class="goal-btn" onclick="saveGoal()">Set Goal</button></div></div>`;
-}
-function editGoal(){
-  const goal=getUserGoal(currentUser);
-  document.getElementById('goal-setup-wrap').innerHTML=`<div class="goal-setup"><div class="goal-setup-title">✏️ Update Your Daily Goal</div><div class="goal-setup-sub">Current: <strong>${goal.toLocaleString('en-IN')} steps</strong></div><div class="goal-row"><input type="number" id="goal-input" value="${goal}" inputmode="numeric" min="${MIN_GOAL}"/><button class="goal-btn" onclick="saveGoal()">Update</button><button onclick="renderGoalSetup()" style="padding:10px 12px;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:13px;cursor:pointer;">Cancel</button></div></div>`;
-  document.getElementById('goal-input').focus();
-}
-async function saveGoal(){
-  const steps=parseInt(document.getElementById('goal-input')?.value);
-  if(!steps||steps<1){showToast('Please enter a valid goal');return;}
-  try{await sb('POST','cc_goals?on_conflict=user_name',{user_name:cleanName(currentUser),goal_steps:steps});showToast('Goal set! 🎯');await refreshAll();}
-  catch(e){showToast('Error: '+e.message.slice(0,40));}
-}
-
-function renderPtsCard(){
-  if(isAdmin){document.getElementById('pts-card-wrap').innerHTML='';return;}
-  const goal=getUserGoal(currentUser);
-  const el=document.getElementById('pts-card-wrap');
-  if(!goal){el.innerHTML='';return;}
-  const{points,days}=calcPoints(currentUser);
-  const today=new Date().toISOString().split('T')[0];
-  const dots=CHALLENGE_DATES.map((date,i)=>{
-    const s=days[i];const isToday=date===today;
-    const cls=isToday?'today':s;
-    const icon=s==='hit'?'✓':s==='miss'?'✗':'·';
-    const pts=s==='hit'?'+10':s==='miss'?'0':'';
-    return `<div class="pts-day ${cls}"><div class="pd-date">${parseInt(date.split('-')[2])} Apr</div><div class="pd-icon">${icon}</div><div class="pd-pts">${pts}</div></div>`;
-  }).join('');
-  el.innerHTML=`<div class="pts-card"><div class="pts-top"><div class="pts-title">My Points · Goal: ${goal.toLocaleString()} steps</div><div class="pts-badge">${points} pts</div></div><div class="pts-row">${dots}</div><div style="margin-top:8px;font-size:11px;color:var(--text3);text-align:center;">Best ${Math.min(days.filter(d=>d==='hit').length,MAX_POINT_DAYS)} of ${MAX_POINT_DAYS} days count · Max ${MAX_POINT_DAYS*POINTS_PER_DAY} pts</div></div>`;
-}
-
-function renderMetrics(){
-  if(isAdmin){document.getElementById('metrics').innerHTML='';return;}
-  const goal=getUserGoal(currentUser);
-  const today=new Date().toISOString().split('T')[0];
-  const todayEntry=allEntries.find(e=>e.user_name===cleanName(currentUser)&&e.date===today);
-  const{points}=calcPoints(currentUser);
-  const{total:teamPts}=calcTeamPoints(currentTeam);
-  const ti=Object.keys(TEAMS).indexOf(currentTeam)+1;
-  document.getElementById('metrics').innerHTML=`
-    <div class="metric"><div class="mv" style="color:var(--accent)">${points}</div><div class="ml">My pts</div></div>
-    <div class="metric"><div class="mv" style="color:var(--t${ti})">${teamPts}</div><div class="ml">Team pts</div></div>
-    <div class="metric"><div class="mv" style="color:${todayEntry&&goal&&todayEntry.steps>=goal?'var(--green)':'var(--text2)'}">${todayEntry?todayEntry.steps.toLocaleString('en-IN'):'—'}</div><div class="ml">Today</div></div>`;
-}
-
-function onDateChange(){
-  const date=document.getElementById('step-date').value;
-  const hint=document.getElementById('step-hint');
-  const existing=allEntries.find(e=>e.user_name===cleanName(currentUser)&&e.date===date);
-  if(existing){hint.innerHTML=`<div class="hint">⚠️ Already logged <strong>${existing.steps.toLocaleString('en-IN')} steps</strong> on ${fd(date)}. Saving will update it.</div>`;document.getElementById('step-count').value=existing.steps;}
-  else{hint.innerHTML='';document.getElementById('step-count').value='';}
-}
-async function addSteps(){
-  const date=document.getElementById('step-date').value;
-  const steps=parseInt(document.getElementById('step-count').value);
-  if(!date||!CHALLENGE_DATES.includes(date)){showToast('Date must be within 17–24 Apr');return;}
-  if(!steps||steps<1){showToast('Enter valid steps');return;}
-  const goal=getUserGoal(currentUser);
-  try{
-    await sb('POST','cc_steps?on_conflict=user_name,date',{user_name:cleanName(currentUser),date,steps});
-    document.getElementById('step-count').value='';document.getElementById('step-hint').innerHTML='';
-    const hit=goal&&steps>=goal;
-    showToast(hit?`Goal hit! 🎯`:`Saved — ${goal?(goal-steps).toLocaleString('en-IN')+' more to hit goal':'set a goal to earn points'}`);
-    await refreshAll();
-  }catch(e){showToast('Save failed: '+e.message.slice(0,40));}
-}
-async function deleteEntry(id){
-  try{await sb('DELETE',`cc_steps?id=eq.${id}`);showToast('Removed');await refreshAll();}
-  catch(e){showToast('Delete failed');}
-}
-function renderMine(){
-  const mine=allEntries.filter(e=>e.user_name===cleanName(currentUser)).sort((a,b)=>b.date.localeCompare(a.date));
-  const goal=getUserGoal(currentUser);
-  const el=document.getElementById('my-entries');
-  if(!mine.length){el.innerHTML='<div class="empty">No entries yet</div>';return;}
-  el.innerHTML=mine.map(e=>{
-    const hit=goal&&e.steps>=goal;
-    return `<div class="eitem"><div><div class="esteps ${hit?'hit':'miss'}">${e.steps.toLocaleString('en-IN')}<span class="epill ${hit?'hit':'miss'}">${hit?'✓ +10pts':'✗ 0pts'}</span></div><div class="edate">${fd(e.date)}</div></div><button class="delbtn" onclick="deleteEntry(${e.id})">×</button></div>`;
-  }).join('');
-}
-
-function renderStepTiles(){
-  const el=document.getElementById('step-tiles');if(!el)return;
-  if(isAdmin){
-    const ts=allEntries.reduce((s,e)=>s+e.steps,0);
-    const tm=new Set(allEntries.map(e=>e.user_name)).size;
-    el.innerHTML=`<div style="flex:1;padding:10px 12px;border-right:1px solid var(--border);background:var(--surface);"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Total steps</div><div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent);">${ts.toLocaleString('en-IN')}</div></div><div style="flex:1;padding:10px 12px;background:var(--surface);"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Active members</div><div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green);">${tm}</div></div>`;
-    return;
-  }
-  const mySteps=allEntries.filter(e=>e.user_name===cleanName(currentUser)).reduce((s,e)=>s+e.steps,0);
-  const teamSteps=allEntries.filter(e=>MEMBERS.find(m=>cleanName(m.name)===e.user_name&&m.team===currentTeam)).reduce((s,e)=>s+e.steps,0);
-  const t=TEAMS[currentTeam];
-  el.innerHTML=`<div style="flex:1;padding:10px 12px;border-right:1px solid var(--border);background:var(--surface);"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">My steps</div><div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text);">${mySteps.toLocaleString('en-IN')}</div></div><div style="flex:1;padding:10px 12px;background:var(--surface);"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${t.emoji} Team steps</div><div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:${t.color};">${teamSteps.toLocaleString('en-IN')}</div></div>`;
-}
-
-let adminBoardTeam=null;
-function renderTeamBoard(){
-  const el=document.getElementById('team-board');
-  const tabsEl=document.getElementById('board-team-tabs');
-  if(isAdmin){
-    if(!adminBoardTeam)adminBoardTeam=Object.keys(TEAMS)[0];
-    tabsEl.style.display='flex';tabsEl.style.gap='6px';
-    tabsEl.innerHTML=Object.keys(TEAMS).map(team=>{
-      const t=TEAMS[team];const{total}=calcTeamPoints(team);const sel=adminBoardTeam===team;
-      const bg=sel?'var(--accent-dim)':'var(--surface)';const bc=sel?t.color:'var(--border)';const tc=sel?t.color:'var(--text2)';
-      return `<button onclick="adminSwitchBoardTeam('${team}')" style="flex:1;padding:9px 6px;border-radius:var(--radius-sm);border:1.5px solid ${bc};background:${bg};color:${tc};font-size:12px;font-weight:600;cursor:pointer;text-align:center;"><div>${t.emoji} ${team}</div><div style="font-size:11px;font-family:'DM Mono',monospace;margin-top:2px;">${total}pts</div></button>`;
+    const data=await sb('GET',`monthly_steps?month=eq.${curMonth}&select=*&order=steps.desc`);
+    const el=document.getElementById('leaderboard');
+    if(!data.length){
+      el.innerHTML='<div class="empty">No entries yet for this month</div>';
+      ['king-name','queen-name'].forEach(id=>document.getElementById(id).textContent='—');
+      ['king-steps','queen-steps','king-month','queen-month'].forEach(id=>document.getElementById(id).textContent='');
+      return;
+    }
+    const medals=['🥇','🥈','🥉'];let kd=false,qd=false,king=null,queen=null;
+    el.innerHTML=data.map((row,i)=>{
+      const g=gMap[row.user_name]||'M';
+      const ik=g==='M'&&!kd,iq=g==='F'&&!qd;
+      if(ik){kd=true;king=row;}if(iq){qd=true;queen=row;}
+      const crown=ik?' 🤴':iq?' 👸':'';
+      const rc=i===0?'var(--amber)':i===1?'rgba(255,255,255,0.5)':i===2?'#cd7f32':'var(--text3)';
+      const avBg=g==='F'?'rgba(168,85,247,0.15)':'rgba(0,196,204,0.12)';
+      const avC=g==='F'?'var(--purple)':'var(--accent)';
+      const sc=ik?'var(--amber)':iq?'var(--purple)':'var(--text2)';
+      return `<div class="lb-row"><div class="lb-rank" style="color:${rc}">${medals[i]||i+1}</div><div class="lb-av" style="background:${avBg};color:${avC}">${row.user_name.slice(0,2).toUpperCase()}</div><div class="lb-info"><div class="lb-name">${row.user_name}${crown}</div><div class="lb-gender">${g==='F'?'♀ Female':'♂ Male'}</div></div><div class="lb-steps" style="color:${sc}">${row.steps.toLocaleString('en-IN')}</div></div>`;
     }).join('');
-  }else{tabsEl.style.display='none';}
-  const teamsToShow=isAdmin?[adminBoardTeam]:[currentTeam];
-  el.innerHTML=teamsToShow.map(team=>{
-    const t=TEAMS[team];
-    const{total,bonusEligible,membersAtMax,threshold,twistPts}=calcTeamPoints(team);
-    const maxPts=MAX_POINT_DAYS*POINTS_PER_DAY;
-    const today=new Date().toISOString().split('T')[0];const over=today>CHALLENGE_END;
-    const bonusText=over?(bonusEligible?`🎁 +${BONUS_POINTS} bonus earned!`:`❌ Bonus missed — ${membersAtMax}/${threshold} hit ${maxPts}pts`):(bonusEligible?`🎁 On track! ${membersAtMax}/${threshold} at ${maxPts}pts!`:`⚡ ${membersAtMax}/${threshold} hit ${maxPts}pts — keep pushing!`);
-    const bonusCls=bonusEligible?'on-track':membersAtMax>0?'pending':'off-track';
-    const members=MEMBERS.filter(m=>m.team===team);
-    const memberRows=members.map(m=>{
-      const goal=getUserGoal(m.name);const{points,days}=calcPoints(m.name);
-      const isMe=m.name===currentUser;const maxP=MAX_POINT_DAYS*POINTS_PER_DAY;
-      const pct=Math.round(points/maxP*100);
-      const dots=days.map(s=>{const c=s==='hit'?'var(--green)':s==='miss'?'var(--red-dim)':'var(--surface3)';const b=s==='miss'?'1px solid rgba(240,82,82,0.3)':'none';return `<div style="width:8px;height:8px;border-radius:50%;background:${c};border:${b};flex-shrink:0;"></div>`;}).join('');
-      const ptsColor=points>=maxP?'var(--green)':points>0?'var(--accent)':'var(--text3)';
-      return `<div style="background:${isMe?'var(--accent-dim)':'var(--surface2)'};border:${isMe?'1.5px solid var(--accent)':'1px solid var(--border)'};border-radius:14px;padding:12px 12px 10px;position:relative;">
-        ${isMe?'<div style="position:absolute;top:8px;right:8px;font-size:9px;font-weight:700;color:var(--accent);background:var(--accent-dim);padding:2px 6px;border-radius:999px;">you</div>':''}
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:28px;height:28px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text2);flex-shrink:0;">${cleanName(m.name).slice(0,2).toUpperCase()}</div><div style="font-size:12px;font-weight:600;color:var(--text);line-height:1.2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.name}</div></div>
-        <div style="font-size:18px;font-weight:800;color:${ptsColor};font-family:'DM Mono',monospace;line-height:1;margin-bottom:4px;">${points}<span style="font-size:11px;font-weight:500;color:var(--text3);">/${maxP}</span></div>
-        <div style="height:3px;background:var(--surface);border-radius:999px;margin-bottom:6px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${ptsColor};border-radius:999px;"></div></div>
-        <div style="display:flex;gap:3px;flex-wrap:wrap;">${dots}</div>
-        <div style="font-size:10px;color:${goal?'var(--text2)':'var(--text3)'};margin-top:5px;">${goal?goal.toLocaleString('en-IN')+' steps/day':'Goal not set'}</div>
-      </div>`;
-    }).join('');
-    return `<div class="team-section"><div class="team-hdr ${t.cls}"><div class="team-name-lbl">${t.emoji} Team ${team}</div><div class="team-pts-lbl">${total} pts${twistPts?` <span style="font-size:10px;color:var(--amber);">(+${twistPts} ⚡)</span>`:''}</div></div><div class="team-body"><div class="bonus-banner ${bonusCls}" style="margin:8px;border-radius:8px;">${bonusText}</div><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:8px;">${memberRows}</div></div></div>`;
-  }).join('');
-}
-function adminSwitchBoardTeam(team){adminBoardTeam=team;renderTeamBoard();}
-
-let adminSelTeam=null,adminSelDate=null;
-function renderDataEntry(){
-  const el=document.getElementById('data-entry-wrap');if(!el)return;
-  if(isCaptain(currentUser)&&!adminSelTeam)adminSelTeam=currentTeam;
-  const teamBtns=!isAdmin?'':Object.keys(TEAMS).map(team=>{
-    const t=TEAMS[team];const sel=adminSelTeam===team;
-    const bg=sel?'var(--accent-dim)':'var(--surface2)';const bc=sel?t.color:'var(--border)';const tc=sel?t.color:'var(--text2)';
-    return `<button onclick="adminPickTeam('${team}')" style="flex:1;padding:10px 6px;border-radius:var(--radius-sm);border:1.5px solid ${bc};background:${bg};color:${tc};font-size:13px;font-weight:600;cursor:pointer;text-align:center;">${t.emoji} ${team}</button>`;
-  }).join('');
-  const dateBtns=adminSelTeam?CHALLENGE_DATES.map(date=>{
-    const sel=adminSelDate===date;const dn=parseInt(date.split('-')[2]);
-    const bg=sel?'var(--accent-dim)':'var(--surface2)';const bc=sel?'var(--accent)':'var(--border)';const tc=sel?'var(--accent)':'var(--text2)';
-    return `<button onclick="adminPickDate('${date}')" style="flex:1;padding:8px 4px;border-radius:var(--radius-sm);border:1.5px solid ${bc};background:${bg};color:${tc};font-size:12px;font-weight:600;cursor:pointer;">${dn} Apr</button>`;
-  }).join(''):'';
-  let memberRows='';
-  if(adminSelTeam&&adminSelDate){
-    memberRows=MEMBERS.filter(m=>m.team===adminSelTeam).map(m=>{
-      const entry=allEntries.find(e=>e.user_name===cleanName(m.name)&&e.date===adminSelDate);
-      const goal=getUserGoal(m.name);const hit=entry&&goal&&entry.steps>=goal;
-      const sid=cleanName(m.name).replace(/\s+/g,'-');
-      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);"><div style="width:30px;height:30px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text2);flex-shrink:0;">${cleanName(m.name).slice(0,2).toUpperCase()}</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:var(--text);">${m.name}</div><div style="font-size:10px;color:var(--text3);">Goal: ${goal?goal.toLocaleString('en-IN'):'not set'}</div></div><div style="display:flex;align-items:center;gap:6px;"><input type="number" id="as-${sid}" value="${entry?entry.steps:''}" placeholder="—" inputmode="numeric" style="width:90px;padding:7px 10px;background:var(--surface2);border:1.5px solid ${hit?'rgba(62,207,142,0.4)':'var(--border)'};border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;text-align:right;"/><button onclick="adminSaveEntry('${cleanName(m.name)}','${adminSelDate}')" style="padding:7px 12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;">${entry?'Update':'Save'}</button></div></div>`;
-    }).join('');
-  }
-  const t=TEAMS[adminSelTeam]||TEAMS[Object.keys(TEAMS)[0]];
-  const teamHeader=isAdmin?`<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Select Team</div><div style="display:flex;gap:6px;margin-bottom:${adminSelTeam?'14px':'0'};">${teamBtns}</div>`:`<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="font-size:20px;">${t.emoji}</span><span style="font-size:14px;font-weight:700;color:${t.color};">Team ${adminSelTeam}</span><span style="font-size:11px;color:var(--text3);">— your team</span></div>`;
-  el.innerHTML=`<div style="background:var(--surface);border-radius:var(--radius);padding:14px;">${teamHeader}${adminSelTeam?`<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Select Date</div><div style="display:flex;gap:4px;">${dateBtns}</div>`:''}</div>${adminSelTeam&&adminSelDate?`<div style="background:var(--surface);border-radius:var(--radius);padding:4px 14px;margin-top:12px;"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;padding:10px 0 4px;">${TEAMS[adminSelTeam].emoji} ${adminSelTeam} &middot; ${parseInt(adminSelDate.split('-')[2])} Apr</div>${memberRows}</div>`:''}`;
-}
-function adminPickTeam(team){adminSelTeam=team;adminSelDate=null;renderDataEntry();}
-function adminPickDate(date){adminSelDate=date;renderDataEntry();}
-async function adminSaveEntry(userName,date){
-  const sid=userName.replace(/\s+/g,'-');
-  const input=document.getElementById(`as-${sid}`);
-  const steps=parseInt(input?.value);
-  if(!steps||steps<1){showToast(`Enter valid steps for ${userName}`);return;}
-  try{await sb('POST','cc_steps?on_conflict=user_name,date',{user_name:userName,date,steps});showToast(`${userName} — ${steps.toLocaleString('en-IN')} steps saved ✓`);await loadAll();renderDataEntry();renderTeamBoard();renderStepTiles();}
-  catch(e){showToast('Save failed: '+e.message.slice(0,40));}
+    document.getElementById('king-name').textContent=king?king.user_name:'—';
+    document.getElementById('king-steps').textContent=king?king.steps.toLocaleString('en-IN')+' steps':'';
+    document.getElementById('king-month').textContent=king?mLabel(curMonth):'';
+    document.getElementById('queen-name').textContent=queen?queen.user_name:'—';
+    document.getElementById('queen-steps').textContent=queen?queen.steps.toLocaleString('en-IN')+' steps':'';
+    document.getElementById('queen-month').textContent=queen?mLabel(curMonth):'';
+  }catch(e){document.getElementById('leaderboard').innerHTML='<div class="empty">Could not load data</div>';}
 }
 
-async function renderLoginScores(){
+async function loadHistory(){
   try{
-    await loadAll();
-    const scores=Object.keys(TEAMS).map(team=>({team,total:calcTeamPoints(team).total}));
-    const sorted=[...scores].sort((a,b)=>b.total-a.total);
-    const ranks=['👑','🥈','🥉'];
-    scores.forEach(({team,total})=>{
-      const el=document.getElementById('score-'+team);
-      const rank=ranks[sorted.findIndex(s=>s.team===team)];
-      if(el)el.textContent=total;
-      const rankEl=document.getElementById('rank-'+team);
-      if(rankEl)rankEl.textContent=rank;
-    });
-  }catch(e){console.error('login scores:',e);}
+    const data=await sb('GET','monthly_steps?select=month,user_name,steps&order=month.desc');
+    const byM={};data.forEach(r=>{if(!byM[r.month])byM[r.month]=[];byM[r.month].push(r);});
+    const el=document.getElementById('history-list');
+    const months=Object.keys(byM).sort().reverse();
+    if(!months.length){el.innerHTML='<div class="empty">No history yet</div>';return;}
+    el.innerHTML=months.map(m=>{
+      const e=byM[m];
+      const k=e.filter(r=>gMap[r.user_name]==='M').sort((a,b)=>b.steps-a.steps)[0];
+      const q=e.filter(r=>gMap[r.user_name]==='F').sort((a,b)=>b.steps-a.steps)[0];
+      return `<div class="hist-row"><div class="hist-month">${mLabel(m)}</div><div class="hist-winners">${k?`🤴 ${k.user_name}`:''}${q?` · 👸 ${q.user_name}`:''}</div></div>`;
+    }).join('');
+  }catch(e){}
 }
 
-// ── TWISTS ──
-async function renderTwists(){
-  const el=document.getElementById('twists-wrap');if(!el)return;
-  el.innerHTML='<div class="empty">Loading...</div>';
-  await loadAll();
-  const twists=allTwists;
-  const completions=allTwistCompletions;
-  const addForm=isAdmin?`<div style="background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:12px;border:1px solid var(--border);"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;">⚡ Add New Twist</div><div style="display:flex;flex-direction:column;gap:8px;"><input type="text" id="twist-title" placeholder="Twist title e.g. Walk to work today!" style="width:100%;padding:10px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;"/><textarea id="twist-desc" placeholder="Description (optional)" rows="2" style="width:100%;padding:10px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;resize:none;"></textarea><div style="display:flex;gap:8px;align-items:center;"><input type="number" id="twist-pts" placeholder="Bonus pts e.g. 50" inputmode="numeric" style="flex:1;padding:10px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;"/><button onclick="createTwist()" style="padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">Add Twist</button></div></div></div>`:'';
-  if(!twists.length){el.innerHTML=addForm+`<div class="empty">${isAdmin?'No twists yet — add the first one!':'No surprise twists yet — stay tuned! ⚡'}</div>`;return;}
-  const twistCards=twists.map((tw,i)=>{
-    const teamCompletions={};
-    completions.filter(c=>c.twist_id===tw.id).forEach(c=>teamCompletions[c.team]=true);
-    const myTeamDone=teamCompletions[currentTeam]||false;
-    const doneCount=Object.keys(teamCompletions).length;
-    const teamPills=Object.keys(TEAMS).map(team=>{const done=teamCompletions[team];const t=TEAMS[team];return `<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;background:${done?'rgba(62,207,142,0.15)':'var(--surface2)'};color:${done?'var(--green)':'var(--text3)'};border:1px solid ${done?'rgba(62,207,142,0.3)':'var(--border)'};">${t.emoji} ${team} ${done?'✓':''}</span>`;}).join('');
-    const myTeam=currentTeam||adminBoardTeam||Object.keys(TEAMS)[0];
-    const canMark=isCaptain(currentUser)&&!teamCompletions[myTeam];
-    const canRevert=isCaptain(currentUser)&&teamCompletions[myTeam];
-    const markBtn=canMark?`<button onclick="markTwistDone(${tw.id},'${myTeam}')" style="padding:8px 14px;background:var(--green);color:#0a1f15;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">✓ Mark Done</button>`:canRevert?`<button onclick="revertTwist(${tw.id},'${myTeam}')" style="padding:8px 14px;background:none;border:1px solid rgba(240,82,82,0.4);border-radius:var(--radius-sm);color:var(--red);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;">↩ Revert</button>`:`<span style="font-size:12px;color:var(--green);font-weight:600;">✓ Completed!</span>`;
-    const deletBtn=isAdmin?`<button onclick="deleteTwist(${tw.id})" style="padding:6px 10px;background:none;border:1px solid rgba(240,82,82,0.3);border-radius:var(--radius-sm);color:var(--red);font-size:11px;cursor:pointer;">Delete</button>`:'';
-    return `<div style="background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:10px;border:1px solid ${myTeamDone?'rgba(62,207,142,0.25)':'var(--border)'};">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;">
-        <div style="display:flex;align-items:center;gap:8px;"><div style="width:26px;height:26px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--accent);flex-shrink:0;">${i+1}</div>
-        <div><div style="font-size:14px;font-weight:700;color:var(--text);">${tw.title}</div>${tw.description?`<div style="font-size:12px;color:var(--text2);margin-top:2px;">${tw.description}</div>`:''}</div></div>
-        <div style="background:var(--amber-dim);border:1px solid rgba(240,164,41,0.3);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800;color:var(--amber);white-space:nowrap;flex-shrink:0;">+${tw.bonus_points} pts</div>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">${teamPills}</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;"><div style="font-size:11px;color:var(--text3);">${doneCount}/3 teams completed</div><div style="display:flex;gap:6px;">${deletBtn}${markBtn}</div></div>
-    </div>`;
-  }).join('');
-  el.innerHTML=addForm+twistCards;
-}
-async function createTwist(){
-  const title=document.getElementById('twist-title')?.value.trim();
-  const desc=document.getElementById('twist-desc')?.value.trim();
-  const pts=parseInt(document.getElementById('twist-pts')?.value);
-  if(!title){showToast('Enter a twist title');return;}
-  if(!pts||pts<1){showToast('Enter bonus points');return;}
-  const existing=await sb('GET','cc_twists?select=id');
-  if(existing.length>=100){showToast('Max 100 twists allowed!');return;}
-  try{await sb('POST','cc_twists',{title,description:desc||null,bonus_points:pts});showToast('Twist added! ⚡');renderTwists();}
-  catch(e){showToast('Error: '+e.message.slice(0,40));}
-}
-async function markTwistDone(twistId,team){
-  try{await sb('POST','cc_twist_completions',{twist_id:twistId,team});showToast(`✓ Twist completed for ${team}! Points added!`);await loadAll();renderTwists();renderTeamBoard();renderMetrics();}
-  catch(e){showToast('Error: '+e.message.slice(0,40));}
-}
-async function revertTwist(twistId,team){
-  try{await sb('DELETE',`cc_twist_completions?twist_id=eq.${twistId}&team=eq.${team}`);showToast(`↩ Reverted for ${team} — points removed`);await loadAll();renderTwists();renderTeamBoard();renderMetrics();}
-  catch(e){showToast('Error: '+e.message.slice(0,40));}
-}
-async function deleteTwist(twistId){
-  try{await sb('DELETE',`cc_twist_completions?twist_id=eq.${twistId}`);await sb('DELETE',`cc_twists?id=eq.${twistId}`);showToast('Twist deleted');renderTwists();}
-  catch(e){showToast('Error: '+e.message.slice(0,40));}
+function buildGrid(cid,onSel,cur=null){
+  const el=document.getElementById(cid);if(!el)return;
+  el.innerHTML=[...allMembers].map(m=>`<button class="name-btn${cur===m.name?' selected':''}" onclick="(${onSel.toString()})('${m.name.replace(/'/g,"\\'")}',this)">${m.name}</button>`).join('');
 }
 
+function openEntryModal(){
+  selEntry=null;document.getElementById('entry-steps').value='';document.getElementById('entry-err').style.display='none';
+  document.getElementById('entry-month-lbl').textContent=mLabel(curMonth);
+  buildGrid('entry-name-grid',function(name,btn){selEntry=name;document.querySelectorAll('#entry-name-grid .name-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');});
+  document.getElementById('entry-modal').classList.add('active');
+}
+async function submitEntry(){
+  const steps=parseInt(document.getElementById('entry-steps').value);
+  const err=document.getElementById('entry-err');
+  if(!selEntry){err.textContent='Please select your name';err.style.display='block';return;}
+  if(!steps||steps<1){err.textContent='Enter valid steps';err.style.display='block';return;}
+  err.style.display='none';
+  try{await sb('POST','monthly_steps?on_conflict=user_name,month',{user_name:selEntry,month:curMonth,steps});closeModal('entry-modal');showToast(`${selEntry} — ${steps.toLocaleString('en-IN')} steps saved! 🎉`);loadLB();loadHistory();}
+  catch(e){err.textContent='Save failed: '+e.message.slice(0,40);err.style.display='block';}
+}
+
+function openAdminModal(){
+  document.getElementById('admin-pwd').value='';document.getElementById('admin-err').style.display='none';
+  document.getElementById('a-pwd-sec').style.display='block';document.getElementById('a-main').style.display='none';
+  document.getElementById('admin-modal').classList.add('active');
+}
+function verifyAdmin(){
+  if(document.getElementById('admin-pwd').value!==ADMIN_PW){document.getElementById('admin-err').style.display='block';return;}
+  document.getElementById('a-pwd-sec').style.display='none';document.getElementById('a-main').style.display='block';
+  switchTab('entry');
+}
 function switchTab(tab){
-  ['add','board','data','twists'].forEach(t=>{
-    const p=document.getElementById(`panel-${t}`);const tb=document.getElementById(`tb-${t}`);const nav=document.getElementById(`nav-${t}`);
-    if(p)p.classList.toggle('active',t===tab);if(tb)tb.classList.toggle('active',t===tab);if(nav)nav.classList.toggle('active',t===tab);
-  });
-  if(tab==='data')renderDataEntry();
-  if(tab==='twists')renderTwists();
+  document.getElementById('t-entry').style.display=tab==='entry'?'block':'none';
+  document.getElementById('t-members').style.display=tab==='members'?'block':'none';
+  document.getElementById('t-entry-btn').className='tab-btn'+(tab==='entry'?' on':'');
+  document.getElementById('t-members-btn').className='tab-btn'+(tab==='members'?' on':'');
+  if(tab==='entry'){
+    selAdmin=null;selAdminMonth=curMonth;buildMonthGrid();
+    document.getElementById('a-steps').value='';document.getElementById('a-steps-err').style.display='none';
+    buildGrid('a-name-grid',function(n,btn){selAdmin=n;document.querySelectorAll('#a-name-grid .name-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');});
+  }else{
+    document.getElementById('new-name').value='';newG=null;resetG('new');
+    document.getElementById('add-err').style.display='none';renderMemList();
+  }
 }
-function fmt(n){return Math.round(n).toLocaleString('en-IN');}
-function fd(d){return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'});}
+
+function buildMonthGrid(){
+  selAdminMonth=curMonth;
+  document.getElementById('a-month-grid').innerHTML=MONTHS.map(m=>{
+    const[y,mo]=m.split('-');
+    const lbl=new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
+    const sel=selAdminMonth===m;
+    return `<button onclick="pickMonth('${m}',this)" style="padding:5px 10px;border-radius:var(--radius-sm);border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'var(--accent-dim)':'var(--surface2)'};color:${sel?'var(--accent)':'var(--text2)'};font-size:11px;font-weight:600;cursor:pointer;">${lbl}</button>`;
+  }).join('');
+}
+function pickMonth(m,btn){
+  selAdminMonth=m;
+  document.querySelectorAll('#a-month-grid button').forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--surface2)';b.style.color='var(--text2)';});
+  btn.style.borderColor='var(--accent)';btn.style.background='var(--accent-dim)';btn.style.color='var(--accent)';
+}
+async function saveAdminSteps(){
+  const steps=parseInt(document.getElementById('a-steps').value);
+  const err=document.getElementById('a-steps-err');
+  if(!selAdmin){err.textContent='Please select a member';err.style.display='block';return;}
+  if(!steps||steps<1){err.textContent='Enter valid steps';err.style.display='block';return;}
+  err.style.display='none';
+  try{await sb('POST','monthly_steps?on_conflict=user_name,month',{user_name:selAdmin,month:selAdminMonth,steps});closeModal('admin-modal');showToast(`${selAdmin} — ${steps.toLocaleString('en-IN')} steps saved for ${mLabel(selAdminMonth)} ✓`);loadLB();loadHistory();}
+  catch(e){err.textContent='Save failed: '+e.message.slice(0,40);err.style.display='block';}
+}
+
+function resetG(prefix){
+  const m=prefix==='new'?'gm-btn':'egm-btn',f=prefix==='new'?'gf-btn':'egf-btn';
+  [m,f].forEach(id=>{const el=document.getElementById(id);if(el){el.style.borderColor='var(--border)';el.style.background='var(--surface2)';el.style.color='var(--text2)';}});
+}
+function setGender(prefix,g){
+  if(prefix==='new')newG=g;else editG=g;
+  resetG(prefix);
+  const mid=prefix==='new'?'gm-btn':'egm-btn',fid=prefix==='new'?'gf-btn':'egf-btn';
+  if(g==='M'){const el=document.getElementById(mid);el.style.borderColor='var(--accent)';el.style.background='var(--accent-dim)';el.style.color='var(--accent)';}
+  else{const el=document.getElementById(fid);el.style.borderColor='var(--purple)';el.style.background='var(--purple-dim)';el.style.color='var(--purple)';}
+}
+
+async function addMember(){
+  const name=document.getElementById('new-name').value.trim();
+  const err=document.getElementById('add-err');
+  if(!name){err.textContent='Enter a name';err.style.display='block';return;}
+  if(!newG){err.textContent='Select gender';err.style.display='block';return;}
+  if(allMembers.find(m=>m.name.toLowerCase()===name.toLowerCase())){err.textContent='Member already exists';err.style.display='block';return;}
+  err.style.display='none';
+  try{
+    await sb('POST','vidial_members',{name,gender:newG});
+    showToast(`${name} (${newG==='M'?'Male':'Female'}) added! ✓`);
+    document.getElementById('new-name').value='';newG=null;resetG('new');
+    await loadMembers();renderMemList();
+  }catch(e){err.textContent='Save failed: '+e.message.slice(0,40);err.style.display='block';}
+}
+
+function renderMemList(){
+  const el=document.getElementById('mem-list');
+  if(!allMembers.length){el.innerHTML='<div class="empty">No members yet</div>';return;}
+  el.innerHTML=allMembers.map(m=>`
+    <div class="mem-row">
+      <div style="width:28px;height:28px;border-radius:50%;background:${m.gender==='F'?'var(--purple-dim)':'var(--accent-dim)'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${m.gender==='F'?'var(--purple)':'var(--accent)'};flex-shrink:0;">${m.name.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:var(--text);">${m.name}</div><div style="font-size:10px;color:var(--text3);">${m.gender==='F'?'♀ Female':'♂ Male'}</div></div>
+      <button onclick="openEdit(${m.id},'${m.name.replace(/'/g,"\\'")}','${m.gender}')" style="padding:5px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-size:11px;cursor:pointer;flex-shrink:0;">Edit</button>
+    </div>`).join('');
+}
+
+function openEdit(id,name,gender){
+  editId=id;editG=gender;
+  document.getElementById('edit-sub').textContent=`Editing: ${name}`;
+  document.getElementById('edit-name').value=name;
+  document.getElementById('edit-err').style.display='none';
+  resetG('edit');setGender('edit',gender);
+  document.getElementById('edit-modal').classList.add('active');
+}
+async function saveEdit(){
+  const name=document.getElementById('edit-name').value.trim();
+  const err=document.getElementById('edit-err');
+  if(!name){err.textContent='Enter a name';err.style.display='block';return;}
+  if(!editG){err.textContent='Select gender';err.style.display='block';return;}
+  err.style.display='none';
+  try{
+    await sb('PATCH',`vidial_members?id=eq.${editId}`,{name,gender:editG});
+    showToast(`${name} updated ✓`);closeModal('edit-modal');
+    await loadMembers();renderMemList();loadLB();
+  }catch(e){err.textContent='Save failed: '+e.message.slice(0,40);err.style.display='block';}
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('active');}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
-buildGrid();
-renderLoginScores();
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('admin-modal').classList.contains('active')&&document.getElementById('a-pwd-sec').style.display!=='none')verifyAdmin();});
+
+async function init(){
+  document.getElementById('month-label').textContent=mLabel(curMonth);
+  await loadMembers();
+  loadLB();loadHistory();
+}
+init();
 </script>
 </body>
 </html>
