@@ -375,35 +375,34 @@ function renderHomeCategories(data){
   const consistent=data.filter(r=>r.steps>=200000&&r.steps<300000).sort((a,b)=>b.steps-a.steps);
   const newbie=data.filter(r=>r.steps>=100000&&r.steps<200000).sort((a,b)=>b.steps-a.steps);
 
-  function catBlock(title,emoji,color,dimColor,arr){
+  function catBlock(title,emoji,color,dimColor,range,arr){
     if(!arr.length)return '';
-    const top=arr.slice(0,2);
-    const medals=['🥇','🥈'];
-    const rows=top.map((r,i)=>{
+    const top=arr.slice(0,4);
+    const medals=['🥇','🥈','🥉','4️⃣'];
+    const tiles=top.map((r,i)=>{
       const g=gMap[r.user_name]||'M';
-      const avBg=g==='F'?'rgba(168,85,247,0.15)':'rgba(0,196,204,0.12)';
+      const avBg=g==='F'?'rgba(236,72,153,0.15)':'rgba(59,130,246,0.12)';
       const avC=g==='F'?'var(--purple)':'var(--accent)';
-      return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
-        <div style="font-size:14px;width:22px;text-align:center;">${medals[i]||i+1}</div>
-        <div style="width:28px;height:28px;border-radius:50%;background:${avBg};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${avC};flex-shrink:0;">${r.user_name.slice(0,2).toUpperCase()}</div>
-        <div style="flex:1;font-size:13px;font-weight:600;color:var(--text);">${r.user_name}</div>
-        <div style="font-size:13px;font-weight:700;font-family:'DM Mono',monospace;color:${color};">${r.steps.toLocaleString('en-IN')}</div>
+      return `<div style="display:flex;align-items:center;gap:7px;padding:7px 8px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);">
+        <div style="font-size:11px;width:16px;text-align:center;flex-shrink:0;">${medals[i]}</div>
+        <div style="width:24px;height:24px;border-radius:50%;background:${avBg};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${avC};flex-shrink:0;">${r.user_name.slice(0,2).toUpperCase()}</div>
+        <div style="font-size:11px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.user_name}</div>
       </div>`;
     }).join('');
-    const count=arr.length>2?`<span style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${arr.length} members</span>`:'';
+    const count=`<span style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${arr.length} member${arr.length!==1?'s':''}</span>`;
     return `<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:8px;">
       <div style="padding:9px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-        <div style="font-size:12px;font-weight:700;color:${color};">${emoji} ${title}</div>
+        <div style="font-size:12px;font-weight:700;color:${color};">${emoji} ${title} <span style="font-size:10px;font-weight:500;opacity:0.7;">${range}</span></div>
         ${count}
       </div>
-      <div style="padding:0 14px;">${rows}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px 12px;">${tiles}</div>
     </div>`;
   }
 
   const html=
-    catBlock('Heavy Walkers','🔥','var(--amber)','rgba(240,164,41,0.08)',heavy)+
-    catBlock('Consistent Walkers','💪','var(--accent)','rgba(0,196,204,0.08)',consistent)+
-    catBlock('Newbies','🌱','var(--green)','rgba(62,207,142,0.08)',newbie);
+    catBlock('Heavy Walkers','🔥','var(--amber)','rgba(249,115,22,0.08)','3L+ steps',heavy)+
+    catBlock('Consistent Walkers','💪','var(--accent)','rgba(59,130,246,0.08)','2L–3L steps',consistent)+
+    catBlock('Newbies','🌱','var(--green)','rgba(99,102,241,0.08)','1L–2L steps',newbie);
 
   document.getElementById('home-categories').innerHTML=html;
 }
