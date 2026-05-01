@@ -749,9 +749,9 @@
         const ADMIN_PW = 'vidial';
 
         const MONTHS = [];
-        // Generate Jan 2026 to last month (current month - 1)
+        // Generate Oct 2025 to last month (current month - 1)
         (function () {
-            const start = new Date(2026, 0, 1); // Jan 2026
+            const start = new Date(2025, 9, 1); // Oct 2025
             const now = new Date();
             const end = new Date(now.getFullYear(), now.getMonth() - 1, 1); // last month
             let d = new Date(start);
@@ -831,20 +831,20 @@
                     const avBg = g === 'F' ? 'rgba(168,85,247,0.15)' : 'rgba(0,196,204,0.12)';
                     const avC = g === 'F' ? 'var(--purple)' : 'var(--accent)';
                     return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
-            <div style="font-size:14px;width:22px;text-align:center;">${medals[i] || i + 1}</div>
-            <div style="width:28px;height:28px;border-radius:50%;background:${avBg};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${avC};flex-shrink:0;">${r.user_name.slice(0, 2).toUpperCase()}</div>
-            <div style="flex:1;font-size:13px;font-weight:600;color:var(--text);">${r.user_name}</div>
-            <div style="font-size:13px;font-weight:700;font-family:'DM Mono',monospace;color:${color};">${(r.steps / 100000).toFixed(1)}L</div>
-          </div>`;
+                <div style="font-size:14px;width:22px;text-align:center;">${medals[i] || i + 1}</div>
+                <div style="width:28px;height:28px;border-radius:50%;background:${avBg};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${avC};flex-shrink:0;">${r.user_name.slice(0, 2).toUpperCase()}</div>
+                <div style="flex:1;font-size:13px;font-weight:600;color:var(--text);">${r.user_name}</div>
+                <div style="font-size:13px;font-weight:700;font-family:'DM Mono',monospace;color:${color};">${(r.steps / 100000).toFixed(1)}L</div>
+              </div>`;
                 }).join('');
                 const count = arr.length > 2 ? `<span style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${arr.length} members</span>` : '';
                 return `<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:8px;">
-          <div style="padding:9px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-            <div style="font-size:12px;font-weight:700;color:${color};">${emoji} ${title}</div>
-            ${count}
-          </div>
-          <div style="padding:0 14px;">${rows}</div>
-        </div>`;
+              <div style="padding:9px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-size:12px;font-weight:700;color:${color};">${emoji} ${title}</div>
+                ${count}
+              </div>
+              <div style="padding:0 14px;">${rows}</div>
+            </div>`;
             }
 
             const html =
@@ -943,19 +943,19 @@
                     const sid = 'usr-inp-' + m;
                     const hasData = steps != null;
                     return `<div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;border:1px solid ${hasData ? 'rgba(0,196,204,0.2)' : 'var(--border)'};">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${hasData ? '10px' : '0'};">
-              <div>
-                <div style="font-size:14px;font-weight:700;color:var(--text);">${mLabel(m)}</div>
-                ${hasData ? `<div style="font-size:11px;color:var(--text3);margin-top:2px;">Rank <span style="color:var(--accent);font-weight:700;">#${rank}</span> of ${total} · <span style="color:var(--text2);">${steps.toLocaleString('en-IN')} steps</span></div>` : '<div style="font-size:11px;color:var(--text3);margin-top:2px;">No entry yet</div>'}
-              </div>
-              ${hasData ? `<div style="font-size:18px;font-weight:800;font-family:'DM Mono',monospace;color:var(--accent);">${(steps / 100000).toFixed(1)}L</div>` : ''}
-            </div>
-            <div style="display:flex;gap:6px;align-items:center;">
-              <input type="number" id="${sid}" value="${steps || ''}" placeholder="Enter steps…" inputmode="numeric"
-                style="flex:1;padding:8px 10px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;"/>
-              <button onclick="saveUserEntry('${m}','${sid}')" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">${hasData ? 'Update' : 'Save'}</button>
-            </div>
-          </div>`;
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${hasData ? '10px' : '0'};">
+                  <div>
+                    <div style="font-size:14px;font-weight:700;color:var(--text);">${mLabel(m)}</div>
+                    ${hasData ? `<div style="font-size:11px;color:var(--text3);margin-top:2px;">Rank <span style="color:var(--accent);font-weight:700;">#${rank}</span> of ${total} · <span style="color:var(--text2);">${steps.toLocaleString('en-IN')} steps</span></div>` : '<div style="font-size:11px;color:var(--text3);margin-top:2px;">No entry yet</div>'}
+                  </div>
+                  ${hasData ? `<div style="font-size:18px;font-weight:800;font-family:'DM Mono',monospace;color:var(--accent);">${(steps / 100000).toFixed(1)}L</div>` : ''}
+                </div>
+                <div style="display:flex;gap:6px;align-items:center;">
+                  <input type="number" id="${sid}" value="${steps || ''}" placeholder="Enter steps…" inputmode="numeric"
+                    style="flex:1;padding:8px 10px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;"/>
+                  <button onclick="saveUserEntry('${m}','${sid}')" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">${hasData ? 'Update' : 'Save'}</button>
+                </div>
+              </div>`;
                 }).join('');
             } catch (e) { el.innerHTML = '<div class="empty">Could not load data</div>'; }
         }
@@ -978,7 +978,7 @@
                 const total = all.reduce((s, r) => s + r.steps, 0);
                 document.getElementById('udash-total').textContent = total.toLocaleString('en-IN');
                 document.getElementById('udash-km').textContent = '≈ ' + (total / 1300).toLocaleString('en-IN', { maximumFractionDigits: 0 }) + ' km';
-                const availMonths = [...new Set(all.map(r => r.month))].filter(m => m >= '2026-01').sort();
+                const availMonths = [...new Set(all.map(r => r.month))].filter(m => m >= '2025-10').sort();
                 if (!uDashMonth || !availMonths.includes(uDashMonth)) uDashMonth = availMonths[availMonths.length - 1] || DEFAULT_MONTH;
                 document.getElementById('udash-month-grid').innerHTML = availMonths.map(m => {
                     const [y, mo] = m.split('-');
@@ -1020,20 +1020,20 @@
                     const medal = medals[actualRank - 1] || ('#' + actualRank);
                     const sep = r._sep ? `<div style="text-align:center;font-size:10px;color:var(--text3);padding:3px 0 1px;">• • •</div>` : '';
                     return sep + `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);${isMe ? 'background:rgba(0,196,204,0.06);margin:0 -14px;padding:8px 14px;' : ''}">
-            <div style="font-size:13px;font-weight:700;width:22px;text-align:center;">${medal}</div>
-            <div style="width:28px;height:28px;border-radius:50%;background:${isMe ? 'var(--accent-dim)' : avBg};border:${isMe ? '1.5px solid var(--accent)' : '1px solid transparent'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${isMe ? 'var(--accent)' : avC};flex-shrink:0;">${r.user_name.slice(0, 2).toUpperCase()}</div>
-            <div style="flex:1;font-size:12px;font-weight:600;color:var(--text);">${r.user_name}${isMe ? ' <span style="font-size:9px;color:var(--accent);background:var(--accent-dim);padding:1px 6px;border-radius:999px;margin-left:4px;">you</span>' : ''}</div>
-            <div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:${isMe ? 'var(--accent)' : color};">${(r.steps / 100000).toFixed(1)}L</div>
-          </div>`;
+                <div style="font-size:13px;font-weight:700;width:22px;text-align:center;">${medal}</div>
+                <div style="width:28px;height:28px;border-radius:50%;background:${isMe ? 'var(--accent-dim)' : avBg};border:${isMe ? '1.5px solid var(--accent)' : '1px solid transparent'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${isMe ? 'var(--accent)' : avC};flex-shrink:0;">${r.user_name.slice(0, 2).toUpperCase()}</div>
+                <div style="flex:1;font-size:12px;font-weight:600;color:var(--text);">${r.user_name}${isMe ? ' <span style="font-size:9px;color:var(--accent);background:var(--accent-dim);padding:1px 6px;border-radius:999px;margin-left:4px;">you</span>' : ''}</div>
+                <div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:${isMe ? 'var(--accent)' : color};">${(r.steps / 100000).toFixed(1)}L</div>
+              </div>`;
                 }).join('');
                 const highlighted = myIdx >= 0;
                 return `<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid ${highlighted ? 'rgba(0,196,204,0.25)' : 'var(--border)'};margin-bottom:10px;">
-          <div style="padding:9px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-            <div style="font-size:12px;font-weight:700;color:${color};">${emoji} ${title}${highlighted ? ' <span style="font-size:9px;color:var(--accent);background:var(--accent-dim);padding:1px 6px;border-radius:999px;margin-left:6px;">you\'re here!</span>' : ''}</div>
-            <div style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${arr.length} member${arr.length !== 1 ? 's' : ''}</div>
-          </div>
-          <div style="padding:0 14px;">${rows}</div>
-        </div>`;
+              <div style="padding:9px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-size:12px;font-weight:700;color:${color};">${emoji} ${title}${highlighted ? ' <span style="font-size:9px;color:var(--accent);background:var(--accent-dim);padding:1px 6px;border-radius:999px;margin-left:6px;">you\'re here!</span>' : ''}</div>
+                <div style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${arr.length} member${arr.length !== 1 ? 's' : ''}</div>
+              </div>
+              <div style="padding:0 14px;">${rows}</div>
+            </div>`;
             }
             document.getElementById('udash-categories').innerHTML =
                 catCard('Heavy Walkers', '🔥', 'var(--amber)', 'rgba(240,164,41,0.08)', heavy) +
@@ -1090,7 +1090,7 @@
                 document.getElementById('dash-km').textContent = '≈ ' + (total / 1300).toLocaleString('en-IN', { maximumFractionDigits: 0 }) + ' km';
 
                 // Build month filter from available months
-                const availMonths = [...new Set(all.map(r => r.month))].filter(m => m >= '2026-01').sort();
+                const availMonths = [...new Set(all.map(r => r.month))].filter(m => m >= '2025-10').sort();
                 if (!dashMonth || !availMonths.includes(dashMonth)) dashMonth = availMonths[availMonths.length - 1] || MONTHS[MONTHS.length - 1];
 
                 document.getElementById('dash-month-grid').innerHTML = availMonths.map(m => {
@@ -1129,19 +1129,19 @@
                 const top = members.slice(0, 3);
                 const medals = ['🥇', '🥈', '🥉'];
                 const rows = top.length ? top.map((r, i) => `
-          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
-            <div style="font-size:14px;width:22px;text-align:center;">${medals[i]}</div>
-            <div style="width:28px;height:28px;border-radius:50%;background:${dimColor};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${color};flex-shrink:0;">${r.user_name.slice(0, 2).toUpperCase()}</div>
-            <div style="flex:1;font-size:12px;font-weight:600;color:var(--text);">${r.user_name}</div>
-            <div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:${color};">${(r.steps / 100000).toFixed(1)}L</div>
-          </div>`).join('') : '<div class="empty" style="padding:12px;font-size:12px;">No members in this range</div>';
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
+                <div style="font-size:14px;width:22px;text-align:center;">${medals[i]}</div>
+                <div style="width:28px;height:28px;border-radius:50%;background:${dimColor};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${color};flex-shrink:0;">${r.user_name.slice(0, 2).toUpperCase()}</div>
+                <div style="flex:1;font-size:12px;font-weight:600;color:var(--text);">${r.user_name}</div>
+                <div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:${color};">${(r.steps / 100000).toFixed(1)}L</div>
+              </div>`).join('') : '<div class="empty" style="padding:12px;font-size:12px;">No members in this range</div>';
                 return `<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:10px;">
-          <div style="padding:10px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-            <div style="font-size:13px;font-weight:700;color:${color};">${emoji} ${title}</div>
-            <div style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${members.length} member${members.length !== 1 ? 's' : ''}</div>
-          </div>
-          <div style="padding:0 14px;">${rows}</div>
-        </div>`;
+              <div style="padding:10px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-size:13px;font-weight:700;color:${color};">${emoji} ${title}</div>
+                <div style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${members.length} member${members.length !== 1 ? 's' : ''}</div>
+              </div>
+              <div style="padding:0 14px;">${rows}</div>
+            </div>`;
             }
 
             document.getElementById('dash-categories').innerHTML =
@@ -1183,17 +1183,17 @@
                 const current = existing[m.name];
                 const sid = 'inp-' + m.name.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
                 return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-          <div style="width:34px;height:34px;border-radius:50%;background:${avBg};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${avC};flex-shrink:0;">${m.name.slice(0, 2).toUpperCase()}</div>
-          <div style="flex:1;min-width:0;">
-            <div style="font-size:13px;font-weight:600;color:var(--text);">${m.name}</div>
-            <div style="font-size:10px;color:var(--text3);">${g === 'F' ? '♀ Female' : '♂ Male'}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-            <input type="number" id="${sid}" value="${current || ''}" placeholder="—" inputmode="numeric"
-              style="width:96px;padding:7px 10px;background:var(--surface2);border:1.5px solid ${current ? 'rgba(62,207,142,0.4)' : 'var(--border)'};border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;text-align:right;"/>
-            <button onclick="saveOneEntry('${m.name}','${sid}')" style="padding:7px 12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">${current ? 'Update' : 'Save'}</button>
-          </div>
-        </div>`;
+              <div style="width:34px;height:34px;border-radius:50%;background:${avBg};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${avC};flex-shrink:0;">${m.name.slice(0, 2).toUpperCase()}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:13px;font-weight:600;color:var(--text);">${m.name}</div>
+                <div style="font-size:10px;color:var(--text3);">${g === 'F' ? '♀ Female' : '♂ Male'}</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                <input type="number" id="${sid}" value="${current || ''}" placeholder="—" inputmode="numeric"
+                  style="width:96px;padding:7px 10px;background:var(--surface2);border:1.5px solid ${current ? 'rgba(62,207,142,0.4)' : 'var(--border)'};border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;text-align:right;"/>
+                <button onclick="saveOneEntry('${m.name}','${sid}')" style="padding:7px 12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">${current ? 'Update' : 'Save'}</button>
+              </div>
+            </div>`;
             }).join('');
         }
 
@@ -1241,11 +1241,11 @@
             const el = document.getElementById('mem-list');
             if (!allMembers.length) { el.innerHTML = '<div class="empty">No members yet</div>'; return; }
             el.innerHTML = allMembers.map(m => `
-        <div class="mem-row">
-          <div style="width:28px;height:28px;border-radius:50%;background:${m.gender === 'F' ? 'var(--purple-dim)' : 'var(--accent-dim)'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${m.gender === 'F' ? 'var(--purple)' : 'var(--accent)'};flex-shrink:0;">${m.name.slice(0, 2).toUpperCase()}</div>
-          <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:var(--text);">${m.name}</div><div style="font-size:10px;color:var(--text3);">${m.gender === 'F' ? '♀ Female' : '♂ Male'}</div></div>
-          <button onclick="openEdit(${m.id},'${m.name.replace(/'/g, "\\'")}','${m.gender}')" style="padding:5px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-size:11px;cursor:pointer;flex-shrink:0;">Edit</button>
-        </div>`).join('');
+            <div class="mem-row">
+              <div style="width:28px;height:28px;border-radius:50%;background:${m.gender === 'F' ? 'var(--purple-dim)' : 'var(--accent-dim)'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${m.gender === 'F' ? 'var(--purple)' : 'var(--accent)'};flex-shrink:0;">${m.name.slice(0, 2).toUpperCase()}</div>
+              <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:var(--text);">${m.name}</div><div style="font-size:10px;color:var(--text3);">${m.gender === 'F' ? '♀ Female' : '♂ Male'}</div></div>
+              <button onclick="openEdit(${m.id},'${m.name.replace(/'/g, "\\'")}','${m.gender}')" style="padding:5px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-size:11px;cursor:pointer;flex-shrink:0;">Edit</button>
+            </div>`).join('');
         }
 
         function openEdit(id, name, gender) {
