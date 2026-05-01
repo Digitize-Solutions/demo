@@ -417,8 +417,8 @@ async function loadHistory(){
     if(!months.length){el.innerHTML='<div class="empty">No history yet</div>';return;}
     el.innerHTML=months.map(m=>{
       const e=byM[m];
-      const k=e.filter(r=>gMap[r.user_name]==='M').sort((a,b)=>b.steps-a.steps)[0];
-      const q=e.filter(r=>gMap[r.user_name]==='F').sort((a,b)=>b.steps-a.steps)[0];
+      const k=e.filter(r=>gMap[r.user_name]==='M'&&!ADMINS.includes(r.user_name)).sort((a,b)=>b.steps-a.steps)[0];
+      const q=e.filter(r=>gMap[r.user_name]==='F'&&!ADMINS.includes(r.user_name)).sort((a,b)=>b.steps-a.steps)[0];
       return `<div class="hist-row"><div class="hist-month">${mLabel(m)}</div><div class="hist-winners">${k?`🤴 ${k.user_name}`:''}${q?` · 👸 ${q.user_name}`:''}</div></div>`;
     }).join('');
   }catch(e){}
