@@ -1,835 +1,1284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Vidial Monthly King & Queen</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-:root{
-  --bg:#07111a;--surface:#0d1f26;--surface2:#142a33;--surface3:#1a3540;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
-  --text:#e0f4f8;--text2:#6bb8c8;--text3:#3d7a88;
-  --accent:#00c4cc;--accent-dim:rgba(0,196,204,0.15);
-  --green:#3ecf8e;--green-dim:rgba(62,207,142,0.15);
-  --amber:#f0a429;--amber-dim:rgba(240,164,41,0.12);
-  --red:#f05252;--red-dim:rgba(240,82,82,0.12);
-  --purple:#a855f7;--purple-dim:rgba(168,85,247,0.12);
-  --radius:16px;--radius-sm:10px;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);}
-#home-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px;overflow-y:auto;}
-.home-box{width:100%;max-width:400px;margin:0 auto;}
-.brand{text-align:center;margin-bottom:20px;}
-.brand-icon{font-size:48px;display:block;margin-bottom:8px;animation:bounce 2s infinite;}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.brand h1{font-size:22px;font-weight:600;letter-spacing:-0.5px;}
-.brand p{font-size:13px;color:var(--text2);margin-top:4px;}
-.crown-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-.crown-card{border-radius:var(--radius);padding:14px;text-align:center;border:1px solid rgba(255,255,255,0.06);}
-.crown-card.king{background:linear-gradient(135deg,rgba(240,164,41,0.1),rgba(240,164,41,0.04));border-color:rgba(240,164,41,0.25);}
-.crown-card.queen{background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(168,85,247,0.04));border-color:rgba(168,85,247,0.25);}
-.crown-icon{font-size:28px;margin-bottom:6px;}
-.crown-title{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;}
-.king .crown-title{color:var(--amber);}
-.queen .crown-title{color:var(--purple);}
-.crown-name{font-size:14px;font-weight:700;color:#fff;margin-bottom:2px;}
-.crown-steps{font-size:12px;font-family:'DM Mono',monospace;color:var(--text2);}
-.crown-month{font-size:10px;color:var(--text3);margin-top:2px;}
-.month-bar{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;border:1px solid var(--border);}
-.month-nav{background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:0 4px;}
-.month-label{font-size:14px;font-weight:600;color:var(--text);}
-.lb-card{background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;}
-.lb-hdr{padding:10px 14px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;}
-.lb-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);}
-.lb-row:last-child{border-bottom:none;}
-.lb-rank{font-size:13px;font-weight:700;width:22px;text-align:center;flex-shrink:0;}
-.lb-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
-.lb-info{flex:1;min-width:0;}
-.lb-name{font-size:13px;font-weight:600;color:var(--text);}
-.lb-gender{font-size:10px;color:var(--text3);}
-.lb-steps{font-size:14px;font-weight:700;font-family:'DM Mono',monospace;}
-.empty{text-align:center;padding:24px;color:var(--text3);font-size:13px;}
-.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-.action-btn{padding:12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;text-align:center;}
-.action-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
-.action-btn.adm{background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.2);color:var(--purple);}
-.hist-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
-.hist-row{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:6px;border:1px solid var(--border);}
-.hist-month{font-size:13px;font-weight:600;color:var(--text);}
-.hist-winners{font-size:12px;color:var(--text2);}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:50;align-items:flex-end;justify-content:center;}
-.modal.active{display:flex;}
-.modal-box{background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;padding:20px 20px 36px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;}
-.modal-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;}
-.modal-sub{font-size:12px;color:var(--text2);margin-bottom:16px;}
-.flabel{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;}
-.finput{width:100%;padding:12px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;}
-.finput:focus{border-color:var(--accent);}
-.name-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;max-height:180px;overflow-y:auto;}
-.name-btn{padding:9px 8px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;background:var(--surface2);border:1.5px solid var(--border);color:var(--text2);cursor:pointer;text-align:center;}
-.name-btn.selected{border-color:var(--accent);background:var(--accent-dim);color:var(--text);}
-.modal-btns{display:flex;gap:8px;margin-top:4px;}
-.modal-btn{flex:1;padding:13px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;border:none;}
-.modal-btn.cancel{background:none;border:1px solid var(--border2);color:var(--text2);}
-.modal-btn.submit{background:var(--accent);color:#fff;}
-.err{font-size:12px;color:var(--red);margin-bottom:8px;display:none;}
-.sec-div{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin:14px 0 8px;padding-top:14px;border-top:1px solid var(--border);}
-.gender-row{display:flex;gap:8px;margin-bottom:12px;}
-.gbtn{flex:1;padding:9px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;}
-.tab-row{display:flex;gap:6px;margin-bottom:16px;}
-.tab-btn{flex:1;padding:9px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;}
-.tab-btn.on{border-color:var(--accent);background:var(--accent-dim);color:var(--accent);}
-.mem-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);}
-.mem-row:last-child{border-bottom:none;}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;font-weight:500;opacity:0;transition:all 0.25s;pointer-events:none;z-index:200;white-space:nowrap;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>Vidial Steps King & Queen</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #080e18;
+            --surface: #0d1525;
+            --surface2: #111c30;
+            --surface3: #16243b;
+            --border: rgba(255,255,255,0.07);
+            --border2: rgba(255,255,255,0.13);
+            --text: #f0f8ff;
+            --text2: #7aafdd;
+            --text3: #3a6080;
+            --accent: #3b82f6;
+            --accent-dim: rgba(59,130,246,0.15);
+            --green: #f97316;
+            --green-dim: rgba(249,115,22,0.15);
+            --amber: #f97316;
+            --amber-dim: rgba(249,115,22,0.12);
+            --red: #f43f5e;
+            --red-dim: rgba(244,63,94,0.12);
+            --purple: #fb923c;
+            --purple-dim: rgba(251,146,60,0.15);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            background: var(--bg);
+            font-family: 'DM Sans',sans-serif;
+            color: var(--text);
+        }
+
+        #home-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .home-box {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .brand-icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 8px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%,100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-8px)
+            }
+        }
+
+        .brand h1 {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .brand p {
+            font-size: 13px;
+            color: var(--text2);
+            margin-top: 4px;
+        }
+
+        .crown-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .crown-card {
+            border-radius: var(--radius);
+            padding: 14px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+            .crown-card.king {
+                background: linear-gradient(135deg,rgba(240,164,41,0.1),rgba(240,164,41,0.04));
+                border-color: rgba(240,164,41,0.25);
+            }
+
+            .crown-card.queen {
+                background: linear-gradient(135deg,rgba(168,85,247,0.1),rgba(168,85,247,0.04));
+                border-color: rgba(168,85,247,0.25);
+            }
+
+        .crown-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .crown-title {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .king .crown-title {
+            color: var(--amber);
+        }
+
+        .queen .crown-title {
+            color: var(--purple);
+        }
+
+        .crown-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .crown-steps {
+            font-size: 12px;
+            font-family: 'DM Mono',monospace;
+            color: var(--text2);
+        }
+
+        .crown-month {
+            font-size: 10px;
+            color: var(--text3);
+            margin-top: 2px;
+        }
+
+        .month-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .month-nav {
+            background: none;
+            border: none;
+            color: var(--text2);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
+        .month-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .lb-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: 14px;
+        }
+
+        .lb-hdr {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .lb-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+            .lb-row:last-child {
+                border-bottom: none;
+            }
+
+        .lb-rank {
+            font-size: 13px;
+            font-weight: 700;
+            width: 22px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .lb-av {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .lb-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .lb-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .lb-gender {
+            font-size: 10px;
+            color: var(--text3);
+        }
+
+        .lb-steps {
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'DM Mono',monospace;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 24px;
+            color: var(--text3);
+            font-size: 13px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .action-btn {
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text2);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+        }
+
+            .action-btn.primary {
+                background: var(--accent);
+                border-color: var(--accent);
+                color: #fff;
+            }
+
+            .action-btn.adm {
+                background: rgba(168,85,247,0.1);
+                border-color: rgba(168,85,247,0.2);
+                color: var(--purple);
+            }
+
+        .hist-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
+
+        .hist-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .hist-month {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .hist-winners {
+            font-size: 12px;
+            color: var(--text2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 50;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+            .modal.active {
+                display: flex;
+            }
+
+        .modal-box {
+            background: var(--surface);
+            border-radius: var(--radius) var(--radius) 0 0;
+            padding: 20px 20px 36px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .modal-sub {
+            font-size: 12px;
+            color: var(--text2);
+            margin-bottom: 16px;
+        }
+
+        .flabel {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 5px;
+        }
+
+        .finput {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 14px;
+            font-family: 'DM Sans',sans-serif;
+            outline: none;
+            margin-bottom: 12px;
+        }
+
+            .finput:focus {
+                border-color: var(--accent);
+            }
+
+        .name-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 12px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .name-btn {
+            padding: 9px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            color: var(--text2);
+            cursor: pointer;
+            text-align: center;
+        }
+
+            .name-btn.selected {
+                border-color: var(--accent);
+                background: var(--accent-dim);
+                color: var(--text);
+            }
+
+        .modal-btns {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 13px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+            .modal-btn.cancel {
+                background: none;
+                border: 1px solid var(--border2);
+                color: var(--text2);
+            }
+
+            .modal-btn.submit {
+                background: var(--accent);
+                color: #fff;
+            }
+
+        .err {
+            font-size: 12px;
+            color: var(--red);
+            margin-bottom: 8px;
+            display: none;
+        }
+
+        .sec-div {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text3);
+            margin: 14px 0 8px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .gender-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .gbtn {
+            flex: 1;
+            padding: 9px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            background: var(--surface2);
+            color: var(--text2);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .tab-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 9px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            background: var(--surface2);
+            color: var(--text2);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+            .tab-btn.on {
+                border-color: var(--accent);
+                background: var(--accent-dim);
+                color: var(--accent);
+            }
+
+        .mem-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+            .mem-row:last-child {
+                border-bottom: none;
+            }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--text);
+            color: var(--bg);
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.25s;
+            pointer-events: none;
+            z-index: 200;
+            white-space: nowrap;
+        }
+
+            .toast.show {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+    </style>
 </head>
 <body>
-<div id="home-page">
-  <div class="home-box">
-    <div class="brand">
-      <span class="brand-icon">👑</span>
-      <h1>Monthly King & Queen</h1>
-      <p>Vidial Wellness · Highest steps wins the crown</p>
+    <div id="home-page">
+        <div class="home-box">
+            <div class="brand">
+                <span class="brand-icon">👑</span>
+                <h1>Steps King & Queen</h1>
+                <p>Vidial Wellness · Highest steps wins the crown</p>
+            </div>
+            <div class="crown-row">
+                <div class="crown-card king"><div class="crown-icon">🤴</div><div class="crown-title">King of Steps</div><div class="crown-name" id="king-name">—</div><div class="crown-steps" id="king-steps"></div><div class="crown-month" id="king-month"></div></div>
+                <div class="crown-card queen"><div class="crown-icon">👸</div><div class="crown-title">Queen of Steps</div><div class="crown-name" id="queen-name">—</div><div class="crown-steps" id="queen-steps"></div><div class="crown-month" id="queen-month"></div></div>
+            </div>
+            <div class="month-bar">
+                <button class="month-nav" onclick="changeMonth(-1)">‹</button>
+                <div class="month-label" id="month-label">—</div>
+                <button class="month-nav" onclick="changeMonth(1)">›</button>
+            </div>
+            <div id="home-categories" style="margin-bottom:14px;"></div>
+            <div class="action-grid">
+                <button class="action-btn primary" onclick="openEntryModal()">➕ Enter My Steps</button>
+                <button class="action-btn adm" onclick="openAdminModal()">🔐 Admin</button>
+            </div>
+            <div style="margin-bottom:60px;">
+                <div class="hist-title">👑 Hall of Fame</div>
+                <div id="history-list"><div class="empty">Loading...</div></div>
+            </div>
+        </div>
     </div>
-    <div class="crown-row">
-      <div class="crown-card king"><div class="crown-icon">🤴</div><div class="crown-title">King of Steps</div><div class="crown-name" id="king-name">—</div><div class="crown-steps" id="king-steps"></div><div class="crown-month" id="king-month"></div></div>
-      <div class="crown-card queen"><div class="crown-icon">👸</div><div class="crown-title">Queen of Steps</div><div class="crown-name" id="queen-name">—</div><div class="crown-steps" id="queen-steps"></div><div class="crown-month" id="queen-month"></div></div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- Name Picker Modal -->
+    <div class="modal" id="entry-modal">
+        <div class="modal-box">
+            <div class="modal-title">👤 Who are you?</div>
+            <div class="modal-sub">Select your name to continue</div>
+            <div class="flabel">Your Name</div>
+            <div class="name-grid" id="entry-name-grid"></div>
+            <div class="err" id="entry-err"></div>
+            <div class="modal-btns">
+                <button class="modal-btn cancel" onclick="closeModal('entry-modal')">Cancel</button>
+                <button class="modal-btn submit" onclick="goToUserPage()">Continue →</button>
+            </div>
+        </div>
     </div>
-    <div class="month-bar">
-      <button class="month-nav" onclick="changeMonth(-1)">‹</button>
-      <div class="month-label" id="month-label">—</div>
-      <button class="month-nav" onclick="changeMonth(1)">›</button>
+
+    <!-- User Full Screen Page -->
+    <div id="user-page" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:40;overflow:hidden;flex-direction:column;">
+        <!-- User Header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-dim);border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent);" id="user-av">—</div>
+                <div><div style="font-size:14px;font-weight:700;color:var(--text);" id="user-header-name">—</div><div style="font-size:11px;color:var(--text3);" id="user-header-sub">—</div></div>
+            </div>
+            <button onclick="exitUser()" style="padding:6px 14px;border-radius:999px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;cursor:pointer;">← Back</button>
+        </div>
+        <!-- User Tabs -->
+        <div style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;">
+            <button id="user-tab-mydata" onclick="switchUserTab('mydata')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;">📅 My Data</button>
+            <button id="user-tab-dash" onclick="switchUserTab('dash')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">📊 Dashboard</button>
+        </div>
+
+        <!-- MY DATA TAB -->
+        <div id="user-mydata" style="flex:1;overflow-y:auto;padding:16px 16px 32px;">
+            <div id="user-my-rows"><div class="empty">Loading...</div></div>
+        </div>
+
+        <!-- USER DASHBOARD TAB -->
+        <div id="user-dash" style="display:none;flex:1;overflow-y:auto;padding:16px 16px 32px;">
+            <div style="background:linear-gradient(135deg,rgba(0,196,204,0.1),rgba(62,207,142,0.05));border:1px solid rgba(0,196,204,0.2);border-radius:var(--radius);padding:16px;margin-bottom:14px;text-align:center;">
+                <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">👟 All Time Total Steps</div>
+                <div style="font-size:36px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;" id="udash-total">—</div>
+                <div style="font-size:12px;color:var(--text3);margin-top:4px;" id="udash-km">—</div>
+            </div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Filter by Month</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;" id="udash-month-grid"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+                <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
+                    <div style="font-size:28px;font-weight:800;color:var(--green);font-family:'DM Mono',monospace;" id="udash-active">—</div>
+                    <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px;">Active Members</div>
+                </div>
+                <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
+                    <div style="font-size:22px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;" id="udash-month-steps">—</div>
+                    <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px;">Steps This Month</div>
+                    <div style="font-size:10px;color:var(--text3);margin-top:2px;" id="udash-month-km"></div>
+                </div>
+            </div>
+            <div id="udash-categories"></div>
+        </div>
     </div>
-    <div id="home-categories" style="margin-bottom:14px;"></div>
-    <div class="action-grid">
-      <button class="action-btn primary" onclick="openEntryModal()">➕ Enter My Steps</button>
-      <button class="action-btn adm" onclick="openAdminModal()">🔐 Admin</button>
+
+    <!-- Admin Password Modal -->
+    <div class="modal" id="admin-modal">
+        <div class="modal-box">
+            <div class="modal-title">🔐 Admin Login</div>
+            <div class="modal-sub">Enter password to access admin panel</div>
+            <div class="flabel">Password</div>
+            <input type="password" class="finput" id="admin-pwd" placeholder="Admin password" />
+            <div class="err" id="admin-err">Incorrect password</div>
+            <div class="modal-btns">
+                <button class="modal-btn cancel" onclick="closeModal('admin-modal')">Cancel</button>
+                <button class="modal-btn submit" onclick="verifyAdmin()">Enter Admin</button>
+            </div>
+        </div>
     </div>
-    <div style="margin-bottom:60px;">
-      <div class="hist-title">👑 Hall of Fame</div>
-      <div id="history-list"><div class="empty">Loading...</div></div>
+
+    <!-- Admin Full Screen Page -->
+    <div id="admin-page" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:40;overflow:hidden;flex-direction:column;">
+        <!-- Admin Header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:32px;height:32px;border-radius:50%;background:rgba(168,85,247,0.15);border:1.5px solid var(--purple);display:flex;align-items:center;justify-content:center;font-size:14px;">🔐</div>
+                <div><div style="font-size:14px;font-weight:700;color:var(--text);">Admin Panel</div><div style="font-size:11px;color:var(--text3);">Steps King & Queen</div></div>
+            </div>
+            <button onclick="exitAdmin()" style="padding:6px 14px;border-radius:999px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;cursor:pointer;">Exit</button>
+        </div>
+        <!-- Admin Tabs -->
+        <div style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;">
+            <button class="adm-tab active" id="adm-tab-dash" onclick="switchAdmTab('dash')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;">📊 Dashboard</button>
+            <button class="adm-tab" id="adm-tab-entry" onclick="switchAdmTab('entry')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">📋 Steps</button>
+            <button class="adm-tab" id="adm-tab-members" onclick="switchAdmTab('members')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">👥 Members</button>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div id="adm-dash" style="flex:1;overflow-y:auto;padding:16px 16px 32px;">
+            <!-- Overall total -->
+            <div style="background:linear-gradient(135deg,rgba(0,196,204,0.1),rgba(62,207,142,0.05));border:1px solid rgba(0,196,204,0.2);border-radius:var(--radius);padding:16px;margin-bottom:14px;text-align:center;">
+                <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">👟 All Time Total Steps</div>
+                <div style="font-size:36px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;" id="dash-total">—</div>
+                <div style="font-size:12px;color:var(--text3);margin-top:4px;" id="dash-km">—</div>
+            </div>
+            <!-- Month filter -->
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Filter by Month</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;" id="dash-month-grid"></div>
+            <!-- Stats row -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+                <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
+                    <div style="font-size:28px;font-weight:800;color:var(--green);font-family:'DM Mono',monospace;" id="dash-active">—</div>
+                    <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px;">Active Members</div>
+                </div>
+                <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
+                    <div style="font-size:22px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;" id="dash-month-steps">—</div>
+                    <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px;">Steps This Month</div>
+                    <div style="font-size:10px;color:var(--text3);margin-top:2px;" id="dash-month-km"></div>
+                </div>
+            </div>
+            <!-- Categories -->
+            <div id="dash-categories"></div>
+        </div>
+
+        <!-- ENTRY TAB -->
+        <div id="adm-entry" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+            <!-- Month selector -->
+            <div style="padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Select Month</div>
+                <div style="display:flex;gap:5px;flex-wrap:wrap;" id="a-month-grid"></div>
+            </div>
+            <!-- Member list with inline step entry -->
+            <div style="flex:1;overflow-y:auto;padding:8px 16px 24px;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin:8px 0 10px;">Members — tap to enter/update steps</div>
+                <div id="a-member-list"></div>
+            </div>
+        </div>
+
+        <!-- MEMBERS TAB -->
+        <div id="adm-members" style="display:none;flex:1;overflow-y:auto;padding:16px;">
+            <!-- Add new -->
+            <div style="background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:14px;border:1px solid var(--border);">
+                <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;">➕ Add New Member</div>
+                <div class="flabel">Full Name</div>
+                <input type="text" class="finput" id="new-name" placeholder="e.g. Ramesh Kumar" />
+                <div class="flabel">Gender</div>
+                <div class="gender-row">
+                    <button class="gbtn" id="gm-btn" onclick="setGender('new','M')">♂ Male</button>
+                    <button class="gbtn" id="gf-btn" onclick="setGender('new','F')">♀ Female</button>
+                </div>
+                <div class="err" id="add-err"></div>
+                <button onclick="addMember()" style="width:100%;padding:11px;background:var(--green);color:#0a1f15;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;">✓ Add Member</button>
+            </div>
+            <!-- Existing members -->
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px;">✏️ Edit Existing Members</div>
+            <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);">
+                <div id="mem-list"><div class="empty">Loading...</div></div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<div class="toast" id="toast"></div>
-
-<!-- Name Picker Modal -->
-<div class="modal" id="entry-modal">
-  <div class="modal-box">
-    <div class="modal-title">👤 Who are you?</div>
-    <div class="modal-sub">Select your name to continue</div>
-    <div class="flabel">Your Name</div>
-    <div class="name-grid" id="entry-name-grid"></div>
-    <div class="err" id="entry-err"></div>
-    <div class="modal-btns">
-      <button class="modal-btn cancel" onclick="closeModal('entry-modal')">Cancel</button>
-      <button class="modal-btn submit" onclick="goToUserPage()">Continue →</button>
+    <!-- Edit Member Modal -->
+    <div class="modal" id="edit-modal">
+        <div class="modal-box">
+            <div class="modal-title">✏️ Edit Member</div>
+            <div class="modal-sub" id="edit-sub"></div>
+            <div class="flabel">Name</div>
+            <input type="text" class="finput" id="edit-name" />
+            <div class="flabel">Gender</div>
+            <div class="gender-row">
+                <button class="gbtn" id="egm-btn" onclick="setGender('edit','M')">♂ Male</button>
+                <button class="gbtn" id="egf-btn" onclick="setGender('edit','F')">♀ Female</button>
+            </div>
+            <div class="err" id="edit-err"></div>
+            <div class="modal-btns">
+                <button class="modal-btn cancel" onclick="closeModal('edit-modal')">Cancel</button>
+                <button class="modal-btn submit" onclick="saveEdit()">Save Changes</button>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- User Full Screen Page -->
-<div id="user-page" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:40;overflow:hidden;flex-direction:column;">
-  <!-- User Header -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-dim);border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent);" id="user-av">—</div>
-      <div><div style="font-size:14px;font-weight:700;color:var(--text);" id="user-header-name">—</div><div style="font-size:11px;color:var(--text3);" id="user-header-sub">—</div></div>
-    </div>
-    <button onclick="exitUser()" style="padding:6px 14px;border-radius:999px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;cursor:pointer;">← Back</button>
-  </div>
-  <!-- User Tabs -->
-  <div style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;">
-    <button id="user-tab-mydata" onclick="switchUserTab('mydata')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;">📅 My Data</button>
-    <button id="user-tab-dash" onclick="switchUserTab('dash')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">📊 Dashboard</button>
-  </div>
+    <script>const SB_URL = 'https://osunxzedvlpcmaplntub.supabase.co';
+        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdW54emVkdmxwY21hcGxudHViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDE5MzAsImV4cCI6MjA5MDcxNzkzMH0.VgfNj_0LUfeTlT-07pSpf5lJk7uFQVuBW4VpE_PihAg';
+        const ADMIN_PW = 'vidial';
 
-  <!-- MY DATA TAB -->
-  <div id="user-mydata" style="flex:1;overflow-y:auto;padding:16px 16px 32px;">
-    <div id="user-my-rows"><div class="empty">Loading...</div></div>
-  </div>
+        const MONTHS = [];
+        // Generate Jan 2026 to last month (current month - 1)
+        (function () {
+            const start = new Date(2026, 0, 1); // Jan 2026
+            const now = new Date();
+            const end = new Date(now.getFullYear(), now.getMonth() - 1, 1); // last month
+            let d = new Date(start);
+            while (d <= end) {
+                MONTHS.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'));
+                d.setMonth(d.getMonth() + 1);
+            }
+        })();
 
-  <!-- USER DASHBOARD TAB -->
-  <div id="user-dash" style="display:none;flex:1;overflow-y:auto;padding:16px 16px 32px;">
-    <div style="background:linear-gradient(135deg,rgba(0,196,204,0.1),rgba(62,207,142,0.05));border:1px solid rgba(0,196,204,0.2);border-radius:var(--radius);padding:16px;margin-bottom:14px;text-align:center;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">👟 All Time Total Steps</div>
-      <div style="font-size:36px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;" id="udash-total">—</div>
-      <div style="font-size:12px;color:var(--text3);margin-top:4px;" id="udash-km">—</div>
-    </div>
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Filter by Month</div>
-    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;" id="udash-month-grid"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
-      <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
-        <div style="font-size:28px;font-weight:800;color:var(--green);font-family:'DM Mono',monospace;" id="udash-active">—</div>
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px;">Active Members</div>
-      </div>
-      <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
-        <div style="font-size:22px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;" id="udash-month-steps">—</div>
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px;">Steps This Month</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:2px;" id="udash-month-km"></div>
-      </div>
-    </div>
-    <div id="udash-categories"></div>
-  </div>
-</div>
+        // Default = last month
+        const DEFAULT_MONTH = MONTHS[MONTHS.length - 1] || '2026-04';
 
-<!-- Admin Password Modal -->
-<div class="modal" id="admin-modal">
-  <div class="modal-box">
-    <div class="modal-title">🔐 Admin Login</div>
-    <div class="modal-sub">Enter password to access admin panel</div>
-    <div class="flabel">Password</div>
-    <input type="password" class="finput" id="admin-pwd" placeholder="Admin password"/>
-    <div class="err" id="admin-err">Incorrect password</div>
-    <div class="modal-btns">
-      <button class="modal-btn cancel" onclick="closeModal('admin-modal')">Cancel</button>
-      <button class="modal-btn submit" onclick="verifyAdmin()">Enter Admin</button>
-    </div>
-  </div>
-</div>
+        let curMonth = DEFAULT_MONTH || '2026-04';
+        let allMembers = []; let gMap = {};
+        let selEntry = null, selAdmin = null, selAdminMonth = DEFAULT_MONTH;
+        let newG = null, editG = null, editId = null;
 
-<!-- Admin Full Screen Page -->
-<div id="admin-page" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:40;overflow:hidden;flex-direction:column;">
-  <!-- Admin Header -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div style="width:32px;height:32px;border-radius:50%;background:rgba(168,85,247,0.15);border:1.5px solid var(--purple);display:flex;align-items:center;justify-content:center;font-size:14px;">🔐</div>
-      <div><div style="font-size:14px;font-weight:700;color:var(--text);">Admin Panel</div><div style="font-size:11px;color:var(--text3);">Monthly King & Queen</div></div>
-    </div>
-    <button onclick="exitAdmin()" style="padding:6px 14px;border-radius:999px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;cursor:pointer;">Exit</button>
-  </div>
-  <!-- Admin Tabs -->
-  <div style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;">
-    <button class="adm-tab active" id="adm-tab-dash" onclick="switchAdmTab('dash')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;">📊 Dashboard</button>
-    <button class="adm-tab" id="adm-tab-entry" onclick="switchAdmTab('entry')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">📋 Steps</button>
-    <button class="adm-tab" id="adm-tab-members" onclick="switchAdmTab('members')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">👥 Members</button>
-  </div>
+        async function sb(method, path, body) {
+            const r = await fetch(`${SB_URL}/rest/v1/${path}`, { method, headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=representation' : '' }, body: body ? JSON.stringify(body) : undefined });
+            if (!r.ok) throw new Error(`${r.status}: ${await r.text()}`);
+            const t = await r.text(); return t ? JSON.parse(t) : [];
+        }
 
-  <!-- DASHBOARD TAB -->
-  <div id="adm-dash" style="flex:1;overflow-y:auto;padding:16px 16px 32px;">
-    <!-- Overall total -->
-    <div style="background:linear-gradient(135deg,rgba(0,196,204,0.1),rgba(62,207,142,0.05));border:1px solid rgba(0,196,204,0.2);border-radius:var(--radius);padding:16px;margin-bottom:14px;text-align:center;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">👟 All Time Total Steps</div>
-      <div style="font-size:36px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;" id="dash-total">—</div>
-      <div style="font-size:12px;color:var(--text3);margin-top:4px;" id="dash-km">—</div>
-    </div>
-    <!-- Month filter -->
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Filter by Month</div>
-    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;" id="dash-month-grid"></div>
-    <!-- Stats row -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
-      <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
-        <div style="font-size:28px;font-weight:800;color:var(--green);font-family:'DM Mono',monospace;" id="dash-active">—</div>
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px;">Active Members</div>
-      </div>
-      <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
-        <div style="font-size:22px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;" id="dash-month-steps">—</div>
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px;">Steps This Month</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:2px;" id="dash-month-km"></div>
-      </div>
-    </div>
-    <!-- Categories -->
-    <div id="dash-categories"></div>
-  </div>
+        function mLabel(m) { if (!m) return ''; const [y, mo] = m.split('-'); return new Date(y, mo - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }); }
 
-  <!-- ENTRY TAB -->
-  <div id="adm-entry" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
-    <!-- Month selector -->
-    <div style="padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Select Month</div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap;" id="a-month-grid"></div>
-    </div>
-    <!-- Member list with inline step entry -->
-    <div style="flex:1;overflow-y:auto;padding:8px 16px 24px;">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin:8px 0 10px;">Members — tap to enter/update steps</div>
-      <div id="a-member-list"></div>
-    </div>
-  </div>
+        function changeMonth(dir) {
+            const idx = MONTHS.indexOf(curMonth);
+            const newIdx = idx + dir;
+            if (newIdx < 0 || newIdx >= MONTHS.length) return;
+            curMonth = MONTHS[newIdx];
+            document.getElementById('month-label').textContent = mLabel(curMonth);
+            loadLB();
+        }
 
-  <!-- MEMBERS TAB -->
-  <div id="adm-members" style="display:none;flex:1;overflow-y:auto;padding:16px;">
-    <!-- Add new -->
-    <div style="background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:14px;border:1px solid var(--border);">
-      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;">➕ Add New Member</div>
-      <div class="flabel">Full Name</div>
-      <input type="text" class="finput" id="new-name" placeholder="e.g. Ramesh Kumar"/>
-      <div class="flabel">Gender</div>
-      <div class="gender-row">
-        <button class="gbtn" id="gm-btn" onclick="setGender('new','M')">♂ Male</button>
-        <button class="gbtn" id="gf-btn" onclick="setGender('new','F')">♀ Female</button>
-      </div>
-      <div class="err" id="add-err"></div>
-      <button onclick="addMember()" style="width:100%;padding:11px;background:var(--green);color:#0a1f15;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;">✓ Add Member</button>
-    </div>
-    <!-- Existing members -->
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px;">✏️ Edit Existing Members</div>
-    <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);">
-      <div id="mem-list"><div class="empty">Loading...</div></div>
-    </div>
-  </div>
-</div>
+        async function loadMembers() {
+            try { const d = await sb('GET', 'vidial_members?select=*&order=name.asc'); allMembers = d; gMap = {}; d.forEach(m => gMap[m.name] = m.gender); }
+            catch (e) { console.error(e); }
+        }
 
-<!-- Edit Member Modal -->
-<div class="modal" id="edit-modal">
-  <div class="modal-box">
-    <div class="modal-title">✏️ Edit Member</div>
-    <div class="modal-sub" id="edit-sub"></div>
-    <div class="flabel">Name</div>
-    <input type="text" class="finput" id="edit-name"/>
-    <div class="flabel">Gender</div>
-    <div class="gender-row">
-      <button class="gbtn" id="egm-btn" onclick="setGender('edit','M')">♂ Male</button>
-      <button class="gbtn" id="egf-btn" onclick="setGender('edit','F')">♀ Female</button>
-    </div>
-    <div class="err" id="edit-err"></div>
-    <div class="modal-btns">
-      <button class="modal-btn cancel" onclick="closeModal('edit-modal')">Cancel</button>
-      <button class="modal-btn submit" onclick="saveEdit()">Save Changes</button>
-    </div>
-  </div>
-</div>
+        async function loadLB() {
+            document.getElementById('month-label').textContent = mLabel(curMonth);
+            try {
+                const data = await sb('GET', `monthly_steps?month=eq.${curMonth}&select=*&order=steps.desc`);
+                if (!data.length) {
+                    ['king-name', 'queen-name'].forEach(id => document.getElementById(id).textContent = '—');
+                    ['king-steps', 'queen-steps', 'king-month', 'queen-month'].forEach(id => document.getElementById(id).textContent = '');
+                    document.getElementById('home-categories').innerHTML = '<div class="empty" style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">No entries yet for this month</div>';
+                    return;
+                }
+                let kd = false, qd = false, king = null, queen = null;
+                data.forEach(row => {
+                    const g = gMap[row.user_name] || 'M';
+                    if (g === 'M' && !kd) { kd = true; king = row; }
+                    if (g === 'F' && !qd) { qd = true; queen = row; }
+                });
+                document.getElementById('king-name').textContent = king ? king.user_name : '—';
+                document.getElementById('king-steps').textContent = king ? king.steps.toLocaleString('en-IN') + ' steps' : '';
+                document.getElementById('king-month').textContent = king ? mLabel(curMonth) : '';
+                document.getElementById('queen-name').textContent = queen ? queen.user_name : '—';
+                document.getElementById('queen-steps').textContent = queen ? queen.steps.toLocaleString('en-IN') + ' steps' : '';
+                document.getElementById('queen-month').textContent = queen ? mLabel(curMonth) : '';
+                renderHomeCategories(data);
+            } catch (e) { document.getElementById('leaderboard').innerHTML = '<div class="empty">Could not load data</div>'; }
+        }
 
-<script>
-const SB_URL='https://osunxzedvlpcmaplntub.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdW54emVkdmxwY21hcGxudHViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDE5MzAsImV4cCI6MjA5MDcxNzkzMH0.VgfNj_0LUfeTlT-07pSpf5lJk7uFQVuBW4VpE_PihAg';
-const ADMIN_PW='vidial';
+        function renderHomeCategories(data) {
+            const heavy = data.filter(r => r.steps >= 300000).sort((a, b) => b.steps - a.steps);
+            const consistent = data.filter(r => r.steps >= 200000 && r.steps < 300000).sort((a, b) => b.steps - a.steps);
+            const newbie = data.filter(r => r.steps >= 100000 && r.steps < 200000).sort((a, b) => b.steps - a.steps);
 
-const MONTHS=[];
-// Generate Jan 2026 to last month (current month - 1)
-(function(){
-  const start=new Date(2026,0,1); // Jan 2026
-  const now=new Date();
-  const end=new Date(now.getFullYear(),now.getMonth()-1,1); // last month
-  let d=new Date(start);
-  while(d<=end){
-    MONTHS.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
-    d.setMonth(d.getMonth()+1);
-  }
-})();
-
-// Default = last month
-const DEFAULT_MONTH=MONTHS[MONTHS.length-1]||'2026-04';
-
-let curMonth=DEFAULT_MONTH||'2026-04';
-let allMembers=[];let gMap={};
-let selEntry=null,selAdmin=null,selAdminMonth=DEFAULT_MONTH;
-let newG=null,editG=null,editId=null;
-
-async function sb(method,path,body){
-  const r=await fetch(`${SB_URL}/rest/v1/${path}`,{method,headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':'application/json','Cache-Control':'no-cache','Prefer':method==='POST'?'resolution=merge-duplicates,return=representation':''},body:body?JSON.stringify(body):undefined});
-  if(!r.ok)throw new Error(`${r.status}: ${await r.text()}`);
-  const t=await r.text();return t?JSON.parse(t):[];
-}
-
-function mLabel(m){if(!m)return '';const[y,mo]=m.split('-');return new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'long',year:'numeric'});}
-
-function changeMonth(dir){
-  const idx=MONTHS.indexOf(curMonth);
-  const newIdx=idx+dir;
-  if(newIdx<0||newIdx>=MONTHS.length)return;
-  curMonth=MONTHS[newIdx];
-  document.getElementById('month-label').textContent=mLabel(curMonth);
-  loadLB();
-}
-
-async function loadMembers(){
-  try{const d=await sb('GET','vidial_members?select=*&order=name.asc');allMembers=d;gMap={};d.forEach(m=>gMap[m.name]=m.gender);}
-  catch(e){console.error(e);}
-}
-
-async function loadLB(){
-  document.getElementById('month-label').textContent=mLabel(curMonth);
-  try{
-    const data=await sb('GET',`monthly_steps?month=eq.${curMonth}&select=*&order=steps.desc`);
-    if(!data.length){
-      ['king-name','queen-name'].forEach(id=>document.getElementById(id).textContent='—');
-      ['king-steps','queen-steps','king-month','queen-month'].forEach(id=>document.getElementById(id).textContent='');
-      document.getElementById('home-categories').innerHTML='<div class="empty" style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">No entries yet for this month</div>';
-      return;
-    }
-    let kd=false,qd=false,king=null,queen=null;
-    data.forEach(row=>{
-      const g=gMap[row.user_name]||'M';
-      if(g==='M'&&!kd){kd=true;king=row;}
-      if(g==='F'&&!qd){qd=true;queen=row;}
-    });
-    document.getElementById('king-name').textContent=king?king.user_name:'—';
-    document.getElementById('king-steps').textContent=king?king.steps.toLocaleString('en-IN')+' steps':'';
-    document.getElementById('king-month').textContent=king?mLabel(curMonth):'';
-    document.getElementById('queen-name').textContent=queen?queen.user_name:'—';
-    document.getElementById('queen-steps').textContent=queen?queen.steps.toLocaleString('en-IN')+' steps':'';
-    document.getElementById('queen-month').textContent=queen?mLabel(curMonth):'';
-    renderHomeCategories(data);
-  }catch(e){document.getElementById('leaderboard').innerHTML='<div class="empty">Could not load data</div>';}
-}
-
-function renderHomeCategories(data){
-  const heavy=data.filter(r=>r.steps>=300000).sort((a,b)=>b.steps-a.steps);
-  const consistent=data.filter(r=>r.steps>=200000&&r.steps<300000).sort((a,b)=>b.steps-a.steps);
-  const newbie=data.filter(r=>r.steps>=100000&&r.steps<200000).sort((a,b)=>b.steps-a.steps);
-
-  function catBlock(title,emoji,color,dimColor,arr){
-    if(!arr.length)return '';
-    const top=arr.slice(0,2);
-    const medals=['🥇','🥈'];
-    const rows=top.map((r,i)=>{
-      const g=gMap[r.user_name]||'M';
-      const avBg=g==='F'?'rgba(168,85,247,0.15)':'rgba(0,196,204,0.12)';
-      const avC=g==='F'?'var(--purple)':'var(--accent)';
-      return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
-        <div style="font-size:14px;width:22px;text-align:center;">${medals[i]||i+1}</div>
-        <div style="width:28px;height:28px;border-radius:50%;background:${avBg};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${avC};flex-shrink:0;">${r.user_name.slice(0,2).toUpperCase()}</div>
-        <div style="flex:1;font-size:13px;font-weight:600;color:var(--text);">${r.user_name}</div>
-        <div style="font-size:13px;font-weight:700;font-family:'DM Mono',monospace;color:${color};">${(r.steps/100000).toFixed(1)}L</div>
-      </div>`;
-    }).join('');
-    const count=arr.length>2?`<span style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${arr.length} members</span>`:'';
-    return `<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:8px;">
-      <div style="padding:9px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-        <div style="font-size:12px;font-weight:700;color:${color};">${emoji} ${title}</div>
-        ${count}
-      </div>
-      <div style="padding:0 14px;">${rows}</div>
-    </div>`;
-  }
-
-  const html=
-    catBlock('Heavy Walkers','🔥','var(--amber)','rgba(240,164,41,0.08)',heavy)+
-    catBlock('Consistent Walkers','💪','var(--accent)','rgba(0,196,204,0.08)',consistent)+
-    catBlock('Newbies','🌱','var(--green)','rgba(62,207,142,0.08)',newbie);
-
-  document.getElementById('home-categories').innerHTML=html;
-}
-
-async function loadHistory(){
-  try{
-    const data=await sb('GET','monthly_steps?select=month,user_name,steps&order=month.desc');
-    const byM={};data.forEach(r=>{if(!byM[r.month])byM[r.month]=[];byM[r.month].push(r);});
-    const el=document.getElementById('history-list');
-    const months=Object.keys(byM).sort().reverse();
-    if(!months.length){el.innerHTML='<div class="empty">No history yet</div>';return;}
-    el.innerHTML=months.map(m=>{
-      const e=byM[m];
-      const k=e.filter(r=>gMap[r.user_name]==='M').sort((a,b)=>b.steps-a.steps)[0];
-      const q=e.filter(r=>gMap[r.user_name]==='F').sort((a,b)=>b.steps-a.steps)[0];
-      return `<div class="hist-row"><div class="hist-month">${mLabel(m)}</div><div class="hist-winners">${k?`🤴 ${k.user_name}`:''}${q?` · 👸 ${q.user_name}`:''}</div></div>`;
-    }).join('');
-  }catch(e){}
-}
-
-function buildGrid(cid,onSel,cur=null){
-  const el=document.getElementById(cid);if(!el)return;
-  el.innerHTML=[...allMembers].map(m=>`<button class="name-btn${cur===m.name?' selected':''}" onclick="(${onSel.toString()})('${m.name.replace(/'/g,"\\'")}',this)">${m.name}</button>`).join('');
-}
-
-function openEntryModal(){
-  selEntry=null;
-  document.getElementById('entry-err').style.display='none';
-  buildGrid('entry-name-grid',function(name,btn){
-    selEntry=name;
-    document.querySelectorAll('#entry-name-grid .name-btn').forEach(b=>b.classList.remove('selected'));
-    btn.classList.add('selected');
-  });
-  document.getElementById('entry-modal').classList.add('active');
-}
-
-function goToUserPage(){
-  const err=document.getElementById('entry-err');
-  if(!selEntry){err.textContent='Please select your name';err.style.display='block';return;}
-  closeModal('entry-modal');
-  const g=gMap[selEntry]||'M';
-  document.getElementById('user-av').textContent=selEntry.slice(0,2).toUpperCase();
-  document.getElementById('user-av').style.background=g==='F'?'rgba(168,85,247,0.15)':'var(--accent-dim)';
-  document.getElementById('user-av').style.borderColor=g==='F'?'var(--purple)':'var(--accent)';
-  document.getElementById('user-av').style.color=g==='F'?'var(--purple)':'var(--accent)';
-  document.getElementById('user-header-name').textContent=selEntry;
-  document.getElementById('user-header-sub').textContent=g==='F'?'♀ Female':'♂ Male';
-  const up=document.getElementById('user-page');up.style.display='flex';
-  switchUserTab('mydata');
-}
-
-function exitUser(){
-  document.getElementById('user-page').style.display='none';
-  loadLB();loadHistory();
-}
-
-function switchUserTab(tab){
-  document.getElementById('user-mydata').style.display=tab==='mydata'?'block':'none';
-  document.getElementById('user-dash').style.display=tab==='dash'?'block':'none';
-  const mt=document.getElementById('user-tab-mydata'),dt=document.getElementById('user-tab-dash');
-  mt.style.borderBottomColor=tab==='mydata'?'var(--accent)':'transparent';
-  mt.style.color=tab==='mydata'?'var(--accent)':'var(--text2)';
-  dt.style.borderBottomColor=tab==='dash'?'var(--accent)':'transparent';
-  dt.style.color=tab==='dash'?'var(--accent)':'var(--text2)';
-  if(tab==='mydata') loadUserMyData();
-  else loadUserDash();
-}
-
-async function loadUserMyData(){
-  const el=document.getElementById('user-my-rows');
-  el.innerHTML='<div class="empty">Loading...</div>';
-  try{
-    // Get user's entries
-    const myData=await sb('GET',`monthly_steps?user_name=eq.${encodeURIComponent(selEntry)}&select=month,steps&order=month.desc`);
-    // Get all data to compute ranks
-    const allData=await sb('GET','monthly_steps?select=user_name,month,steps');
-
-    if(!myData.length){el.innerHTML='<div class="empty">No entries yet — use the form below to add your steps!</div>';
-      // Show empty rows for all MONTHS
-    }
-
-    const myByMonth={};myData.forEach(r=>myByMonth[r.month]=r.steps);
-
-    el.innerHTML=[...MONTHS].reverse().map(m=>{
-      const steps=myByMonth[m];
-      const monthAll=allData.filter(r=>r.month===m).sort((a,b)=>b.steps-a.steps);
-      const rank=steps?monthAll.findIndex(r=>r.user_name===selEntry)+1:null;
-      const total=monthAll.length;
-      const sid='usr-inp-'+m;
-      const hasData=steps!=null;
-      return `<div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;border:1px solid ${hasData?'rgba(0,196,204,0.2)':'var(--border)'};">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${hasData?'10px':'0'};">
-          <div>
-            <div style="font-size:14px;font-weight:700;color:var(--text);">${mLabel(m)}</div>
-            ${hasData?`<div style="font-size:11px;color:var(--text3);margin-top:2px;">Rank <span style="color:var(--accent);font-weight:700;">#${rank}</span> of ${total} · <span style="color:var(--text2);">${steps.toLocaleString('en-IN')} steps</span></div>`:'<div style="font-size:11px;color:var(--text3);margin-top:2px;">No entry yet</div>'}
+            function catBlock(title, emoji, color, dimColor, arr) {
+                if (!arr.length) return '';
+                const top = arr.slice(0, 2);
+                const medals = ['🥇', '🥈'];
+                const rows = top.map((r, i) => {
+                    const g = gMap[r.user_name] || 'M';
+                    const avBg = g === 'F' ? 'rgba(168,85,247,0.15)' : 'rgba(0,196,204,0.12)';
+                    const avC = g === 'F' ? 'var(--purple)' : 'var(--accent)';
+                    return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
+            <div style="font-size:14px;width:22px;text-align:center;">${medals[i] || i + 1}</div>
+            <div style="width:28px;height:28px;border-radius:50%;background:${avBg};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${avC};flex-shrink:0;">${r.user_name.slice(0, 2).toUpperCase()}</div>
+            <div style="flex:1;font-size:13px;font-weight:600;color:var(--text);">${r.user_name}</div>
+            <div style="font-size:13px;font-weight:700;font-family:'DM Mono',monospace;color:${color};">${(r.steps / 100000).toFixed(1)}L</div>
+          </div>`;
+                }).join('');
+                const count = arr.length > 2 ? `<span style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${arr.length} members</span>` : '';
+                return `<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:8px;">
+          <div style="padding:9px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:12px;font-weight:700;color:${color};">${emoji} ${title}</div>
+            ${count}
           </div>
-          ${hasData?`<div style="font-size:18px;font-weight:800;font-family:'DM Mono',monospace;color:var(--accent);">${(steps/100000).toFixed(1)}L</div>`:''}
-        </div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <input type="number" id="${sid}" value="${steps||''}" placeholder="Enter steps…" inputmode="numeric"
-            style="flex:1;padding:8px 10px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;"/>
-          <button onclick="saveUserEntry('${m}','${sid}')" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">${hasData?'Update':'Save'}</button>
-        </div>
-      </div>`;
-    }).join('');
-  }catch(e){el.innerHTML='<div class="empty">Could not load data</div>';}
-}
+          <div style="padding:0 14px;">${rows}</div>
+        </div>`;
+            }
 
-async function saveUserEntry(month,sid){
-  const el=document.getElementById(sid);
-  const steps=parseInt(el?.value);
-  if(!steps||steps<1){showToast('Enter valid steps');return;}
-  try{
-    await sb('POST',`monthly_steps?on_conflict=user_name,month`,{user_name:selEntry,month,steps});
-    showToast(`Saved! ${steps.toLocaleString('en-IN')} steps for ${mLabel(month)} ✓`);
-    loadUserMyData();loadLB();loadHistory();
-  }catch(e){showToast('Save failed: '+e.message.slice(0,40));}
-}
+            const html =
+                catBlock('Heavy Walkers', '🔥', 'var(--amber)', 'rgba(240,164,41,0.08)', heavy) +
+                catBlock('Consistent Walkers', '💪', 'var(--accent)', 'rgba(0,196,204,0.08)', consistent) +
+                catBlock('Newbies', '🌱', 'var(--green)', 'rgba(62,207,142,0.08)', newbie);
 
-let uDashMonth=null;
-async function loadUserDash(){
-  try{
-    const all=await sb('GET','monthly_steps?select=user_name,month,steps');
-    const total=all.reduce((s,r)=>s+r.steps,0);
-    document.getElementById('udash-total').textContent=total.toLocaleString('en-IN');
-    document.getElementById('udash-km').textContent='≈ '+(total/1300).toLocaleString('en-IN',{maximumFractionDigits:0})+' km';
-    const availMonths=[...new Set(all.map(r=>r.month))].filter(m=>m>='2026-01').sort();
-    if(!uDashMonth||!availMonths.includes(uDashMonth))uDashMonth=availMonths[availMonths.length-1]||DEFAULT_MONTH;
-    document.getElementById('udash-month-grid').innerHTML=availMonths.map(m=>{
-      const[y,mo]=m.split('-');
-      const lbl=new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
-      const sel=uDashMonth===m;
-      return `<button onclick="pickUDashMonth('${m}',this)" style="padding:5px 10px;border-radius:var(--radius-sm);border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'var(--accent-dim)':'var(--surface2)'};color:${sel?'var(--accent)':'var(--text2)'};font-size:11px;font-weight:600;cursor:pointer;">${lbl}</button>`;
-    }).join('');
-    renderUDashMonth(all);
-  }catch(e){}
-}
-function pickUDashMonth(m,btn){
-  uDashMonth=m;
-  document.querySelectorAll('#udash-month-grid button').forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--surface2)';b.style.color='var(--text2)';});
-  btn.style.borderColor='var(--accent)';btn.style.background='var(--accent-dim)';btn.style.color='var(--accent)';
-  sb('GET','monthly_steps?select=user_name,month,steps').then(all=>renderUDashMonth(all)).catch(()=>{});
-}
-function renderUDashMonth(all){
-  const mData=all.filter(r=>r.month===uDashMonth);
-  document.getElementById('udash-active').textContent=mData.length;
-  const mTotal=mData.reduce((s,r)=>s+r.steps,0);
-  document.getElementById('udash-month-steps').textContent=mTotal.toLocaleString('en-IN');
-  document.getElementById('udash-month-km').textContent='≈ '+(mTotal/1300).toLocaleString('en-IN',{maximumFractionDigits:0})+' km';
-  const heavy=mData.filter(r=>r.steps>=300000).sort((a,b)=>b.steps-a.steps);
-  const consistent=mData.filter(r=>r.steps>=200000&&r.steps<300000).sort((a,b)=>b.steps-a.steps);
-  const newbie=mData.filter(r=>r.steps>=100000&&r.steps<200000).sort((a,b)=>b.steps-a.steps);
-  function catCard(title,emoji,color,dimColor,arr){
-    if(!arr.length)return'';
-    const medals=['🥇','🥈','🥉'];
-    const myIdx=arr.findIndex(r=>r.user_name===selEntry);
-    const top3=arr.slice(0,3);
-    // If user is in this category but outside top 3, append them with separator
-    const showRows=myIdx>=3?[...top3,{...arr[myIdx],_sep:true,_rank:myIdx+1}]:top3;
-    const rows=showRows.map((r,i)=>{
-      const actualRank=r._rank||i+1;
-      const g=gMap[r.user_name]||'M';
-      const avBg=g==='F'?'rgba(168,85,247,0.15)':'rgba(0,196,204,0.12)';
-      const avC=g==='F'?'var(--purple)':'var(--accent)';
-      const isMe=r.user_name===selEntry;
-      const medal=medals[actualRank-1]||('#'+actualRank);
-      const sep=r._sep?`<div style="text-align:center;font-size:10px;color:var(--text3);padding:3px 0 1px;">• • •</div>`:'';
-      return sep+`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);${isMe?'background:rgba(0,196,204,0.06);margin:0 -14px;padding:8px 14px;':''}">
-        <div style="font-size:13px;font-weight:700;width:22px;text-align:center;">${medal}</div>
-        <div style="width:28px;height:28px;border-radius:50%;background:${isMe?'var(--accent-dim)':avBg};border:${isMe?'1.5px solid var(--accent)':'1px solid transparent'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${isMe?'var(--accent)':avC};flex-shrink:0;">${r.user_name.slice(0,2).toUpperCase()}</div>
-        <div style="flex:1;font-size:12px;font-weight:600;color:var(--text);">${r.user_name}${isMe?' <span style="font-size:9px;color:var(--accent);background:var(--accent-dim);padding:1px 6px;border-radius:999px;margin-left:4px;">you</span>':''}</div>
-        <div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:${isMe?'var(--accent)':color};">${(r.steps/100000).toFixed(1)}L</div>
-      </div>`;
-    }).join('');
-    const highlighted=myIdx>=0;
-    return `<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid ${highlighted?'rgba(0,196,204,0.25)':'var(--border)'};margin-bottom:10px;">
-      <div style="padding:9px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-        <div style="font-size:12px;font-weight:700;color:${color};">${emoji} ${title}${highlighted?' <span style="font-size:9px;color:var(--accent);background:var(--accent-dim);padding:1px 6px;border-radius:999px;margin-left:6px;">you\'re here!</span>':''}</div>
-        <div style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${arr.length} member${arr.length!==1?'s':''}</div>
-      </div>
-      <div style="padding:0 14px;">${rows}</div>
-    </div>`;
-  }
-  document.getElementById('udash-categories').innerHTML=
-    catCard('Heavy Walkers','🔥','var(--amber)','rgba(240,164,41,0.08)',heavy)+
-    catCard('Consistent Walkers','💪','var(--accent)','rgba(0,196,204,0.08)',consistent)+
-    catCard('Newbies','🌱','var(--green)','rgba(62,207,142,0.08)',newbie);
-}
+            document.getElementById('home-categories').innerHTML = html;
+        }
 
-function openAdminModal(){
-  document.getElementById('admin-pwd').value='';
-  document.getElementById('admin-err').style.display='none';
-  document.getElementById('admin-modal').classList.add('active');
-}
-function verifyAdmin(){
-  if(document.getElementById('admin-pwd').value!==ADMIN_PW){document.getElementById('admin-err').style.display='block';return;}
-  closeModal('admin-modal');
-  const ap=document.getElementById('admin-page');
-  ap.style.display='flex';
-  selAdminMonth=curMonth;
-  switchAdmTab('dash');
-}
-function exitAdmin(){
-  document.getElementById('admin-page').style.display='none';
-  loadLB();loadHistory();
-}
-function switchAdmTab(tab){
-  const tabs=['dash','entry','members'];
-  tabs.forEach(t=>{
-    const panel=document.getElementById('adm-'+t);
-    if(panel)panel.style.display='none';
-    const btn=document.getElementById('adm-tab-'+t);
-    if(btn){btn.style.borderBottomColor='transparent';btn.style.color='var(--text2)';}
-  });
-  const activePanel=document.getElementById('adm-'+tab);
-  if(activePanel)activePanel.style.display=tab==='entry'?'flex':'block';
-  const activeBtn=document.getElementById('adm-tab-'+tab);
-  if(activeBtn){activeBtn.style.borderBottomColor='var(--accent)';activeBtn.style.color='var(--accent)';}
+        async function loadHistory() {
+            try {
+                const data = await sb('GET', 'monthly_steps?select=month,user_name,steps&order=month.desc');
+                const byM = {}; data.forEach(r => { if (!byM[r.month]) byM[r.month] = []; byM[r.month].push(r); });
+                const el = document.getElementById('history-list');
+                const months = Object.keys(byM).sort().reverse().slice(0, 4);
+                if (!months.length) { el.innerHTML = '<div class="empty">No history yet</div>'; return; }
+                el.innerHTML = months.map(m => {
+                    const e = byM[m];
+                    const k = e.filter(r => gMap[r.user_name] === 'M').sort((a, b) => b.steps - a.steps)[0];
+                    const q = e.filter(r => gMap[r.user_name] === 'F').sort((a, b) => b.steps - a.steps)[0];
+                    return `<div class="hist-row"><div class="hist-month">${mLabel(m)}</div><div class="hist-winners">${k ? `🤴 ${k.user_name}` : ''}${q ? ` · 👸 ${q.user_name}` : ''}</div></div>`;
+                }).join('');
+            } catch (e) { }
+        }
 
-  if(tab==='dash'){loadDashboard();}
-  else if(tab==='entry'){buildMonthGrid();renderAdminMemberList();}
-  else{
-    document.getElementById('new-name').value='';newG=null;resetG('new');
-    document.getElementById('add-err').style.display='none';renderMemList();
-  }
-}
+        function buildGrid(cid, onSel, cur = null) {
+            const el = document.getElementById(cid); if (!el) return;
+            el.innerHTML = [...allMembers].map(m => `<button class="name-btn${cur === m.name ? ' selected' : ''}" onclick="(${onSel.toString()})('${m.name.replace(/'/g, "\\'")}',this)">${m.name}</button>`).join('');
+        }
 
-let dashMonth=null;
+        function openEntryModal() {
+            selEntry = null;
+            document.getElementById('entry-err').style.display = 'none';
+            buildGrid('entry-name-grid', function (name, btn) {
+                selEntry = name;
+                document.querySelectorAll('#entry-name-grid .name-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+            });
+            document.getElementById('entry-modal').classList.add('active');
+        }
 
-async function loadDashboard(){
-  // Load all steps
-  try{
-    const all=await sb('GET','monthly_steps?select=user_name,month,steps');
-    const total=all.reduce((s,r)=>s+r.steps,0);
-    document.getElementById('dash-total').textContent=total.toLocaleString('en-IN');
-    document.getElementById('dash-km').textContent='≈ '+(total/1300).toLocaleString('en-IN',{maximumFractionDigits:0})+' km';
+        function goToUserPage() {
+            const err = document.getElementById('entry-err');
+            if (!selEntry) { err.textContent = 'Please select your name'; err.style.display = 'block'; return; }
+            closeModal('entry-modal');
+            const g = gMap[selEntry] || 'M';
+            document.getElementById('user-av').textContent = selEntry.slice(0, 2).toUpperCase();
+            document.getElementById('user-av').style.background = g === 'F' ? 'rgba(168,85,247,0.15)' : 'var(--accent-dim)';
+            document.getElementById('user-av').style.borderColor = g === 'F' ? 'var(--purple)' : 'var(--accent)';
+            document.getElementById('user-av').style.color = g === 'F' ? 'var(--purple)' : 'var(--accent)';
+            document.getElementById('user-header-name').textContent = selEntry;
+            document.getElementById('user-header-sub').textContent = g === 'F' ? '♀ Female' : '♂ Male';
+            const up = document.getElementById('user-page'); up.style.display = 'flex';
+            switchUserTab('mydata');
+        }
 
-    // Build month filter from available months
-    const availMonths=[...new Set(all.map(r=>r.month))].filter(m=>m>='2026-01').sort();
-    if(!dashMonth||!availMonths.includes(dashMonth))dashMonth=availMonths[availMonths.length-1]||MONTHS[MONTHS.length-1];
+        function exitUser() {
+            document.getElementById('user-page').style.display = 'none';
+            loadLB(); loadHistory();
+        }
 
-    document.getElementById('dash-month-grid').innerHTML=availMonths.map(m=>{
-      const[y,mo]=m.split('-');
-      const lbl=new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
-      const sel=dashMonth===m;
-      return `<button onclick="pickDashMonth('${m}',this)" style="padding:5px 10px;border-radius:var(--radius-sm);border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'var(--accent-dim)':'var(--surface2)'};color:${sel?'var(--accent)':'var(--text2)'};font-size:11px;font-weight:600;cursor:pointer;">${lbl}</button>`;
-    }).join('');
+        function switchUserTab(tab) {
+            document.getElementById('user-mydata').style.display = tab === 'mydata' ? 'block' : 'none';
+            document.getElementById('user-dash').style.display = tab === 'dash' ? 'block' : 'none';
+            const mt = document.getElementById('user-tab-mydata'), dt = document.getElementById('user-tab-dash');
+            mt.style.borderBottomColor = tab === 'mydata' ? 'var(--accent)' : 'transparent';
+            mt.style.color = tab === 'mydata' ? 'var(--accent)' : 'var(--text2)';
+            dt.style.borderBottomColor = tab === 'dash' ? 'var(--accent)' : 'transparent';
+            dt.style.color = tab === 'dash' ? 'var(--accent)' : 'var(--text2)';
+            if (tab === 'mydata') loadUserMyData();
+            else loadUserDash();
+        }
 
-    renderDashMonth(all);
-  }catch(e){console.error(e);}
-}
+        async function loadUserMyData() {
+            const el = document.getElementById('user-my-rows');
+            el.innerHTML = '<div class="empty">Loading...</div>';
+            try {
+                // Get user's entries
+                const myData = await sb('GET', `monthly_steps?user_name=eq.${encodeURIComponent(selEntry)}&select=month,steps&order=month.desc`);
+                // Get all data to compute ranks
+                const allData = await sb('GET', 'monthly_steps?select=user_name,month,steps');
 
-function pickDashMonth(m,btn){
-  dashMonth=m;
-  document.querySelectorAll('#dash-month-grid button').forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--surface2)';b.style.color='var(--text2)';});
-  btn.style.borderColor='var(--accent)';btn.style.background='var(--accent-dim)';btn.style.color='var(--accent)';
-  sb('GET','monthly_steps?select=user_name,month,steps').then(all=>renderDashMonth(all)).catch(()=>{});
-}
+                if (!myData.length) {
+                    el.innerHTML = '<div class="empty">No entries yet — use the form below to add your steps!</div>';
+                    // Show empty rows for all MONTHS
+                }
 
-function renderDashMonth(all){
-  const mData=all.filter(r=>r.month===dashMonth);
-  const active=mData.length;
-  const mTotal=mData.reduce((s,r)=>s+r.steps,0);
-  document.getElementById('dash-active').textContent=active;
-  document.getElementById('dash-month-steps').textContent=mTotal.toLocaleString('en-IN');
-  document.getElementById('dash-month-km').textContent='≈ '+(mTotal/1300).toLocaleString('en-IN',{maximumFractionDigits:0})+' km';
+                const myByMonth = {}; myData.forEach(r => myByMonth[r.month] = r.steps);
 
-  // Categorise
-  const heavy=mData.filter(r=>r.steps>=300000).sort((a,b)=>b.steps-a.steps);
-  const consistent=mData.filter(r=>r.steps>=200000&&r.steps<300000).sort((a,b)=>b.steps-a.steps);
-  const newbie=mData.filter(r=>r.steps>=100000&&r.steps<200000).sort((a,b)=>b.steps-a.steps);
+                el.innerHTML = [...MONTHS].reverse().map(m => {
+                    const steps = myByMonth[m];
+                    const monthAll = allData.filter(r => r.month === m).sort((a, b) => b.steps - a.steps);
+                    const rank = steps ? monthAll.findIndex(r => r.user_name === selEntry) + 1 : null;
+                    const total = monthAll.length;
+                    const sid = 'usr-inp-' + m;
+                    const hasData = steps != null;
+                    return `<div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;border:1px solid ${hasData ? 'rgba(0,196,204,0.2)' : 'var(--border)'};">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${hasData ? '10px' : '0'};">
+              <div>
+                <div style="font-size:14px;font-weight:700;color:var(--text);">${mLabel(m)}</div>
+                ${hasData ? `<div style="font-size:11px;color:var(--text3);margin-top:2px;">Rank <span style="color:var(--accent);font-weight:700;">#${rank}</span> of ${total} · <span style="color:var(--text2);">${steps.toLocaleString('en-IN')} steps</span></div>` : '<div style="font-size:11px;color:var(--text3);margin-top:2px;">No entry yet</div>'}
+              </div>
+              ${hasData ? `<div style="font-size:18px;font-weight:800;font-family:'DM Mono',monospace;color:var(--accent);">${(steps / 100000).toFixed(1)}L</div>` : ''}
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <input type="number" id="${sid}" value="${steps || ''}" placeholder="Enter steps…" inputmode="numeric"
+                style="flex:1;padding:8px 10px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;"/>
+              <button onclick="saveUserEntry('${m}','${sid}')" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">${hasData ? 'Update' : 'Save'}</button>
+            </div>
+          </div>`;
+                }).join('');
+            } catch (e) { el.innerHTML = '<div class="empty">Could not load data</div>'; }
+        }
 
-  function catCard(title,emoji,color,dimColor,arr){
-    const members=arr;
-    const top=members.slice(0,3);
-    const medals=['🥇','🥈','🥉'];
-    const rows=top.length?top.map((r,i)=>`
-      <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
-        <div style="font-size:14px;width:22px;text-align:center;">${medals[i]}</div>
-        <div style="width:28px;height:28px;border-radius:50%;background:${dimColor};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${color};flex-shrink:0;">${r.user_name.slice(0,2).toUpperCase()}</div>
-        <div style="flex:1;font-size:12px;font-weight:600;color:var(--text);">${r.user_name}</div>
-        <div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:${color};">${(r.steps/100000).toFixed(1)}L</div>
-      </div>`).join(''):'<div class="empty" style="padding:12px;font-size:12px;">No members in this range</div>';
-    return `<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:10px;">
-      <div style="padding:10px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-        <div style="font-size:13px;font-weight:700;color:${color};">${emoji} ${title}</div>
-        <div style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${members.length} member${members.length!==1?'s':''}</div>
-      </div>
-      <div style="padding:0 14px;">${rows}</div>
-    </div>`;
-  }
+        async function saveUserEntry(month, sid) {
+            const el = document.getElementById(sid);
+            const steps = parseInt(el?.value);
+            if (!steps || steps < 1) { showToast('Enter valid steps'); return; }
+            try {
+                await sb('POST', `monthly_steps?on_conflict=user_name,month`, { user_name: selEntry, month, steps });
+                showToast(`Saved! ${steps.toLocaleString('en-IN')} steps for ${mLabel(month)} ✓`);
+                loadUserMyData(); loadLB(); loadHistory();
+            } catch (e) { showToast('Save failed: ' + e.message.slice(0, 40)); }
+        }
 
-  document.getElementById('dash-categories').innerHTML=
-    catCard('Heavy Walkers','🔥','var(--amber)','rgba(240,164,41,0.08)',heavy)+
-    catCard('Consistent Walkers','💪','var(--accent)','rgba(0,196,204,0.08)',consistent)+
-    catCard('Newbies','🌱','var(--green)','rgba(62,207,142,0.08)',newbie);
-}
+        let uDashMonth = null;
+        async function loadUserDash() {
+            try {
+                const all = await sb('GET', 'monthly_steps?select=user_name,month,steps');
+                const total = all.reduce((s, r) => s + r.steps, 0);
+                document.getElementById('udash-total').textContent = total.toLocaleString('en-IN');
+                document.getElementById('udash-km').textContent = '≈ ' + (total / 1300).toLocaleString('en-IN', { maximumFractionDigits: 0 }) + ' km';
+                const availMonths = [...new Set(all.map(r => r.month))].filter(m => m >= '2026-01').sort();
+                if (!uDashMonth || !availMonths.includes(uDashMonth)) uDashMonth = availMonths[availMonths.length - 1] || DEFAULT_MONTH;
+                document.getElementById('udash-month-grid').innerHTML = availMonths.map(m => {
+                    const [y, mo] = m.split('-');
+                    const lbl = new Date(y, mo - 1, 1).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
+                    const sel = uDashMonth === m;
+                    return `<button onclick="pickUDashMonth('${m}',this)" style="padding:5px 10px;border-radius:var(--radius-sm);border:1.5px solid ${sel ? 'var(--accent)' : 'var(--border)'};background:${sel ? 'var(--accent-dim)' : 'var(--surface2)'};color:${sel ? 'var(--accent)' : 'var(--text2)'};font-size:11px;font-weight:600;cursor:pointer;">${lbl}</button>`;
+                }).join('');
+                renderUDashMonth(all);
+            } catch (e) { }
+        }
+        function pickUDashMonth(m, btn) {
+            uDashMonth = m;
+            document.querySelectorAll('#udash-month-grid button').forEach(b => { b.style.borderColor = 'var(--border)'; b.style.background = 'var(--surface2)'; b.style.color = 'var(--text2)'; });
+            btn.style.borderColor = 'var(--accent)'; btn.style.background = 'var(--accent-dim)'; btn.style.color = 'var(--accent)';
+            sb('GET', 'monthly_steps?select=user_name,month,steps').then(all => renderUDashMonth(all)).catch(() => { });
+        }
+        function renderUDashMonth(all) {
+            const mData = all.filter(r => r.month === uDashMonth);
+            document.getElementById('udash-active').textContent = mData.length;
+            const mTotal = mData.reduce((s, r) => s + r.steps, 0);
+            document.getElementById('udash-month-steps').textContent = mTotal.toLocaleString('en-IN');
+            document.getElementById('udash-month-km').textContent = '≈ ' + (mTotal / 1300).toLocaleString('en-IN', { maximumFractionDigits: 0 }) + ' km';
+            const heavy = mData.filter(r => r.steps >= 300000).sort((a, b) => b.steps - a.steps);
+            const consistent = mData.filter(r => r.steps >= 200000 && r.steps < 300000).sort((a, b) => b.steps - a.steps);
+            const newbie = mData.filter(r => r.steps >= 100000 && r.steps < 200000).sort((a, b) => b.steps - a.steps);
+            function catCard(title, emoji, color, dimColor, arr) {
+                if (!arr.length) return '';
+                const medals = ['🥇', '🥈', '🥉'];
+                const myIdx = arr.findIndex(r => r.user_name === selEntry);
+                const top3 = arr.slice(0, 3);
+                // If user is in this category but outside top 3, append them with separator
+                const showRows = myIdx >= 3 ? [...top3, { ...arr[myIdx], _sep: true, _rank: myIdx + 1 }] : top3;
+                const rows = showRows.map((r, i) => {
+                    const actualRank = r._rank || i + 1;
+                    const g = gMap[r.user_name] || 'M';
+                    const avBg = g === 'F' ? 'rgba(168,85,247,0.15)' : 'rgba(0,196,204,0.12)';
+                    const avC = g === 'F' ? 'var(--purple)' : 'var(--accent)';
+                    const isMe = r.user_name === selEntry;
+                    const medal = medals[actualRank - 1] || ('#' + actualRank);
+                    const sep = r._sep ? `<div style="text-align:center;font-size:10px;color:var(--text3);padding:3px 0 1px;">• • •</div>` : '';
+                    return sep + `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);${isMe ? 'background:rgba(0,196,204,0.06);margin:0 -14px;padding:8px 14px;' : ''}">
+            <div style="font-size:13px;font-weight:700;width:22px;text-align:center;">${medal}</div>
+            <div style="width:28px;height:28px;border-radius:50%;background:${isMe ? 'var(--accent-dim)' : avBg};border:${isMe ? '1.5px solid var(--accent)' : '1px solid transparent'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${isMe ? 'var(--accent)' : avC};flex-shrink:0;">${r.user_name.slice(0, 2).toUpperCase()}</div>
+            <div style="flex:1;font-size:12px;font-weight:600;color:var(--text);">${r.user_name}${isMe ? ' <span style="font-size:9px;color:var(--accent);background:var(--accent-dim);padding:1px 6px;border-radius:999px;margin-left:4px;">you</span>' : ''}</div>
+            <div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:${isMe ? 'var(--accent)' : color};">${(r.steps / 100000).toFixed(1)}L</div>
+          </div>`;
+                }).join('');
+                const highlighted = myIdx >= 0;
+                return `<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid ${highlighted ? 'rgba(0,196,204,0.25)' : 'var(--border)'};margin-bottom:10px;">
+          <div style="padding:9px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:12px;font-weight:700;color:${color};">${emoji} ${title}${highlighted ? ' <span style="font-size:9px;color:var(--accent);background:var(--accent-dim);padding:1px 6px;border-radius:999px;margin-left:6px;">you\'re here!</span>' : ''}</div>
+            <div style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${arr.length} member${arr.length !== 1 ? 's' : ''}</div>
+          </div>
+          <div style="padding:0 14px;">${rows}</div>
+        </div>`;
+            }
+            document.getElementById('udash-categories').innerHTML =
+                catCard('Heavy Walkers', '🔥', 'var(--amber)', 'rgba(240,164,41,0.08)', heavy) +
+                catCard('Consistent Walkers', '💪', 'var(--accent)', 'rgba(0,196,204,0.08)', consistent) +
+                catCard('Newbies', '🌱', 'var(--green)', 'rgba(62,207,142,0.08)', newbie);
+        }
 
-function buildMonthGrid(){
-  selAdminMonth=selAdminMonth||curMonth;
-  document.getElementById('a-month-grid').innerHTML=MONTHS.map(m=>{
-    const[y,mo]=m.split('-');
-    const lbl=new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
-    const sel=selAdminMonth===m;
-    return `<button onclick="pickAdmMonth('${m}',this)" style="padding:5px 10px;border-radius:var(--radius-sm);border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'var(--accent-dim)':'var(--surface2)'};color:${sel?'var(--accent)':'var(--text2)'};font-size:11px;font-weight:600;cursor:pointer;">${lbl}</button>`;
-  }).join('');
-}
-async function pickAdmMonth(m,btn){
-  selAdminMonth=m;
-  document.querySelectorAll('#a-month-grid button').forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--surface2)';b.style.color='var(--text2)';});
-  btn.style.borderColor='var(--accent)';btn.style.background='var(--accent-dim)';btn.style.color='var(--accent)';
-  await renderAdminMemberList();
-}
+        function openAdminModal() {
+            document.getElementById('admin-pwd').value = '';
+            document.getElementById('admin-err').style.display = 'none';
+            document.getElementById('admin-modal').classList.add('active');
+        }
+        function verifyAdmin() {
+            if (document.getElementById('admin-pwd').value !== ADMIN_PW) { document.getElementById('admin-err').style.display = 'block'; return; }
+            closeModal('admin-modal');
+            const ap = document.getElementById('admin-page');
+            ap.style.display = 'flex';
+            selAdminMonth = curMonth;
+            switchAdmTab('dash');
+        }
+        function exitAdmin() {
+            document.getElementById('admin-page').style.display = 'none';
+            loadLB(); loadHistory();
+        }
+        function switchAdmTab(tab) {
+            const tabs = ['dash', 'entry', 'members'];
+            tabs.forEach(t => {
+                const panel = document.getElementById('adm-' + t);
+                if (panel) panel.style.display = 'none';
+                const btn = document.getElementById('adm-tab-' + t);
+                if (btn) { btn.style.borderBottomColor = 'transparent'; btn.style.color = 'var(--text2)'; }
+            });
+            const activePanel = document.getElementById('adm-' + tab);
+            if (activePanel) activePanel.style.display = tab === 'entry' ? 'flex' : 'block';
+            const activeBtn = document.getElementById('adm-tab-' + tab);
+            if (activeBtn) { activeBtn.style.borderBottomColor = 'var(--accent)'; activeBtn.style.color = 'var(--accent)'; }
 
-async function renderAdminMemberList(){
-  const el=document.getElementById('a-member-list');
-  el.innerHTML='<div class="empty">Loading...</div>';
-  // Load existing entries for this month
-  let existing={};
-  try{
-    const data=await sb('GET',`monthly_steps?month=eq.${selAdminMonth}&select=user_name,steps`);
-    data.forEach(r=>existing[r.user_name]=r.steps);
-  }catch(e){}
-  if(!allMembers.length){el.innerHTML='<div class="empty">No members found</div>';return;}
-  el.innerHTML=allMembers.map(m=>{
-    const g=m.gender;
-    const avBg=g==='F'?'rgba(168,85,247,0.15)':'rgba(0,196,204,0.12)';
-    const avC=g==='F'?'var(--purple)':'var(--accent)';
-    const current=existing[m.name];
-    const sid='inp-'+m.name.replace(/\s+/g,'-').replace(/[^a-zA-Z0-9-]/g,'');
-    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-      <div style="width:34px;height:34px;border-radius:50%;background:${avBg};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${avC};flex-shrink:0;">${m.name.slice(0,2).toUpperCase()}</div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:600;color:var(--text);">${m.name}</div>
-        <div style="font-size:10px;color:var(--text3);">${g==='F'?'♀ Female':'♂ Male'}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-        <input type="number" id="${sid}" value="${current||''}" placeholder="—" inputmode="numeric"
-          style="width:96px;padding:7px 10px;background:var(--surface2);border:1.5px solid ${current?'rgba(62,207,142,0.4)':'var(--border)'};border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;text-align:right;"/>
-        <button onclick="saveOneEntry('${m.name}','${sid}')" style="padding:7px 12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">${current?'Update':'Save'}</button>
-      </div>
-    </div>`;
-  }).join('');
-}
+            if (tab === 'dash') { loadDashboard(); }
+            else if (tab === 'entry') { buildMonthGrid(); renderAdminMemberList(); }
+            else {
+                document.getElementById('new-name').value = ''; newG = null; resetG('new');
+                document.getElementById('add-err').style.display = 'none'; renderMemList();
+            }
+        }
 
-async function saveOneEntry(name,sid){
-  const el=document.getElementById(sid);
-  const steps=parseInt(el?.value);
-  if(!steps||steps<1){showToast('Enter valid steps for '+name);return;}
-  try{
-    await sb('POST',`monthly_steps?on_conflict=user_name,month`,{user_name:name,month:selAdminMonth,steps});
-    el.style.borderColor='rgba(62,207,142,0.4)';
-    el.nextElementSibling.textContent='Update';
-    showToast(`${name} — ${steps.toLocaleString('en-IN')} steps saved ✓`);
-    loadLB();loadHistory();
-  }catch(e){showToast('Save failed: '+e.message.slice(0,40));}
-}
+        let dashMonth = null;
 
-function resetG(prefix){
-  const m=prefix==='new'?'gm-btn':'egm-btn',f=prefix==='new'?'gf-btn':'egf-btn';
-  [m,f].forEach(id=>{const el=document.getElementById(id);if(el){el.style.borderColor='var(--border)';el.style.background='var(--surface2)';el.style.color='var(--text2)';}});
-}
-function setGender(prefix,g){
-  if(prefix==='new')newG=g;else editG=g;
-  resetG(prefix);
-  const mid=prefix==='new'?'gm-btn':'egm-btn',fid=prefix==='new'?'gf-btn':'egf-btn';
-  if(g==='M'){const el=document.getElementById(mid);el.style.borderColor='var(--accent)';el.style.background='var(--accent-dim)';el.style.color='var(--accent)';}
-  else{const el=document.getElementById(fid);el.style.borderColor='var(--purple)';el.style.background='var(--purple-dim)';el.style.color='var(--purple)';}
-}
+        async function loadDashboard() {
+            // Load all steps
+            try {
+                const all = await sb('GET', 'monthly_steps?select=user_name,month,steps');
+                const total = all.reduce((s, r) => s + r.steps, 0);
+                document.getElementById('dash-total').textContent = total.toLocaleString('en-IN');
+                document.getElementById('dash-km').textContent = '≈ ' + (total / 1300).toLocaleString('en-IN', { maximumFractionDigits: 0 }) + ' km';
 
-async function addMember(){
-  const name=document.getElementById('new-name').value.trim();
-  const err=document.getElementById('add-err');
-  if(!name){err.textContent='Enter a name';err.style.display='block';return;}
-  if(!newG){err.textContent='Select gender';err.style.display='block';return;}
-  if(allMembers.find(m=>m.name.toLowerCase()===name.toLowerCase())){err.textContent='Member already exists';err.style.display='block';return;}
-  err.style.display='none';
-  try{
-    await sb('POST','vidial_members',{name,gender:newG});
-    showToast(`${name} (${newG==='M'?'Male':'Female'}) added! ✓`);
-    document.getElementById('new-name').value='';newG=null;resetG('new');
-    await loadMembers();renderMemList();
-  }catch(e){err.textContent='Save failed: '+e.message.slice(0,40);err.style.display='block';}
-}
+                // Build month filter from available months
+                const availMonths = [...new Set(all.map(r => r.month))].filter(m => m >= '2026-01').sort();
+                if (!dashMonth || !availMonths.includes(dashMonth)) dashMonth = availMonths[availMonths.length - 1] || MONTHS[MONTHS.length - 1];
 
-function renderMemList(){
-  const el=document.getElementById('mem-list');
-  if(!allMembers.length){el.innerHTML='<div class="empty">No members yet</div>';return;}
-  el.innerHTML=allMembers.map(m=>`
-    <div class="mem-row">
-      <div style="width:28px;height:28px;border-radius:50%;background:${m.gender==='F'?'var(--purple-dim)':'var(--accent-dim)'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${m.gender==='F'?'var(--purple)':'var(--accent)'};flex-shrink:0;">${m.name.slice(0,2).toUpperCase()}</div>
-      <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:var(--text);">${m.name}</div><div style="font-size:10px;color:var(--text3);">${m.gender==='F'?'♀ Female':'♂ Male'}</div></div>
-      <button onclick="openEdit(${m.id},'${m.name.replace(/'/g,"\\'")}','${m.gender}')" style="padding:5px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-size:11px;cursor:pointer;flex-shrink:0;">Edit</button>
-    </div>`).join('');
-}
+                document.getElementById('dash-month-grid').innerHTML = availMonths.map(m => {
+                    const [y, mo] = m.split('-');
+                    const lbl = new Date(y, mo - 1, 1).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
+                    const sel = dashMonth === m;
+                    return `<button onclick="pickDashMonth('${m}',this)" style="padding:5px 10px;border-radius:var(--radius-sm);border:1.5px solid ${sel ? 'var(--accent)' : 'var(--border)'};background:${sel ? 'var(--accent-dim)' : 'var(--surface2)'};color:${sel ? 'var(--accent)' : 'var(--text2)'};font-size:11px;font-weight:600;cursor:pointer;">${lbl}</button>`;
+                }).join('');
 
-function openEdit(id,name,gender){
-  editId=id;editG=gender;
-  document.getElementById('edit-sub').textContent=`Editing: ${name}`;
-  document.getElementById('edit-name').value=name;
-  document.getElementById('edit-err').style.display='none';
-  resetG('edit');setGender('edit',gender);
-  document.getElementById('edit-modal').classList.add('active');
-}
-async function saveEdit(){
-  const name=document.getElementById('edit-name').value.trim();
-  const err=document.getElementById('edit-err');
-  if(!name){err.textContent='Enter a name';err.style.display='block';return;}
-  if(!editG){err.textContent='Select gender';err.style.display='block';return;}
-  err.style.display='none';
-  try{
-    await sb('PATCH',`vidial_members?id=eq.${editId}`,{name,gender:editG});
-    showToast(`${name} updated ✓`);closeModal('edit-modal');
-    await loadMembers();renderMemList();loadLB();
-  }catch(e){err.textContent='Save failed: '+e.message.slice(0,40);err.style.display='block';}
-}
+                renderDashMonth(all);
+            } catch (e) { console.error(e); }
+        }
 
-function closeModal(id){document.getElementById(id).classList.remove('active');}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+        function pickDashMonth(m, btn) {
+            dashMonth = m;
+            document.querySelectorAll('#dash-month-grid button').forEach(b => { b.style.borderColor = 'var(--border)'; b.style.background = 'var(--surface2)'; b.style.color = 'var(--text2)'; });
+            btn.style.borderColor = 'var(--accent)'; btn.style.background = 'var(--accent-dim)'; btn.style.color = 'var(--accent)';
+            sb('GET', 'monthly_steps?select=user_name,month,steps').then(all => renderDashMonth(all)).catch(() => { });
+        }
 
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('admin-modal').classList.contains('active'))verifyAdmin();});
+        function renderDashMonth(all) {
+            const mData = all.filter(r => r.month === dashMonth);
+            const active = mData.length;
+            const mTotal = mData.reduce((s, r) => s + r.steps, 0);
+            document.getElementById('dash-active').textContent = active;
+            document.getElementById('dash-month-steps').textContent = mTotal.toLocaleString('en-IN');
+            document.getElementById('dash-month-km').textContent = '≈ ' + (mTotal / 1300).toLocaleString('en-IN', { maximumFractionDigits: 0 }) + ' km';
 
-async function init(){
-  document.getElementById('month-label').textContent=mLabel(curMonth);
-  await loadMembers();
-  loadLB();loadHistory();
-}
-init();
-</script>
+            // Categorise
+            const heavy = mData.filter(r => r.steps >= 300000).sort((a, b) => b.steps - a.steps);
+            const consistent = mData.filter(r => r.steps >= 200000 && r.steps < 300000).sort((a, b) => b.steps - a.steps);
+            const newbie = mData.filter(r => r.steps >= 100000 && r.steps < 200000).sort((a, b) => b.steps - a.steps);
+
+            function catCard(title, emoji, color, dimColor, arr) {
+                const members = arr;
+                const top = members.slice(0, 3);
+                const medals = ['🥇', '🥈', '🥉'];
+                const rows = top.length ? top.map((r, i) => `
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
+            <div style="font-size:14px;width:22px;text-align:center;">${medals[i]}</div>
+            <div style="width:28px;height:28px;border-radius:50%;background:${dimColor};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${color};flex-shrink:0;">${r.user_name.slice(0, 2).toUpperCase()}</div>
+            <div style="flex:1;font-size:12px;font-weight:600;color:var(--text);">${r.user_name}</div>
+            <div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:${color};">${(r.steps / 100000).toFixed(1)}L</div>
+          </div>`).join('') : '<div class="empty" style="padding:12px;font-size:12px;">No members in this range</div>';
+                return `<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:10px;">
+          <div style="padding:10px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:13px;font-weight:700;color:${color};">${emoji} ${title}</div>
+            <div style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${members.length} member${members.length !== 1 ? 's' : ''}</div>
+          </div>
+          <div style="padding:0 14px;">${rows}</div>
+        </div>`;
+            }
+
+            document.getElementById('dash-categories').innerHTML =
+                catCard('Heavy Walkers', '🔥', 'var(--amber)', 'rgba(240,164,41,0.08)', heavy) +
+                catCard('Consistent Walkers', '💪', 'var(--accent)', 'rgba(0,196,204,0.08)', consistent) +
+                catCard('Newbies', '🌱', 'var(--green)', 'rgba(62,207,142,0.08)', newbie);
+        }
+
+        function buildMonthGrid() {
+            selAdminMonth = selAdminMonth || curMonth;
+            document.getElementById('a-month-grid').innerHTML = MONTHS.map(m => {
+                const [y, mo] = m.split('-');
+                const lbl = new Date(y, mo - 1, 1).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
+                const sel = selAdminMonth === m;
+                return `<button onclick="pickAdmMonth('${m}',this)" style="padding:5px 10px;border-radius:var(--radius-sm);border:1.5px solid ${sel ? 'var(--accent)' : 'var(--border)'};background:${sel ? 'var(--accent-dim)' : 'var(--surface2)'};color:${sel ? 'var(--accent)' : 'var(--text2)'};font-size:11px;font-weight:600;cursor:pointer;">${lbl}</button>`;
+            }).join('');
+        }
+        async function pickAdmMonth(m, btn) {
+            selAdminMonth = m;
+            document.querySelectorAll('#a-month-grid button').forEach(b => { b.style.borderColor = 'var(--border)'; b.style.background = 'var(--surface2)'; b.style.color = 'var(--text2)'; });
+            btn.style.borderColor = 'var(--accent)'; btn.style.background = 'var(--accent-dim)'; btn.style.color = 'var(--accent)';
+            await renderAdminMemberList();
+        }
+
+        async function renderAdminMemberList() {
+            const el = document.getElementById('a-member-list');
+            el.innerHTML = '<div class="empty">Loading...</div>';
+            // Load existing entries for this month
+            let existing = {};
+            try {
+                const data = await sb('GET', `monthly_steps?month=eq.${selAdminMonth}&select=user_name,steps`);
+                data.forEach(r => existing[r.user_name] = r.steps);
+            } catch (e) { }
+            if (!allMembers.length) { el.innerHTML = '<div class="empty">No members found</div>'; return; }
+            el.innerHTML = allMembers.map(m => {
+                const g = m.gender;
+                const avBg = g === 'F' ? 'rgba(168,85,247,0.15)' : 'rgba(0,196,204,0.12)';
+                const avC = g === 'F' ? 'var(--purple)' : 'var(--accent)';
+                const current = existing[m.name];
+                const sid = 'inp-' + m.name.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+                return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div style="width:34px;height:34px;border-radius:50%;background:${avBg};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${avC};flex-shrink:0;">${m.name.slice(0, 2).toUpperCase()}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:600;color:var(--text);">${m.name}</div>
+            <div style="font-size:10px;color:var(--text3);">${g === 'F' ? '♀ Female' : '♂ Male'}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+            <input type="number" id="${sid}" value="${current || ''}" placeholder="—" inputmode="numeric"
+              style="width:96px;padding:7px 10px;background:var(--surface2);border:1.5px solid ${current ? 'rgba(62,207,142,0.4)' : 'var(--border)'};border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;text-align:right;"/>
+            <button onclick="saveOneEntry('${m.name}','${sid}')" style="padding:7px 12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">${current ? 'Update' : 'Save'}</button>
+          </div>
+        </div>`;
+            }).join('');
+        }
+
+        async function saveOneEntry(name, sid) {
+            const el = document.getElementById(sid);
+            const steps = parseInt(el?.value);
+            if (!steps || steps < 1) { showToast('Enter valid steps for ' + name); return; }
+            try {
+                await sb('POST', `monthly_steps?on_conflict=user_name,month`, { user_name: name, month: selAdminMonth, steps });
+                el.style.borderColor = 'rgba(62,207,142,0.4)';
+                el.nextElementSibling.textContent = 'Update';
+                showToast(`${name} — ${steps.toLocaleString('en-IN')} steps saved ✓`);
+                loadLB(); loadHistory();
+            } catch (e) { showToast('Save failed: ' + e.message.slice(0, 40)); }
+        }
+
+        function resetG(prefix) {
+            const m = prefix === 'new' ? 'gm-btn' : 'egm-btn', f = prefix === 'new' ? 'gf-btn' : 'egf-btn';
+            [m, f].forEach(id => { const el = document.getElementById(id); if (el) { el.style.borderColor = 'var(--border)'; el.style.background = 'var(--surface2)'; el.style.color = 'var(--text2)'; } });
+        }
+        function setGender(prefix, g) {
+            if (prefix === 'new') newG = g; else editG = g;
+            resetG(prefix);
+            const mid = prefix === 'new' ? 'gm-btn' : 'egm-btn', fid = prefix === 'new' ? 'gf-btn' : 'egf-btn';
+            if (g === 'M') { const el = document.getElementById(mid); el.style.borderColor = 'var(--accent)'; el.style.background = 'var(--accent-dim)'; el.style.color = 'var(--accent)'; }
+            else { const el = document.getElementById(fid); el.style.borderColor = 'var(--purple)'; el.style.background = 'var(--purple-dim)'; el.style.color = 'var(--purple)'; }
+        }
+
+        async function addMember() {
+            const name = document.getElementById('new-name').value.trim();
+            const err = document.getElementById('add-err');
+            if (!name) { err.textContent = 'Enter a name'; err.style.display = 'block'; return; }
+            if (!newG) { err.textContent = 'Select gender'; err.style.display = 'block'; return; }
+            if (allMembers.find(m => m.name.toLowerCase() === name.toLowerCase())) { err.textContent = 'Member already exists'; err.style.display = 'block'; return; }
+            err.style.display = 'none';
+            try {
+                await sb('POST', 'vidial_members', { name, gender: newG });
+                showToast(`${name} (${newG === 'M' ? 'Male' : 'Female'}) added! ✓`);
+                document.getElementById('new-name').value = ''; newG = null; resetG('new');
+                await loadMembers(); renderMemList();
+            } catch (e) { err.textContent = 'Save failed: ' + e.message.slice(0, 40); err.style.display = 'block'; }
+        }
+
+        function renderMemList() {
+            const el = document.getElementById('mem-list');
+            if (!allMembers.length) { el.innerHTML = '<div class="empty">No members yet</div>'; return; }
+            el.innerHTML = allMembers.map(m => `
+        <div class="mem-row">
+          <div style="width:28px;height:28px;border-radius:50%;background:${m.gender === 'F' ? 'var(--purple-dim)' : 'var(--accent-dim)'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${m.gender === 'F' ? 'var(--purple)' : 'var(--accent)'};flex-shrink:0;">${m.name.slice(0, 2).toUpperCase()}</div>
+          <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:var(--text);">${m.name}</div><div style="font-size:10px;color:var(--text3);">${m.gender === 'F' ? '♀ Female' : '♂ Male'}</div></div>
+          <button onclick="openEdit(${m.id},'${m.name.replace(/'/g, "\\'")}','${m.gender}')" style="padding:5px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-size:11px;cursor:pointer;flex-shrink:0;">Edit</button>
+        </div>`).join('');
+        }
+
+        function openEdit(id, name, gender) {
+            editId = id; editG = gender;
+            document.getElementById('edit-sub').textContent = `Editing: ${name}`;
+            document.getElementById('edit-name').value = name;
+            document.getElementById('edit-err').style.display = 'none';
+            resetG('edit'); setGender('edit', gender);
+            document.getElementById('edit-modal').classList.add('active');
+        }
+        async function saveEdit() {
+            const name = document.getElementById('edit-name').value.trim();
+            const err = document.getElementById('edit-err');
+            if (!name) { err.textContent = 'Enter a name'; err.style.display = 'block'; return; }
+            if (!editG) { err.textContent = 'Select gender'; err.style.display = 'block'; return; }
+            err.style.display = 'none';
+            try {
+                await sb('PATCH', `vidial_members?id=eq.${editId}`, { name, gender: editG });
+                showToast(`${name} updated ✓`); closeModal('edit-modal');
+                await loadMembers(); renderMemList(); loadLB();
+            } catch (e) { err.textContent = 'Save failed: ' + e.message.slice(0, 40); err.style.display = 'block'; }
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2800); }
+
+        document.addEventListener('keydown', e => { if (e.key === 'Enter' && document.getElementById('admin-modal').classList.contains('active')) verifyAdmin(); });
+
+        async function init() {
+            document.getElementById('month-label').textContent = mLabel(curMonth);
+            await loadMembers();
+            loadLB(); loadHistory();
+        }
+        init();</script>
 </body>
 </html>
