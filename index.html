@@ -298,6 +298,7 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
 const SB_URL='https://osunxzedvlpcmaplntub.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdW54emVkdmxwY21hcGxudHViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDE5MzAsImV4cCI6MjA5MDcxNzkzMH0.VgfNj_0LUfeTlT-07pSpf5lJk7uFQVuBW4VpE_PihAg';
 const ADMIN_PW='vidial';
+const ADMINS=['Snega','Deepa']; // excluded from King & Queen crowns
 
 const MONTHS=[];
 // Generate Oct 2025 to last month (current month - 1)
@@ -354,6 +355,7 @@ async function loadLB(){
     }
     let kd=false,qd=false,king=null,queen=null;
     data.forEach(row=>{
+      if(ADMINS.includes(row.user_name))return; // skip admins for crown
       const g=gMap[row.user_name]||'M';
       if(g==='M'&&!kd){kd=true;king=row;}
       if(g==='F'&&!qd){qd=true;queen=row;}
