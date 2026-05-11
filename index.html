@@ -206,6 +206,7 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
   <!-- Admin Tabs -->
   <div style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;">
     <button class="adm-tab active" id="adm-tab-dash" onclick="switchAdmTab('dash')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;">📊 Dashboard</button>
+    <button class="adm-tab" id="adm-tab-insights" onclick="switchAdmTab('insights')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">✨ Insights</button>
     <button class="adm-tab" id="adm-tab-entry" onclick="switchAdmTab('entry')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">📋 Steps</button>
     <button class="adm-tab" id="adm-tab-members" onclick="switchAdmTab('members')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">👥 Members</button>
   </div>
@@ -236,6 +237,44 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
     <!-- Categories -->
     <div id="dash-categories"></div>
 
+  </div>
+
+  <!-- INSIGHTS TAB -->
+  <div id="adm-insights" style="display:none;flex:1;overflow-y:auto;padding:16px 16px 32px;">
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:28px;margin-bottom:6px;">✨</div>
+      <div style="font-size:16px;font-weight:800;color:var(--text);font-family:'DM Sans',sans-serif;">Group Insights</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px;">Vidial Wellness Analytics</div>
+    </div>
+
+    <!-- Group Total Trend -->
+    <div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:14px;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+        <div style="width:28px;height:28px;border-radius:8px;background:rgba(59,130,246,0.15);display:flex;align-items:center;justify-content:center;font-size:14px;">📈</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);">Group Total Steps</div>
+          <div style="font-size:10px;color:var(--text3);">Are we collectively walking more each month?</div>
+        </div>
+      </div>
+      <div style="position:relative;height:190px;margin-top:12px;"><canvas id="trend-chart"></canvas></div>
+    </div>
+
+    <!-- Category Donut -->
+    <div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:14px;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:28px;height:28px;border-radius:8px;background:rgba(249,115,22,0.15);display:flex;align-items:center;justify-content:center;font-size:14px;">🏆</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);">Category Breakdown</div>
+          <div style="font-size:10px;color:var(--text3);">What % of members in each tier this month</div>
+        </div>
+      </div>
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Select Month</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;" id="donut-month-grid"></div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="position:relative;height:170px;width:170px;flex-shrink:0;"><canvas id="donut-chart"></canvas></div>
+        <div id="donut-legend" style="flex:1;"></div>
+      </div>
+    </div>
   </div>
 
   <!-- ENTRY TAB -->
@@ -614,7 +653,7 @@ function exitAdmin(){
   loadLB();loadHistory();
 }
 function switchAdmTab(tab){
-  const tabs=['dash','entry','members'];
+  const tabs=['dash','insights','entry','members'];
   tabs.forEach(t=>{
     const panel=document.getElementById('adm-'+t);
     if(panel)panel.style.display='none';
@@ -627,6 +666,7 @@ function switchAdmTab(tab){
   if(activeBtn){activeBtn.style.borderBottomColor='var(--accent)';activeBtn.style.color='var(--accent)';}
 
   if(tab==='dash'){loadDashboard();}
+  else if(tab==='insights'){loadInsights();}
   else if(tab==='entry'){buildMonthGrid();renderAdminMemberList();}
   else{
     document.getElementById('new-name').value='';newG=null;resetG('new');
@@ -636,6 +676,33 @@ function switchAdmTab(tab){
 
 let dashMonth=null;
 
+
+let insightsLoaded=false;
+
+async function loadInsights(){
+  if(insightsLoaded&&typeof Chart!=='undefined'){return;}
+  try{
+    const all=await sb('GET','monthly_steps?select=user_name,month,steps');
+    chartAllData=all;
+    const availMonths=[...new Set(all.map(r=>r.month))].filter(m=>m>='2025-10').sort();
+    const donutMonth=availMonths[availMonths.length-1]||DEFAULT_MONTH;
+    // Build donut month picker
+    document.getElementById('donut-month-grid').innerHTML=availMonths.map(m=>{
+      const[y,mo]=m.split('-');
+      const lbl=new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
+      const sel=m===donutMonth;
+      return `<button onclick="pickDonutMonth('${m}',this)" style="padding:5px 10px;border-radius:var(--radius-sm);border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'var(--accent-dim)':'var(--surface2)'};color:${sel?'var(--accent)':'var(--text2)'};font-size:11px;font-weight:600;cursor:pointer;">${lbl}</button>`;
+    }).join('');
+    loadChartJS(()=>{renderTrendChart();renderDonutChart(donutMonth);});
+    insightsLoaded=true;
+  }catch(e){console.error(e);}
+}
+
+function pickDonutMonth(m,btn){
+  document.querySelectorAll('#donut-month-grid button').forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--surface2)';b.style.color='var(--text2)';});
+  btn.style.borderColor='var(--accent)';btn.style.background='var(--accent-dim)';btn.style.color='var(--accent)';
+  loadChartJS(()=>renderDonutChart(m));
+}
 
 let trendChartInst=null;
 let donutChartInst=null;
@@ -746,9 +813,7 @@ function pickDashMonth(m,btn){
   document.querySelectorAll('#dash-month-grid button').forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--surface2)';b.style.color='var(--text2)';});
   btn.style.borderColor='var(--accent)';btn.style.background='var(--accent-dim)';btn.style.color='var(--accent)';
   sb('GET','monthly_steps?select=user_name,month,steps').then(all=>{
-    chartAllData=all;
     renderDashMonth(all);
-    loadChartJS(()=>renderDonutChart(m));
   }).catch(()=>{});
 }
 
