@@ -235,6 +235,27 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
     </div>
     <!-- Categories -->
     <div id="dash-categories"></div>
+    <!-- Charts -->
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin:18px 0 10px;">📊 Charts & Insights</div>
+    <!-- Trend Chart -->
+    <div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:14px;margin-bottom:10px;">
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;">📈 Monthly Trend</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:10px;">Select a member to see their step trend across months</div>
+      <div id="trend-member-picker" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;max-height:90px;overflow-y:auto;"></div>
+      <canvas id="trend-chart" height="180" style="width:100%;"></canvas>
+    </div>
+    <!-- Migration Chart -->
+    <div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:14px;margin-bottom:10px;">
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;">🏅 Category Migration</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:10px;">How many members in each tier per month</div>
+      <canvas id="migration-chart" height="180" style="width:100%;"></canvas>
+    </div>
+    <!-- Streak Chart -->
+    <div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:14px;margin-bottom:10px;">
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;">🔥 Consistency Streak</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:10px;">Months each member has submitted data (darker = more consistent)</div>
+      <div id="streak-chart" style="overflow-x:auto;"></div>
+    </div>
   </div>
 
   <!-- ENTRY TAB -->
@@ -635,6 +656,139 @@ function switchAdmTab(tab){
 
 let dashMonth=null;
 
+let chartAllData=[];
+let trendSelectedMember=null;
+let trendChartInstance=null;
+let migrationChartInstance=null;
+
+function renderTrendChart(name){
+  trendSelectedMember=name;
+  // Update picker highlight
+  document.querySelectorAll('#trend-member-picker button').forEach(b=>{
+    const sel=b.textContent===name;
+    b.style.borderColor=sel?'var(--accent)':'var(--border)';
+    b.style.background=sel?'var(--accent-dim)':'var(--surface2)';
+    b.style.color=sel?'var(--accent)':'var(--text2)';
+  });
+  const memberData=chartAllData.filter(r=>r.user_name===name);
+  const byMonth={};memberData.forEach(r=>byMonth[r.month]=r.steps);
+  const labels=MONTHS.map(m=>{const[y,mo]=m.split('-');return new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'short',year:'2-digit'});});
+  const vals=MONTHS.map(m=>byMonth[m]||null);
+  const canvas=document.getElementById('trend-chart');
+  const ctx=canvas.getContext('2d');
+  if(trendChartInstance)trendChartInstance.destroy();
+  trendChartInstance=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        label:name,
+        data:vals,
+        borderColor:'#3b82f6',
+        backgroundColor:'rgba(59,130,246,0.1)',
+        borderWidth:2.5,
+        pointBackgroundColor:'#3b82f6',
+        pointRadius:4,
+        pointHoverRadius:6,
+        fill:true,
+        tension:0.35,
+        spanGaps:false,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'Steps: '+ctx.raw?.toLocaleString('en-IN')}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5080',font:{size:10}}},
+        y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5080',font:{size:10},callback:v=>(v/100000).toFixed(1)+'L'}},
+      }
+    }
+  });
+}
+
+function renderMigrationChart(){
+  const labels=MONTHS.map(m=>{const[y,mo]=m.split('-');return new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'short',year:'2-digit'});});
+  const legends=[],striders=[],rising=[],starters=[];
+  MONTHS.forEach(m=>{
+    const md=chartAllData.filter(r=>r.month===m);
+    legends.push(md.filter(r=>r.steps>=300000).length);
+    striders.push(md.filter(r=>r.steps>=200000&&r.steps<300000).length);
+    rising.push(md.filter(r=>r.steps>=100000&&r.steps<200000).length);
+    starters.push(md.filter(r=>r.steps>0&&r.steps<100000).length);
+  });
+  const canvas=document.getElementById('migration-chart');
+  const ctx=canvas.getContext('2d');
+  if(migrationChartInstance)migrationChartInstance.destroy();
+  migrationChartInstance=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'🔥 Legends',data:legends,backgroundColor:'rgba(249,115,22,0.8)',borderRadius:4},
+        {label:'💪 Striders',data:striders,backgroundColor:'rgba(59,130,246,0.8)',borderRadius:4},
+        {label:'🌱 Rising Stars',data:rising,backgroundColor:'rgba(99,102,241,0.8)',borderRadius:4},
+        {label:'👣 Starters',data:starters,backgroundColor:'rgba(122,175,221,0.4)',borderRadius:4},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#9d8fcc',font:{size:10},boxWidth:10}}},
+      scales:{
+        x:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5080',font:{size:10}}},
+        y:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5080',font:{size:10},stepSize:1}},
+      }
+    }
+  });
+}
+
+function renderStreakChart(){
+  const el=document.getElementById('streak-chart');
+  const members=[...new Set(chartAllData.map(r=>r.user_name))].sort();
+  const byMember={};
+  chartAllData.forEach(r=>{
+    if(!byMember[r.user_name])byMember[r.user_name]=new Set();
+    byMember[r.user_name].add(r.month);
+  });
+  // Sort by count desc
+  const sorted=members.sort((a,b)=>(byMember[b]?.size||0)-(byMember[a]?.size||0));
+  const monthLabels=MONTHS.map(m=>{const[y,mo]=m.split('-');return new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'short'});});
+  const rows=sorted.map(name=>{
+    const count=byMember[name]?.size||0;
+    const pct=Math.round(count/MONTHS.length*100);
+    const cells=MONTHS.map(m=>{
+      const has=byMember[name]?.has(m);
+      const steps=chartAllData.find(r=>r.user_name===name&&r.month===m)?.steps||0;
+      const intensity=has?Math.min(1,steps/400000):0;
+      const alpha=has?(0.3+intensity*0.7):0.05;
+      const color=has?`rgba(59,130,246,${alpha.toFixed(2)})`:'rgba(255,255,255,0.04)';
+      const title=has?steps.toLocaleString('en-IN')+' steps':'—';
+      return `<td title="${title}" style="width:28px;height:24px;background:${color};border-radius:4px;border:1px solid rgba(255,255,255,0.04);"></td>`;
+    }).join('');
+    const g=gMap[name]||'M';
+    const avC=g==='F'?'#ec4899':'#3b82f6';
+    return `<tr>
+      <td style="padding:2px 8px 2px 0;white-space:nowrap;"><div style="display:flex;align-items:center;gap:5px;"><div style="width:18px;height:18px;border-radius:50%;background:${avC}22;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:${avC};">${name.slice(0,2).toUpperCase()}</div><div style="font-size:11px;color:var(--text2);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div></div></td>
+      ${cells}
+      <td style="padding:2px 0 2px 6px;font-size:10px;font-weight:700;color:var(--accent);white-space:nowrap;">${count}/${MONTHS.length}</td>
+    </tr>`;
+  }).join('');
+  const hdr=monthLabels.map(l=>`<th style="font-size:9px;color:var(--text3);font-weight:600;padding:0 2px 6px;width:28px;text-align:center;">${l}</th>`).join('');
+  el.innerHTML=`<table style="border-collapse:separate;border-spacing:3px;width:100%;">
+    <thead><tr><th style="text-align:left;font-size:9px;color:var(--text3);font-weight:600;padding-bottom:6px;min-width:100px;">Member</th>${hdr}<th></th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function renderCharts(){
+  // Load Chart.js if not loaded
+  if(typeof Chart==='undefined'){
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+    s.onload=()=>{renderMigrationChart();renderStreakChart();if(trendSelectedMember)renderTrendChart(trendSelectedMember);};
+    document.head.appendChild(s);
+  }else{renderMigrationChart();renderStreakChart();if(trendSelectedMember)renderTrendChart(trendSelectedMember);}
+}
+
 async function loadDashboard(){
   // Load all steps
   try{
@@ -655,6 +809,14 @@ async function loadDashboard(){
     }).join('');
 
     renderDashMonth(all);
+    // Store for charts & build trend picker
+    chartAllData=all.filter(r=>r.month>='2025-10');
+    const members=[...new Set(all.map(r=>r.user_name))].sort();
+    if(!trendSelectedMember&&members.length)trendSelectedMember=members[0];
+    document.getElementById('trend-member-picker').innerHTML=members.map(n=>
+      `<button onclick="renderTrendChart('${n}')" style="padding:4px 8px;border-radius:999px;border:1.5px solid ${n===trendSelectedMember?'var(--accent)':'var(--border)'};background:${n===trendSelectedMember?'var(--accent-dim)':'var(--surface2)'};color:${n===trendSelectedMember?'var(--accent)':'var(--text2)'};font-size:10px;font-weight:600;cursor:pointer;">${n}</button>`
+    ).join('');
+    renderCharts();
   }catch(e){console.error(e);}
 }
 
