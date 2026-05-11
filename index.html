@@ -890,8 +890,8 @@ function renderDonutChart(month){
     data:{
       labels:['🔥 Legends','💪 Striders','🌱 Rising Stars','👣 Starters'],
       datasets:[{data:[legends,striders,rising,starters],
-        backgroundColor:['rgba(249,115,22,0.85)','rgba(59,130,246,0.85)','rgba(99,102,241,0.85)','rgba(122,175,221,0.4)'],
-        borderColor:['rgba(249,115,22,0.3)','rgba(59,130,246,0.3)','rgba(99,102,241,0.3)','rgba(122,175,221,0.2)'],
+        backgroundColor:['rgba(239,68,68,0.85)','rgba(234,179,8,0.85)','rgba(34,197,94,0.85)','rgba(59,130,246,0.85)'],
+        borderColor:['rgba(239,68,68,0.3)','rgba(234,179,8,0.3)','rgba(34,197,94,0.3)','rgba(59,130,246,0.3)'],
         borderWidth:2,hoverOffset:6,
       }]
     },
@@ -902,10 +902,10 @@ function renderDonutChart(month){
   });
   // Legend
   const cats=[
-    {label:'🔥 Legends',val:legends,color:'rgba(249,115,22,0.85)'},
-    {label:'💪 Striders',val:striders,color:'rgba(59,130,246,0.85)'},
-    {label:'🌱 Rising Stars',val:rising,color:'rgba(99,102,241,0.85)'},
-    {label:'👣 Starters',val:starters,color:'rgba(122,175,221,0.6)'},
+    {label:'🔥 Legends',val:legends,color:'rgba(239,68,68,0.85)'},
+    {label:'💪 Striders',val:striders,color:'rgba(234,179,8,0.85)'},
+    {label:'🌱 Rising Stars',val:rising,color:'rgba(34,197,94,0.85)'},
+    {label:'👣 Starters',val:starters,color:'rgba(59,130,246,0.85)'},
   ];
   document.getElementById('donut-legend').innerHTML=cats.map(c=>
     `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
