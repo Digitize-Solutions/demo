@@ -637,6 +637,86 @@ function switchAdmTab(tab){
 let dashMonth=null;
 
 
+let trendChartInst=null;
+let donutChartInst=null;
+let chartAllData=[];
+
+function loadChartJS(cb){
+  if(typeof Chart!=='undefined'){cb();return;}
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+  s.onload=cb;document.head.appendChild(s);
+}
+
+function renderTrendChart(){
+  const byMonth={};
+  MONTHS.forEach(m=>{
+    const total=chartAllData.filter(r=>r.month===m).reduce((s,r)=>s+r.steps,0);
+    byMonth[m]=total||null;
+  });
+  const labels=MONTHS.map(m=>{const[y,mo]=m.split('-');return new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'short',year:'2-digit'});});
+  const vals=MONTHS.map(m=>byMonth[m]);
+  const ctx=document.getElementById('trend-chart').getContext('2d');
+  if(trendChartInst)trendChartInst.destroy();
+  trendChartInst=new Chart(ctx,{
+    type:'line',
+    data:{labels,datasets:[{
+      label:'Total Steps',data:vals,
+      borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,0.08)',
+      borderWidth:2.5,pointBackgroundColor:'#3b82f6',pointRadius:4,
+      fill:true,tension:0.35,spanGaps:false,
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Total: '+(c.raw||0).toLocaleString('en-IN')+' steps'}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5080',font:{size:10}}},
+        y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5080',font:{size:10},callback:v=>v>=100000?(v/100000).toFixed(1)+'L':v}},
+      }
+    }
+  });
+}
+
+function renderDonutChart(month){
+  const mData=chartAllData.filter(r=>r.month===month);
+  const legends=mData.filter(r=>r.steps>=300000).length;
+  const striders=mData.filter(r=>r.steps>=200000&&r.steps<300000).length;
+  const rising=mData.filter(r=>r.steps>=100000&&r.steps<200000).length;
+  const starters=mData.filter(r=>r.steps>0&&r.steps<100000).length;
+  const total=legends+striders+rising+starters;
+  const ctx=document.getElementById('donut-chart').getContext('2d');
+  if(donutChartInst)donutChartInst.destroy();
+  donutChartInst=new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels:['🔥 Legends','💪 Striders','🌱 Rising Stars','👣 Starters'],
+      datasets:[{data:[legends,striders,rising,starters],
+        backgroundColor:['rgba(249,115,22,0.85)','rgba(59,130,246,0.85)','rgba(99,102,241,0.85)','rgba(122,175,221,0.4)'],
+        borderColor:['rgba(249,115,22,0.3)','rgba(59,130,246,0.3)','rgba(99,102,241,0.3)','rgba(122,175,221,0.2)'],
+        borderWidth:2,hoverOffset:6,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'65%',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+' ('+Math.round(c.raw/total*100)+'%)'}}}
+    }
+  });
+  // Legend
+  const cats=[
+    {label:'🔥 Legends',val:legends,color:'rgba(249,115,22,0.85)'},
+    {label:'💪 Striders',val:striders,color:'rgba(59,130,246,0.85)'},
+    {label:'🌱 Rising Stars',val:rising,color:'rgba(99,102,241,0.85)'},
+    {label:'👣 Starters',val:starters,color:'rgba(122,175,221,0.6)'},
+  ];
+  document.getElementById('donut-legend').innerHTML=cats.map(c=>
+    `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <div style="width:10px;height:10px;border-radius:50%;background:${c.color};flex-shrink:0;"></div>
+      <div style="font-size:11px;color:var(--text2);flex:1;">${c.label}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);font-family:'DM Mono',monospace;">${c.val}${total?' <span style="font-size:10px;color:var(--text3);">('+Math.round(c.val/total*100)+'%)</span>':''}</div>
+    </div>`
+  ).join('');
+}
+
 async function loadDashboard(){
   // Load all steps
   try{
@@ -665,7 +745,11 @@ function pickDashMonth(m,btn){
   dashMonth=m;
   document.querySelectorAll('#dash-month-grid button').forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--surface2)';b.style.color='var(--text2)';});
   btn.style.borderColor='var(--accent)';btn.style.background='var(--accent-dim)';btn.style.color='var(--accent)';
-  sb('GET','monthly_steps?select=user_name,month,steps').then(all=>renderDashMonth(all)).catch(()=>{});
+  sb('GET','monthly_steps?select=user_name,month,steps').then(all=>{
+    chartAllData=all;
+    renderDashMonth(all);
+    loadChartJS(()=>renderDonutChart(m));
+  }).catch(()=>{});
 }
 
 function renderDashMonth(all){
