@@ -374,6 +374,7 @@ function renderHomeCategories(data){
   const heavy=data.filter(r=>r.steps>=300000).sort((a,b)=>b.steps-a.steps);
   const consistent=data.filter(r=>r.steps>=200000&&r.steps<300000).sort((a,b)=>b.steps-a.steps);
   const newbie=data.filter(r=>r.steps>=100000&&r.steps<200000).sort((a,b)=>b.steps-a.steps);
+  const starters=data.filter(r=>r.steps>0&&r.steps<100000).sort((a,b)=>b.steps-a.steps);
 
   function catBlock(title,emoji,color,dimColor,range,arr){
     if(!arr.length)return '';
@@ -402,7 +403,8 @@ function renderHomeCategories(data){
   const html=
     catBlock('Legends','🔥','var(--amber)','rgba(249,115,22,0.08)','3L+ steps',heavy)+
     catBlock('Striders','💪','var(--accent)','rgba(59,130,246,0.08)','2L–3L steps',consistent)+
-    catBlock('Rising Stars','🌱','var(--green)','rgba(99,102,241,0.08)','1L–2L steps',newbie);
+    catBlock('Rising Stars','🌱','var(--green)','rgba(99,102,241,0.08)','1L–2L steps',newbie)+
+    catBlock('Starters','👣','var(--text2)','rgba(122,175,221,0.08)','< 1L steps',starters);
 
   document.getElementById('home-categories').innerHTML=html;
 }
@@ -555,6 +557,7 @@ function renderUDashMonth(all){
   const heavy=mData.filter(r=>r.steps>=300000).sort((a,b)=>b.steps-a.steps);
   const consistent=mData.filter(r=>r.steps>=200000&&r.steps<300000).sort((a,b)=>b.steps-a.steps);
   const newbie=mData.filter(r=>r.steps>=100000&&r.steps<200000).sort((a,b)=>b.steps-a.steps);
+  const starters=mData.filter(r=>r.steps>0&&r.steps<100000).sort((a,b)=>b.steps-a.steps);
   function catCard(title,emoji,color,dimColor,arr){
     if(!arr.length)return'';
     const medals=['🥇','🥈','🥉'];
@@ -674,14 +677,13 @@ function renderDashMonth(all){
   const heavy=mData.filter(r=>r.steps>=300000).sort((a,b)=>b.steps-a.steps);
   const consistent=mData.filter(r=>r.steps>=200000&&r.steps<300000).sort((a,b)=>b.steps-a.steps);
   const newbie=mData.filter(r=>r.steps>=100000&&r.steps<200000).sort((a,b)=>b.steps-a.steps);
+  const starters=mData.filter(r=>r.steps>0&&r.steps<100000).sort((a,b)=>b.steps-a.steps);
 
   function catCard(title,emoji,color,dimColor,arr){
-    const members=arr;
-    const top=members.slice(0,3);
     const medals=['🥇','🥈','🥉'];
-    const rows=top.length?top.map((r,i)=>`
+    const rows=arr.length?arr.map((r,i)=>`
       <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
-        <div style="font-size:14px;width:22px;text-align:center;">${medals[i]}</div>
+        <div style="font-size:13px;width:22px;text-align:center;color:${i<3?'inherit':'var(--text3)'};">${medals[i]||i+1}</div>
         <div style="width:28px;height:28px;border-radius:50%;background:${dimColor};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${color};flex-shrink:0;">${r.user_name.slice(0,2).toUpperCase()}</div>
         <div style="flex:1;font-size:12px;font-weight:600;color:var(--text);">${r.user_name}</div>
         <div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:${color};">${r.steps.toLocaleString('en-IN')}</div>
@@ -689,16 +691,17 @@ function renderDashMonth(all){
     return `<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:10px;">
       <div style="padding:10px 14px;background:${dimColor};border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
         <div style="font-size:13px;font-weight:700;color:${color};">${emoji} ${title}</div>
-        <div style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${members.length} member${members.length!==1?'s':''}</div>
+        <div style="font-size:10px;color:${color};opacity:0.7;font-weight:600;">${arr.length} member${arr.length!==1?'s':''}</div>
       </div>
       <div style="padding:0 14px;">${rows}</div>
     </div>`;
   }
 
   document.getElementById('dash-categories').innerHTML=
-    catCard('Legends','🔥','var(--amber)','rgba(240,164,41,0.08)',heavy)+
-    catCard('Striders','💪','var(--accent)','rgba(0,196,204,0.08)',consistent)+
-    catCard('Rising Stars','🌱','var(--green)','rgba(62,207,142,0.08)',newbie);
+    catCard('Legends','🔥','var(--amber)','rgba(249,115,22,0.08)',heavy)+
+    catCard('Striders','💪','var(--accent)','rgba(59,130,246,0.08)',consistent)+
+    catCard('Rising Stars','🌱','var(--green)','rgba(99,102,241,0.08)',newbie)+
+    catCard('Starters','👣','var(--text2)','rgba(122,175,221,0.08)',starters);
 }
 
 function buildMonthGrid(){
