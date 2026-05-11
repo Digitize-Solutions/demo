@@ -588,7 +588,7 @@ async function loadUserInsights(){
       </div>`;
 
     // Rank history
-    const rankRows=MONTHS.map(m=>{
+    const rankRows=[...MONTHS].reverse().map(m=>{
       const mAll=allData.filter(r=>r.month===m).sort((a,b)=>b.steps-a.steps);
       const mySteps=byMonth[m];
       const rank=mySteps?mAll.findIndex(r=>r.user_name===selEntry)+1:null;
