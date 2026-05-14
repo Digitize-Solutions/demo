@@ -99,6 +99,13 @@ nav {
   display:flex; align-items:center; justify-content:center;
   position:relative; overflow:hidden;
   padding:calc(var(--nav-h) + 2rem) 1.5rem 5rem;
+  background-image:url('https://images.unsplash.com/photo-1588286840104-8957b019727f?w=1200&q=80&fit=crop');
+  background-size:cover; background-position:center;
+}
+.hero-overlay {
+  position:absolute; inset:0;
+  background:rgba(245,240,232,0.82);
+  backdrop-filter:blur(1px);
 }
 .hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 80% 60% at 65% 40%,rgba(45,125,111,.09) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 15% 80%,rgba(45,125,111,.06) 0%,transparent 60%); pointer-events:none; }
 .ring { position:absolute; border-radius:50%; border:1px solid rgba(45,125,111,.14); animation:pulse 6s ease-in-out infinite; pointer-events:none; }
@@ -218,6 +225,191 @@ section { padding:4rem 1.5rem; }
 .pt-card-period { font-size:.7rem; color:var(--teal-light); margin-top:.2rem; }
 .pricing-cta { text-align:center; margin-top:1.5rem; }
 
+
+
+/* ── GALLERY ── */
+#gallery { background:var(--forest); padding:4rem 1.5rem; }
+#gallery .sec-label { color:var(--teal-light); }
+#gallery .sec-title { color:var(--cream); }
+.gallery-intro { color:rgba(245,240,232,.6); font-size:.95rem; font-weight:300; margin-bottom:2rem; max-width:480px; line-height:1.8; }
+.gallery-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:.75rem;
+}
+.gallery-item {
+  position:relative; overflow:hidden; border-radius:4px;
+  aspect-ratio:1/1;
+  cursor:pointer;
+}
+.gallery-item.wide { grid-column:span 2; aspect-ratio:2/1; }
+.gallery-item img {
+  width:100%; height:100%; object-fit:cover;
+  transition:transform .5s ease;
+  display:block;
+}
+.gallery-item:hover img { transform:scale(1.05); }
+.gallery-item-overlay {
+  position:absolute; inset:0;
+  background:rgba(26,58,53,0);
+  transition:background .3s;
+  display:flex; align-items:flex-end; padding:.8rem;
+}
+.gallery-item:hover .gallery-item-overlay { background:rgba(26,58,53,0.4); }
+.gallery-swap-note {
+  margin-top:1.2rem; text-align:center;
+  font-size:.72rem; color:rgba(245,240,232,.35);
+  letter-spacing:1px; font-style:italic;
+}
+
+/* About images */
+.about-images {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:.75rem; margin-bottom:1.5rem;
+}
+.about-img {
+  border-radius:4px; overflow:hidden;
+  aspect-ratio:4/3;
+}
+.about-img img { width:100%; height:100%; object-fit:cover; }
+
+@media(max-width:700px){
+  .gallery-grid { grid-template-columns:1fr 1fr; }
+  .gallery-item.wide { grid-column:span 2; }
+  .about-images { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:480px){
+  .gallery-grid { grid-template-columns:1fr 1fr; gap:.5rem; }
+  .about-images { grid-template-columns:1fr; }
+  .gallery-item.wide { grid-column:span 1; aspect-ratio:1/1; }
+}
+
+
+/* ── SUMMER CAMP ── */
+#summercamp {
+  background: linear-gradient(135deg, #FFF9F0 0%, #F0FAF8 100%);
+  padding:4rem 1.5rem;
+  position:relative; overflow:hidden;
+}
+#summercamp::before {
+  content:'☀️';
+  position:absolute; top:-1rem; right:2rem;
+  font-size:8rem; opacity:.08; pointer-events:none;
+}
+.camp-badge {
+  display:inline-block;
+  background:linear-gradient(135deg, #FF6B6B, #FFD93D);
+  color:white; font-size:.7rem; letter-spacing:3px;
+  text-transform:uppercase; padding:.5rem 1.2rem;
+  border-radius:20px; margin-bottom:1rem;
+  font-weight:500; animation:badge-pulse 2s ease-in-out infinite;
+}
+@keyframes badge-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+.camp-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2rem,6vw,3.5rem);
+  font-weight:300; color:var(--forest); line-height:1.1;
+  margin-bottom:.5rem;
+}
+.camp-title span { color:#FF6B6B; font-style:italic; }
+.camp-subtitle {
+  font-size:1rem; color:var(--muted); font-weight:300;
+  margin-bottom:2rem; line-height:1.7;
+}
+/* Quick facts */
+.camp-facts {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:1rem; margin-bottom:2.5rem;
+}
+.camp-fact {
+  background:white; border-radius:8px;
+  padding:1.2rem 1rem; text-align:center;
+  box-shadow:0 2px 12px rgba(0,0,0,0.06);
+  border-bottom:3px solid var(--teal);
+}
+.camp-fact-icon { font-size:1.6rem; margin-bottom:.4rem; display:block; }
+.camp-fact-value {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem; color:var(--forest); font-weight:400;
+  line-height:1.3; display:block;
+}
+.camp-fact-label { font-size:.62rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-top:.2rem; display:block; }
+/* Activities */
+.camp-activities {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:1rem; margin-bottom:2rem;
+}
+.camp-activity-card {
+  border-radius:8px; padding:1.5rem;
+  display:flex; gap:1rem; align-items:flex-start;
+}
+.camp-activity-card.yoga { background:#E8F8F5; border:1.5px solid #2D7D6F; }
+.camp-activity-card.crafts { background:#F3F0FF; border:1.5px solid #9B8EC4; }
+.camp-activity-icon { font-size:2rem; flex-shrink:0; }
+.camp-activity-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem; color:var(--forest); margin-bottom:.3rem;
+}
+.camp-activity-desc { font-size:.83rem; color:var(--muted); line-height:1.7; font-weight:300; }
+/* Timeline */
+.camp-timeline-title {
+  font-size:.65rem; letter-spacing:4px; text-transform:uppercase;
+  color:var(--teal); margin-bottom:1.2rem; display:block;
+}
+.camp-timeline {
+  display:grid; grid-template-columns:repeat(5,1fr);
+  gap:.75rem; margin-bottom:2rem;
+}
+.camp-slot {
+  background:white; border-radius:6px; padding:1rem .8rem;
+  text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  border-top:3px solid;
+}
+.camp-slot:nth-child(1) { border-color:#FF6B6B; }
+.camp-slot:nth-child(2) { border-color:#4ECDC4; }
+.camp-slot:nth-child(3) { border-color:#FFD93D; }
+.camp-slot:nth-child(4) { border-color:#A8E6CF; }
+.camp-slot:nth-child(5) { border-color:#C3A6FF; }
+.camp-slot-time { font-size:.68rem; font-weight:500; color:var(--teal); letter-spacing:.5px; display:block; margin-bottom:.3rem; }
+.camp-slot-activity { font-size:.78rem; color:var(--forest); line-height:1.5; }
+/* CTA banner */
+.camp-cta-banner {
+  background:var(--forest); border-radius:8px;
+  padding:1.8rem 2rem;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:1rem;
+}
+.camp-cta-text h3 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.5rem; color:var(--cream); font-weight:300;
+}
+.camp-cta-text p { font-size:.8rem; color:var(--teal-light); margin-top:.2rem; }
+.camp-cta-pills { display:flex; gap:.5rem; flex-wrap:wrap; }
+.camp-pill {
+  background:rgba(255,255,255,0.1); color:var(--cream);
+  border:1px solid rgba(255,255,255,0.2);
+  padding:.4rem .9rem; border-radius:20px; font-size:.72rem;
+}
+
+@media(max-width:900px){
+  .camp-facts { grid-template-columns:repeat(2,1fr); }
+  .camp-timeline { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:600px){
+  .camp-facts { grid-template-columns:repeat(2,1fr); gap:.75rem; }
+  .camp-activities { grid-template-columns:1fr; }
+  .camp-timeline { grid-template-columns:1fr 1fr; gap:.6rem; }
+  .camp-slot { padding:.8rem .6rem; }
+  .camp-slot-time { font-size:.62rem; }
+  .camp-slot-activity { font-size:.72rem; }
+  .camp-cta-banner { flex-direction:column; text-align:center; }
+  .camp-cta-pills { justify-content:center; }
+  #summercamp::before { font-size:5rem; }
+}
+@media(max-width:380px){
+  .camp-facts { grid-template-columns:repeat(2,1fr); }
+  .camp-timeline { grid-template-columns:1fr; }
+}
 
 /* ── KIDS SECTION ── */
 #kids { background:var(--cream); }
@@ -483,6 +675,8 @@ footer { background:var(--forest); padding:1.8rem 1.5rem; display:flex; align-it
   <a href="#classes"      onclick="closeMenu()">Classes</a>
   <a href="#schedule"     onclick="closeMenu()">Schedule</a>
   <a href="#pricing"      onclick="closeMenu()">Pricing</a>
+  <a href="#summercamp"  onclick="closeMenu()">☀️ Summer Camp</a>
+  <a href="#gallery"     onclick="closeMenu()">Gallery</a>
   <a href="#kids"        onclick="closeMenu()">Kids</a>
   <a href="#contact"      onclick="closeMenu()">Contact</a>
   <a href="tel:+919289676766" class="m-cta" onclick="closeMenu()">📞 Book a Class</a>
@@ -496,6 +690,8 @@ footer { background:var(--forest); padding:1.8rem 1.5rem; display:flex; align-it
     <li><a href="#classes">Classes</a></li>
     <li><a href="#schedule">Schedule</a></li>
     <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#summercamp">Summer Camp</a></li>
+    <li><a href="#gallery">Gallery</a></li>
     <li><a href="#kids">Kids</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -507,6 +703,7 @@ footer { background:var(--forest); padding:1.8rem 1.5rem; display:flex; align-it
 
 <!-- HERO -->
 <section class="hero" id="home" aria-label="Hero">
+  <div class="hero-overlay" aria-hidden="true"></div>
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="ring" aria-hidden="true"></div>
   <div class="ring" aria-hidden="true"></div>
@@ -520,6 +717,7 @@ footer { background:var(--forest); padding:1.8rem 1.5rem; display:flex; align-it
     <div class="hero-actions">
       <a href="#pricing" class="btn btn-primary">View Membership Plans</a>
       <a href="#schedule" class="btn btn-ghost">See Schedule</a>
+      <a href="#summercamp" class="btn" style="background:linear-gradient(135deg,#FF6B6B,#FFD93D);color:white;border:none;">☀️ Kids Summer Camp</a>
     </div>
   </div>
   <div class="scroll-hint" aria-hidden="true"><span>scroll</span><div class="scroll-line"></div></div>
@@ -556,6 +754,11 @@ footer { background:var(--forest); padding:1.8rem 1.5rem; display:flex; align-it
         </div>
       </div>
       <div class="about-text">
+
+        <div class="about-images">
+          <div class="about-img"><img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80&fit=crop" alt="Meditation class" loading="lazy"/></div>
+          <div class="about-img"><img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600&q=80&fit=crop" alt="Aerial yoga" loading="lazy"/></div>
+        </div>
         <span class="sec-label">What We Provide</span>
         <h2 class="sec-title">Every class. Every level. One studio.</h2>
         <div class="provides-list">
@@ -761,6 +964,135 @@ footer { background:var(--forest); padding:1.8rem 1.5rem; display:flex; align-it
   </div>
 </section>
 
+
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="inner">
+    <span class="sec-label">Inside the studio</span>
+    <h2 class="sec-title">Feel the space</h2>
+    <p class="gallery-intro">A peek into our world — warm light, open mats, and a community that lifts each other up.</p>
+    <div class="gallery-grid">
+      <div class="gallery-item wide">
+        <img src="https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=600&q=80&fit=crop" alt="Yoga class in session" loading="lazy"/>
+        <div class="gallery-item-overlay"></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80&fit=crop" alt="Yoga pose" loading="lazy"/>
+        <div class="gallery-item-overlay"></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?w=600&q=80&fit=crop" alt="Stretching" loading="lazy"/>
+        <div class="gallery-item-overlay"></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80&fit=crop" alt="Power yoga" loading="lazy"/>
+        <div class="gallery-item-overlay"></div>
+      </div>
+      <div class="gallery-item wide">
+        <img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=600&q=80&fit=crop" alt="Meditation group" loading="lazy"/>
+        <div class="gallery-item-overlay"></div>
+      </div>
+    </div>
+    <p class="gallery-swap-note">📸 Real studio photos coming soon — these will be replaced with shots from Asanas N Reps</p>
+  </div>
+</section>
+
+
+<!-- SUMMER CAMP -->
+<section id="summercamp">
+  <div class="inner">
+    <div class="camp-badge">🌟 Limited Spots — Enroll Now!</div>
+    <h2 class="camp-title">Summer Camp <span>2026</span></h2>
+    <p class="camp-subtitle">Yoga + Arts & Crafts Programme for kids aged 4–10 years.<br/>Let's stretch, create & grow together! 🌈</p>
+
+    <!-- Quick Facts -->
+    <div class="camp-facts">
+      <div class="camp-fact">
+        <span class="camp-fact-icon">👧🧒</span>
+        <span class="camp-fact-value">Ages 4–10 Years</span>
+        <span class="camp-fact-label">Who it's for</span>
+      </div>
+      <div class="camp-fact">
+        <span class="camp-fact-icon">🕙</span>
+        <span class="camp-fact-value">10:30 AM – 1:30 PM</span>
+        <span class="camp-fact-label">Daily timings</span>
+      </div>
+      <div class="camp-fact">
+        <span class="camp-fact-icon">📅</span>
+        <span class="camp-fact-value">25 May – 6 June 2026</span>
+        <span class="camp-fact-label">2 weeks</span>
+      </div>
+      <div class="camp-fact">
+        <span class="camp-fact-icon">⏱️</span>
+        <span class="camp-fact-value">3 Hours</span>
+        <span class="camp-fact-label">Per session</span>
+      </div>
+    </div>
+
+    <!-- What kids will enjoy -->
+    <div class="camp-activities">
+      <div class="camp-activity-card yoga">
+        <div class="camp-activity-icon">🧘</div>
+        <div>
+          <div class="camp-activity-title">Yoga</div>
+          <div class="camp-activity-desc">Fun poses, stories & mindful movement — building focus and flexibility through play.</div>
+        </div>
+      </div>
+      <div class="camp-activity-card crafts">
+        <div class="camp-activity-icon">🎨</div>
+        <div>
+          <div class="camp-activity-title">Arts & Crafts</div>
+          <div class="camp-activity-desc">Creative DIY projects to imagine, make & take home — sparking creativity every day!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Schedule -->
+    <span class="camp-timeline-title">Daily highlights</span>
+    <div class="camp-timeline">
+      <div class="camp-slot">
+        <span class="camp-slot-time">10:30 – 10:45 AM</span>
+        <span class="camp-slot-activity">🌅 Welcome circle + breathing + warm-up</span>
+      </div>
+      <div class="camp-slot">
+        <span class="camp-slot-time">10:45 – 11:45 AM</span>
+        <span class="camp-slot-activity">🧘 Themed Yoga Session — poses, story & mindfulness</span>
+      </div>
+      <div class="camp-slot">
+        <span class="camp-slot-time">11:45 AM – 12:15 PM</span>
+        <span class="camp-slot-activity">🥤 Mini break + hydration</span>
+      </div>
+      <div class="camp-slot">
+        <span class="camp-slot-time">12:15 – 1:15 PM</span>
+        <span class="camp-slot-activity">🎨 DIY Arts & Crafts activity</span>
+      </div>
+      <div class="camp-slot">
+        <span class="camp-slot-time">1:15 – 1:30 PM</span>
+        <span class="camp-slot-activity">💚 Cool-down + sharing circle</span>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="camp-cta-banner">
+      <div class="camp-cta-text">
+        <h3>Give your child a summer of movement, creativity & confidence!</h3>
+        <p>📍 SCO-69, First Floor, Sector 16A, Faridabad</p>
+      </div>
+      <div>
+        <div class="camp-cta-pills">
+          <span class="camp-pill">🌟 Building Confidence</span>
+          <span class="camp-pill">🎨 Boosting Creativity</span>
+          <span class="camp-pill">💫 Making Memories</span>
+        </div>
+        <div style="margin-top:1rem; display:flex; gap:.75rem; flex-wrap:wrap;">
+          <a href="tel:+919289676766" class="btn btn-teal" style="min-height:48px;">📞 Enroll Now</a>
+          <a href="https://wa.me/919289676766?text=Hi!%20I%20want%20to%20enroll%20my%20child%20in%20the%20Summer%20Camp%202026" target="_blank" class="btn" style="background:#25D366;color:white;min-height:48px;">💬 WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- KIDS -->
 <section id="kids">
