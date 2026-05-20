@@ -85,6 +85,18 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
 .mem-row:last-child{border-bottom:none;}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;font-weight:500;opacity:0;transition:all 0.25s;pointer-events:none;z-index:200;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:50;align-items:flex-end;justify-content:center;}
+.modal.active{display:flex;}
+.modal-box{background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;padding:24px 20px 36px;width:100%;max-width:480px;}
+.modal-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--text2);margin-bottom:16px;}
+.modal-btns{display:flex;gap:8px;}
+.modal-btn{flex:1;padding:13px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;border:none;}
+.modal-btn.cancel{background:none;border:1px solid var(--border2);color:var(--text2);}
+.modal-btn.submit{background:var(--accent);color:#fff;}
+.dc-btn{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.15s;cursor:pointer;}
+.dc-btn.done{background:rgba(34,197,94,0.15);border-color:rgba(34,197,94,0.4);color:#22c55e;}
+.dc-btn.today-cell{border-color:var(--accent);}
 </style>
 </head>
 <body>
@@ -104,11 +116,11 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
       <div class="month-label" id="month-label">—</div>
       <button class="month-nav" onclick="changeMonth(1)">›</button>
     </div>
-    <div id="home-categories" style="margin-bottom:14px;"></div>
     <div class="action-grid">
-      <button class="action-btn primary" onclick="openEntryModal()">➕ Enter My Steps</button>
-      <button class="action-btn adm" onclick="openAdminModal()">🔐 Admin</button>
+      <button class="action-btn primary" onclick="openEntryModal()">🌿 My Wellness Hub</button>
+      <button class="action-btn adm" onclick="openAdminModal()">🏆 The Coach</button>
     </div>
+    <div id="home-categories" style="margin-bottom:14px;"></div>
     <div style="margin-bottom:60px;">
       <div class="hist-title">👑 Hall of Fame</div>
       <div id="history-list"><div class="empty">Loading...</div></div>
@@ -145,14 +157,29 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
   </div>
   <!-- User Tabs -->
   <div style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;">
-    <button id="user-tab-mydata" onclick="switchUserTab('mydata')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;">📅 My Data</button>
-    <button id="user-tab-insights" onclick="switchUserTab('insights')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">✨ Insights</button>
-    <button id="user-tab-dash" onclick="switchUserTab('dash')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">📊 Dashboard</button>
+    <button id="user-tab-mydata" onclick="switchUserTab('mydata')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;">📅 Data</button>
+    <button id="user-tab-habits" onclick="switchUserTab('habits')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">🌿 Habits</button>
+    <button id="user-tab-insights" onclick="switchUserTab('insights')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">✨ Insights</button>
+    <button id="user-tab-dash" onclick="switchUserTab('dash')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">📊 Dashboard</button>
   </div>
 
   <!-- MY DATA TAB -->
   <div id="user-mydata" style="flex:1;overflow-y:auto;padding:16px 16px 32px;">
     <div id="user-my-rows"><div class="empty">Loading...</div></div>
+  </div>
+
+  <!-- USER HABITS TAB -->
+  <div id="user-habits" style="display:none;flex:1;overflow-y:auto;padding:14px 14px 80px;">
+    <!-- Week strip -->
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;background:var(--surface);border-radius:var(--radius-sm);padding:10px;border:1px solid var(--border);margin-bottom:12px;" id="habit-week-strip"></div>
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;" id="habit-stats-row"></div>
+    <!-- Habit grid -->
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;" id="habit-week-label">This Week</div>
+    <div id="habit-grid"></div>
+    <!-- Monthly summary -->
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin:14px 0 8px;" id="habit-month-label"></div>
+    <div id="habit-monthly-bars"></div>
   </div>
 
   <!-- USER INSIGHTS TAB -->
@@ -218,8 +245,8 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
 <!-- Admin Password Modal -->
 <div class="modal" id="admin-modal">
   <div class="modal-box">
-    <div class="modal-title">🔐 Admin Login</div>
-    <div class="modal-sub">Enter password to access admin panel</div>
+    <div class="modal-title">🏆 The Coach Login</div>
+    <div class="modal-sub">Enter password to access coach panel</div>
     <div class="flabel">Password</div>
     <input type="password" class="finput" id="admin-pwd" placeholder="Admin password"/>
     <div class="err" id="admin-err">Incorrect password</div>
@@ -236,16 +263,17 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
   <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;">
     <div style="display:flex;align-items:center;gap:10px;">
       <div style="width:32px;height:32px;border-radius:50%;background:rgba(168,85,247,0.15);border:1.5px solid var(--purple);display:flex;align-items:center;justify-content:center;font-size:14px;">🔐</div>
-      <div><div style="font-size:14px;font-weight:700;color:var(--text);">Admin Panel</div><div style="font-size:11px;color:var(--text3);">Steps King & Queen</div></div>
+      <div><div style="font-size:14px;font-weight:700;color:var(--text);">The Coach</div><div style="font-size:11px;color:var(--text3);">Steps King & Queen</div></div>
     </div>
     <button onclick="exitAdmin()" style="padding:6px 14px;border-radius:999px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;cursor:pointer;">Exit</button>
   </div>
   <!-- Admin Tabs -->
   <div style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;">
-    <button class="adm-tab active" id="adm-tab-dash" onclick="switchAdmTab('dash')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;">📊 Dashboard</button>
-    <button class="adm-tab" id="adm-tab-insights" onclick="switchAdmTab('insights')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">✨ Insights</button>
-    <button class="adm-tab" id="adm-tab-entry" onclick="switchAdmTab('entry')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">📋 Steps</button>
-    <button class="adm-tab" id="adm-tab-members" onclick="switchAdmTab('members')" style="flex:1;padding:12px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">👥 Members</button>
+    <button class="adm-tab active" id="adm-tab-dash" onclick="switchAdmTab('dash')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;">📊 Dash</button>
+    <button class="adm-tab" id="adm-tab-insights" onclick="switchAdmTab('insights')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">✨ Insights</button>
+    <button class="adm-tab" id="adm-tab-habits" onclick="switchAdmTab('habits')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">🌿 Habits</button>
+    <button class="adm-tab" id="adm-tab-entry" onclick="switchAdmTab('entry')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">📋 Steps</button>
+    <button class="adm-tab" id="adm-tab-members" onclick="switchAdmTab('members')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">👥 Members</button>
   </div>
 
   <!-- DASHBOARD TAB -->
@@ -310,6 +338,38 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
       <div style="display:flex;align-items:center;gap:16px;">
         <div style="position:relative;height:170px;width:170px;flex-shrink:0;"><canvas id="donut-chart"></canvas></div>
         <div id="donut-legend" style="flex:1;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN HABITS TAB -->
+  <div id="adm-habits" style="display:none;flex:1;overflow-y:auto;padding:16px 16px 32px;">
+    <button onclick="openAddHabitModal()" style="width:100%;padding:12px;background:var(--accent-dim);border:1.5px dashed rgba(168,85,247,0.4);border-radius:var(--radius-sm);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px;">+ Add New Habit</button>
+    <!-- Habit overview week picker -->
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Member Overview</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;" id="adm-habit-week-picker"></div>
+    <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;" id="adm-habit-overview"></div>
+    <!-- Habits list -->
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Configured Habits</div>
+    <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);" id="adm-habits-list"></div>
+  </div>
+
+  <!-- Add/Edit Habit Modal -->
+  <div class="modal" id="add-habit-modal">
+    <div class="modal-box">
+      <div class="modal-title" id="add-habit-title">🌿 Add Habit</div>
+      <div class="modal-sub">Configure a habit for your members</div>
+      <div class="flabel">Habit Name</div>
+      <input type="text" class="finput" id="habit-name-input" placeholder="e.g. Hydrate"/>
+      <div class="flabel">Icon (emoji)</div>
+      <input type="text" class="finput" id="habit-icon-input" placeholder="e.g. 💧"/>
+      <div class="flabel">Description (optional)</div>
+      <input type="text" class="finput" id="habit-desc-input" placeholder="e.g. Drink 8 glasses of water"/>
+      <input type="hidden" id="edit-habit-id"/>
+      <div class="err" id="habit-err"></div>
+      <div class="modal-btns">
+        <button class="modal-btn cancel" onclick="closeModal('add-habit-modal')">Cancel</button>
+        <button class="modal-btn submit" onclick="saveHabit()">Save Habit</button>
       </div>
     </div>
   </div>
@@ -539,7 +599,7 @@ function exitUser(){
 }
 
 function switchUserTab(tab){
-  ['mydata','insights','dash'].forEach(t=>{
+  ['mydata','habits','insights','dash'].forEach(t=>{
     const p=document.getElementById('user-'+t);
     if(p)p.style.display='none';
     const b=document.getElementById('user-tab-'+t);
@@ -550,6 +610,7 @@ function switchUserTab(tab){
   const ab=document.getElementById('user-tab-'+tab);
   if(ab){ab.style.borderBottomColor='var(--accent)';ab.style.color='var(--accent)';}
   if(tab==='mydata') loadUserMyData();
+  else if(tab==='habits') loadHabitsTab();
   else if(tab==='insights') loadUserInsights();
   else loadUserDash();
 }
@@ -785,7 +846,7 @@ function exitAdmin(){
   loadLB();loadHistory();
 }
 function switchAdmTab(tab){
-  const tabs=['dash','insights','entry','members'];
+  const tabs=['dash','insights','habits','entry','members'];
   tabs.forEach(t=>{
     const panel=document.getElementById('adm-'+t);
     if(panel)panel.style.display='none';
@@ -799,6 +860,7 @@ function switchAdmTab(tab){
 
   if(tab==='dash'){loadDashboard();}
   else if(tab==='insights'){loadInsights();}
+  else if(tab==='habits'){loadAdminHabits();}
   else if(tab==='entry'){buildMonthGrid();renderAdminMemberList();}
   else{
     document.getElementById('new-name').value='';newG=null;resetG('new');
@@ -1111,6 +1173,293 @@ function closeModal(id){document.getElementById(id).classList.remove('active');}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('admin-modal').classList.contains('active'))verifyAdmin();});
+
+// ══════════════════════════════════
+// HABITS FEATURE
+// ══════════════════════════════════
+let allHabits=[];
+let allHabitLogs=[];
+const DAY_NAMES=['M','T','W','T','F','S','S'];
+
+function getWeekDates(offsetWeeks=0){
+  const d=new Date();
+  const day=d.getDay();
+  const mon=new Date(d);
+  mon.setDate(d.getDate()-((day+6)%7)+offsetWeeks*7);
+  return Array.from({length:7},(_,i)=>{
+    const dd=new Date(mon);dd.setDate(mon.getDate()+i);
+    return dd.toISOString().split('T')[0];
+  });
+}
+
+async function loadHabitsData(){
+  [allHabits,allHabitLogs]=await Promise.all([
+    sb('GET','habits?active=eq.true&order=id.asc'),
+    sb('GET','habit_logs?select=*')
+  ]);
+}
+
+async function loadHabitsTab(){
+  const el=document.getElementById('habit-grid');
+  if(el)el.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">Loading...</div>';
+  await loadHabitsData();
+  const weekDates=getWeekDates();
+  const td=new Date().toISOString().split('T')[0];
+
+  // Week strip
+  const strip=document.getElementById('habit-week-strip');
+  if(strip)strip.innerHTML=weekDates.map((d,i)=>{
+    const isToday=d===td;
+    return `<div style="text-align:center;padding:4px 2px;border-radius:6px;${isToday?'background:var(--accent-dim);':''}">
+      <div style="font-size:8px;font-weight:700;color:${isToday?'var(--accent)':'var(--text3)'};text-transform:uppercase;">${DAY_NAMES[i]}</div>
+      <div style="font-size:13px;font-weight:700;color:${isToday?'var(--accent)':'var(--text)'};">${parseInt(d.split('-')[2])}</div>
+    </div>`;
+  }).join('');
+
+  // Week label
+  const wlEl=document.getElementById('habit-week-label');
+  if(wlEl){const[y,m,d2]=weekDates[0].split('-');const[y2,m2,d3]=weekDates[6].split('-');wlEl.textContent=new Date(y,m-1,d2).toLocaleDateString('en-IN',{month:'short',day:'numeric'})+' – '+new Date(y2,m2-1,d3).toLocaleDateString('en-IN',{month:'short',day:'numeric'});}
+
+  // Stats
+  const todayDone=allHabits.filter(h=>allHabitLogs.some(l=>l.user_name===selEntry&&l.habit_id===h.id&&l.log_date===td)).length;
+  const weekLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&weekDates.includes(l.log_date));
+  const weekPct=allHabits.length*7>0?Math.round(weekLogs.length/(allHabits.length*7)*100):0;
+  const statsEl=document.getElementById('habit-stats-row');
+  if(statsEl)statsEl.innerHTML=`
+    <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:#22c55e;font-family:'DM Mono',monospace;" id="today-done-count">${todayDone}<span style="font-size:14px;color:var(--text3);">/${allHabits.length}</span></div>
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">Today</div>
+    </div>
+    <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;">${weekPct}%</div>
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">This Week</div>
+    </div>`;
+
+  if(!allHabits.length){if(el)el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">No habits configured yet.<br/>Ask admin to add habits!</div>';renderMonthlyBars();return;}
+  if(el)el.innerHTML=allHabits.map(h=>{
+    const streak=calcHabitStreak(h.id);
+    const dayCells=weekDates.map((d,i)=>{
+      const done=allHabitLogs.some(l=>l.user_name===selEntry&&l.habit_id===h.id&&l.log_date===d);
+      const isToday=d===td;
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;" onclick="toggleHabit(${h.id},'${d}',this)">
+        <div style="font-size:8px;font-weight:700;color:var(--text3);text-transform:uppercase;">${DAY_NAMES[i]}</div>
+        <div class="dc-btn ${done?'done':''} ${isToday?'today-cell':''}" style="width:30px;height:30px;">${done?'✓':''}</div>
+      </div>`;
+    }).join('');
+    return `<div style="background:var(--surface);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;border:1px solid var(--border);" id="hcard-${h.id}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="font-size:22px;width:34px;text-align:center;flex-shrink:0;">${h.icon}</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;color:var(--text);">${h.name}</div>
+          ${h.description?`<div style="font-size:11px;color:var(--text3);margin-top:1px;">${h.description}</div>`:''}
+        </div>
+        <div id="streak-${h.id}" style="font-size:11px;font-weight:700;color:var(--amber);">${streak>0?`🔥 ${streak}d`:''}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">${dayCells}</div>
+    </div>`;
+  }).join('');
+  renderMonthlyBars();
+}
+
+function calcHabitStreak(habitId){
+  const myLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&l.habit_id===habitId).map(l=>l.log_date).sort().reverse();
+  if(!myLogs.length)return 0;
+  let streak=0;const d=new Date();
+  for(let i=0;i<60;i++){
+    const ds=d.toISOString().split('T')[0];
+    if(myLogs.includes(ds))streak++;
+    else if(streak>0)break;
+    d.setDate(d.getDate()-1);
+  }
+  return streak;
+}
+
+async function toggleHabit(habitId,date,cell){
+  const btn=cell.querySelector('.dc-btn');
+  const done=btn.classList.contains('done');
+  btn.style.transform='scale(0.85)';setTimeout(()=>btn.style.transform='',150);
+  try{
+    if(done){
+      await sb('DELETE',`habit_logs?user_name=eq.${encodeURIComponent(selEntry)}&habit_id=eq.${habitId}&log_date=eq.${date}`);
+      btn.classList.remove('done');btn.textContent='';
+      allHabitLogs=allHabitLogs.filter(l=>!(l.user_name===selEntry&&l.habit_id===habitId&&l.log_date===date));
+    }else{
+      await sb('POST','habit_logs',{user_name:selEntry,habit_id:habitId,log_date:date});
+      btn.classList.add('done');btn.textContent='✓';
+      allHabitLogs.push({user_name:selEntry,habit_id:habitId,log_date:date});
+      showToast('✓ Logged!');
+    }
+    const sEl=document.getElementById(`streak-${habitId}`);
+    const s=calcHabitStreak(habitId);
+    if(sEl)sEl.textContent=s>0?`🔥 ${s}d`:'';
+    const td=new Date().toISOString().split('T')[0];
+    const todayDone=allHabits.filter(h=>allHabitLogs.some(l=>l.user_name===selEntry&&l.habit_id===h.id&&l.log_date===td)).length;
+    const cEl=document.getElementById('today-done-count');
+    if(cEl)cEl.innerHTML=`${todayDone}<span style="font-size:14px;color:var(--text3);">/${allHabits.length}</span>`;
+    renderMonthlyBars();
+  }catch(e){showToast('Error: '+e.message.slice(0,40));}
+}
+
+function renderMonthlyBars(){
+  const now=new Date();
+  const monthStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const daysInMonth=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const monthLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&l.log_date.startsWith(monthStr));
+  const totalPossible=allHabits.length*daysInMonth;
+  const overallPct=totalPossible>0?Math.round(monthLogs.length/totalPossible*100):0;
+  const monthName=now.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  const el=document.getElementById('habit-month-label');
+  if(el)el.textContent=`${monthName} — ${overallPct}% consistent`;
+  const barsEl=document.getElementById('habit-monthly-bars');
+  if(!barsEl||!allHabits.length)return;
+  barsEl.innerHTML=`<div style="background:var(--surface);border-radius:var(--radius);padding:14px;border:1px solid var(--border);">
+    ${allHabits.map(h=>{
+      const done=monthLogs.filter(l=>l.habit_id===h.id).length;
+      const pct=Math.round(done/daysInMonth*100);
+      const c=pct>=80?'#22c55e':pct>=50?'#f59e0b':'#ef4444';
+      return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div style="font-size:16px;width:22px;text-align:center;flex-shrink:0;">${h.icon}</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text2);width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${h.name}</div>
+        <div style="flex:1;height:6px;background:var(--surface2);border-radius:999px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${c};border-radius:999px;"></div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:${c};width:32px;text-align:right;flex-shrink:0;">${pct}%</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// ── ADMIN HABITS ──
+async function loadAdminHabits(){
+  await loadHabitsData();
+  const picker=document.getElementById('adm-habit-week-picker');
+  picker.innerHTML=[-3,-2,-1,0].map(off=>{
+    const dates=getWeekDates(off);
+    const[y,m,d]=dates[0].split('-');
+    const lbl=off===0?'This Week':off===-1?'Last Week':new Date(y,m-1,d).toLocaleDateString('en-IN',{month:'short',day:'numeric'});
+    const sel=off===0;
+    return `<button onclick="renderAdminHabitWeek(${off},this)" style="padding:5px 10px;border-radius:var(--radius-sm);border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'var(--accent-dim)':'var(--surface2)'};color:${sel?'var(--accent)':'var(--text2)'};font-size:11px;font-weight:600;cursor:pointer;">${lbl}</button>`;
+  }).join('');
+  renderAdminHabitWeek(0,null);
+  renderAdminHabitsList();
+}
+
+async function renderAdminHabitWeek(offset,btn){
+  if(btn){
+    document.querySelectorAll('#adm-habit-week-picker button').forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--surface2)';b.style.color='var(--text2)';});
+    btn.style.borderColor='var(--accent)';btn.style.background='var(--accent-dim)';btn.style.color='var(--accent)';
+  }
+  const weekDates=getWeekDates(offset);
+  allHabitLogs=await sb('GET','habit_logs?select=*');
+  const el=document.getElementById('adm-habit-overview');
+  const members=allMembers.length?allMembers.map(m=>m.name):[];
+  if(!members.length){el.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No members found</div>';return;}
+
+  // Header row — day labels
+  const dayLabels=weekDates.map((d,i)=>{
+    const isToday=d===new Date().toISOString().split('T')[0];
+    const dayNum=parseInt(d.split('-')[2]);
+    return `<div style="text-align:center;font-size:9px;font-weight:700;color:${isToday?'var(--accent)':'var(--text3)'};text-transform:uppercase;">${DAY_NAMES[i]}<br/><span style="font-size:10px;">${dayNum}</span></div>`;
+  }).join('');
+
+  el.innerHTML=`
+    <!-- Sticky header -->
+    <div style="display:grid;grid-template-columns:130px repeat(7,1fr) 36px;gap:3px;padding:8px 12px;background:var(--surface2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1;">
+      <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;">Member</div>
+      ${dayLabels}
+      <div style="font-size:9px;font-weight:700;color:var(--text3);text-align:center;">%</div>
+    </div>
+    ${members.map(name=>{
+      const weekLogs=allHabitLogs.filter(l=>l.user_name===name&&weekDates.includes(l.log_date));
+      const total=allHabits.length*7;
+      const pct=total>0?Math.round(weekLogs.length/total*100):0;
+      const pctColor=pct>=80?'#22c55e':pct>=50?'#f59e0b':pct>0?'#ef4444':'var(--text3)';
+      const hasAny=weekLogs.length>0;
+
+      // For each day: show done habit icons
+      const dayCells=weekDates.map(d=>{
+        const dayHabitIds=weekLogs.filter(l=>l.log_date===d).map(l=>l.habit_id);
+        if(!dayHabitIds.length)return`<div style="display:flex;align-items:center;justify-content:center;min-height:32px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--surface3);"></div></div>`;
+        const icons=allHabits.filter(h=>dayHabitIds.includes(h.id)).map(h=>`<span title="${h.name}" style="font-size:13px;line-height:1;">${h.icon}</span>`).join('');
+        const missedCount=allHabits.length-dayHabitIds.length;
+        return `<div style="display:flex;flex-wrap:wrap;gap:1px;align-items:center;justify-content:center;min-height:32px;padding:2px;">${icons}${missedCount>0&&dayHabitIds.length>0?`<span style="font-size:9px;color:var(--text3);">+${missedCount}✗</span>`:''}</div>`;
+      }).join('');
+
+      return `<div style="display:grid;grid-template-columns:130px repeat(7,1fr) 36px;gap:3px;padding:6px 12px;border-bottom:1px solid var(--border);align-items:center;${!hasAny?'opacity:0.4':''}">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--text2);flex-shrink:0;">${name.slice(0,2).toUpperCase()}</div>
+          <div style="font-size:11px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div>
+        </div>
+        ${dayCells}
+        <div style="font-size:11px;font-weight:800;color:${pctColor};text-align:center;font-family:'DM Mono',monospace;">${pct}%</div>
+      </div>`;
+    }).join('')}`;
+}
+
+async function renderAdminHabitsList(){
+  const habits=await sb('GET','habits?order=id.asc');
+  allHabits=habits;
+  const el=document.getElementById('adm-habits-list');
+  if(!el)return;
+  if(!habits.length){el.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No habits yet — add the first one!</div>';return;}
+  el.innerHTML=habits.map(h=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);">
+      <div style="font-size:20px;width:28px;text-align:center;flex-shrink:0;">${h.icon}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;color:var(--text);">${h.name}</div>
+        ${h.description?`<div style="font-size:11px;color:var(--text3);">${h.description}</div>`:''}
+      </div>
+      <button onclick="openEditHabitModal(${h.id},'${h.name.replace(/'/g,"\\'")}','${h.icon}','${(h.description||'').replace(/'/g,"\\'")}',${h.active})" style="padding:5px 10px;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:11px;cursor:pointer;margin-right:6px;">Edit</button>
+      <button id="toggle-${h.id}" onclick="toggleHabitActive(${h.id},${h.active},this)" style="width:40px;height:22px;border-radius:999px;border:none;cursor:pointer;background:${h.active?'#22c55e':'var(--surface3)'};position:relative;transition:background 0.2s;flex-shrink:0;">
+        <div style="position:absolute;top:3px;${h.active?'right:3px':'left:3px'};width:16px;height:16px;border-radius:50%;background:#fff;transition:all 0.2s;"></div>
+      </button>
+    </div>`).join('');
+}
+
+function openAddHabitModal(){
+  document.getElementById('add-habit-title').textContent='🌿 Add New Habit';
+  document.getElementById('habit-name-input').value='';
+  document.getElementById('habit-icon-input').value='';
+  document.getElementById('habit-desc-input').value='';
+  document.getElementById('edit-habit-id').value='';
+  document.getElementById('habit-err').style.display='none';
+  document.getElementById('add-habit-modal').classList.add('active');
+}
+function openEditHabitModal(id,name,icon,desc,active){
+  document.getElementById('add-habit-title').textContent='✏️ Edit Habit';
+  document.getElementById('habit-name-input').value=name;
+  document.getElementById('habit-icon-input').value=icon;
+  document.getElementById('habit-desc-input').value=desc;
+  document.getElementById('edit-habit-id').value=id;
+  document.getElementById('habit-err').style.display='none';
+  document.getElementById('add-habit-modal').classList.add('active');
+}
+async function saveHabit(){
+  const name=document.getElementById('habit-name-input').value.trim();
+  const icon=document.getElementById('habit-icon-input').value.trim();
+  const desc=document.getElementById('habit-desc-input').value.trim();
+  const editId=document.getElementById('edit-habit-id').value;
+  const err=document.getElementById('habit-err');
+  if(!name){err.textContent='Enter a habit name';err.style.display='block';return;}
+  if(!icon){err.textContent='Enter an emoji icon';err.style.display='block';return;}
+  err.style.display='none';
+  try{
+    if(editId){await sb('PATCH',`habits?id=eq.${editId}`,{name,icon,description:desc||null});showToast('Habit updated ✓');}
+    else{await sb('POST','habits',{name,icon,description:desc||null,active:true});showToast('Habit added! 🌿');}
+    closeModal('add-habit-modal');renderAdminHabitsList();
+  }catch(e){err.textContent='Error: '+e.message.slice(0,40);err.style.display='block';}
+}
+async function toggleHabitActive(id,current,btn){
+  const newVal=!current;
+  await sb('PATCH',`habits?id=eq.${id}`,{active:newVal});
+  btn.style.background=newVal?'#22c55e':'var(--surface3)';
+  const dot=btn.querySelector('div');
+  if(dot){dot.style.right=newVal?'3px':'auto';dot.style.left=newVal?'auto':'3px';}
+  btn.onclick=()=>toggleHabitActive(id,newVal,btn);
+  showToast(newVal?'Habit enabled ✓':'Habit disabled');
+  renderAdminHabitsList();
+}
+// END HABITS FEATURE
 
 async function init(){
   document.getElementById('month-label').textContent=mLabel(curMonth);
