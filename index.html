@@ -170,12 +170,21 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
 
   <!-- USER HABITS TAB -->
   <div id="user-habits" style="display:none;flex:1;overflow-y:auto;padding:14px 14px 80px;">
+    <!-- Week navigator -->
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;border:1px solid var(--border);margin-bottom:10px;">
+      <button onclick="changeHabitWeek(-1)" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;">‹</button>
+      <div style="text-align:center;">
+        <div style="font-size:13px;font-weight:600;color:var(--text);" id="habit-week-label">This Week</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;" id="habit-week-sub"></div>
+      </div>
+      <button onclick="changeHabitWeek(1)" id="habit-week-next" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;">›</button>
+    </div>
     <!-- Week strip -->
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;background:var(--surface);border-radius:var(--radius-sm);padding:10px;border:1px solid var(--border);margin-bottom:12px;" id="habit-week-strip"></div>
     <!-- Stats row -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;" id="habit-stats-row"></div>
     <!-- Habit grid -->
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;" id="habit-week-label">This Week</div>
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;" id="habit-week-label2"></div>
     <div id="habit-grid"></div>
     <!-- Monthly summary -->
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin:14px 0 8px;" id="habit-month-label"></div>
@@ -1199,12 +1208,33 @@ async function loadHabitsData(){
   ]);
 }
 
+let habitWeekOffset=0;
+
+function changeHabitWeek(dir){
+  const now=new Date();
+  const maxOffset=0; // can't go future
+  habitWeekOffset=Math.min(maxOffset,habitWeekOffset+dir);
+  // Disable next button if at current week
+  const nextBtn=document.getElementById('habit-week-next');
+  if(nextBtn)nextBtn.style.opacity=habitWeekOffset>=0?'0.3':'1';
+  loadHabitsTab();
+}
+
 async function loadHabitsTab(){
   const el=document.getElementById('habit-grid');
   if(el)el.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">Loading...</div>';
   await loadHabitsData();
-  const weekDates=getWeekDates();
+  const weekDates=getWeekDates(habitWeekOffset);
   const td=new Date().toISOString().split('T')[0];
+
+  // Week nav label
+  const wNavEl=document.getElementById('habit-week-label');
+  const wSubEl=document.getElementById('habit-week-sub');
+  if(wNavEl)wNavEl.textContent=habitWeekOffset===0?'This Week':habitWeekOffset===-1?'Last Week':`${Math.abs(habitWeekOffset)} Weeks Ago`;
+  if(wSubEl){const[y,m,d2]=weekDates[0].split('-');const[y2,m2,d3]=weekDates[6].split('-');wSubEl.textContent=new Date(y,m-1,d2).toLocaleDateString('en-IN',{month:'short',day:'numeric'})+' – '+new Date(y2,m2-1,d3).toLocaleDateString('en-IN',{month:'short',day:'numeric'});}
+  // Disable next if at current week
+  const nextBtn=document.getElementById('habit-week-next');
+  if(nextBtn)nextBtn.style.opacity=habitWeekOffset>=0?'0.3':'1';
 
   // Week strip
   const strip=document.getElementById('habit-week-strip');
@@ -1216,9 +1246,7 @@ async function loadHabitsTab(){
     </div>`;
   }).join('');
 
-  // Week label
-  const wlEl=document.getElementById('habit-week-label');
-  if(wlEl){const[y,m,d2]=weekDates[0].split('-');const[y2,m2,d3]=weekDates[6].split('-');wlEl.textContent=new Date(y,m-1,d2).toLocaleDateString('en-IN',{month:'short',day:'numeric'})+' – '+new Date(y2,m2-1,d3).toLocaleDateString('en-IN',{month:'short',day:'numeric'});}
+
 
   // Stats
   const todayDone=allHabits.filter(h=>allHabitLogs.some(l=>l.user_name===selEntry&&l.habit_id===h.id&&l.log_date===td)).length;
