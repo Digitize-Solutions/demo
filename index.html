@@ -356,7 +356,14 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
     <button onclick="openAddHabitModal()" style="width:100%;padding:12px;background:var(--accent-dim);border:1.5px dashed rgba(168,85,247,0.4);border-radius:var(--radius-sm);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px;">+ Add New Habit</button>
     <!-- Habit overview week picker -->
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Member Overview</div>
-    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;" id="adm-habit-week-picker"></div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;align-items:center;" id="adm-habit-week-picker">
+      <button onclick="admHabitChangeWeek(-1)" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;">‹</button>
+      <div style="flex:1;text-align:center;">
+        <div style="font-size:13px;font-weight:600;color:var(--text);" id="adm-habit-week-label">This Week</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;" id="adm-habit-week-sub"></div>
+      </div>
+      <button onclick="admHabitChangeWeek(1)" id="adm-habit-week-next" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;opacity:0.3;">›</button>
+    </div>
     <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;" id="adm-habit-overview"></div>
     <!-- Habits list -->
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Configured Habits</div>
@@ -1358,26 +1365,30 @@ function renderMonthlyBars(){
 }
 
 // ── ADMIN HABITS ──
+let admHabitWeekOffset=0;
+function admHabitChangeWeek(dir){
+  admHabitWeekOffset=Math.min(0,admHabitWeekOffset+dir);
+  const nextBtn=document.getElementById('adm-habit-week-next');
+  if(nextBtn)nextBtn.style.opacity=admHabitWeekOffset>=0?'0.3':'1';
+  renderAdminHabitWeek(admHabitWeekOffset);
+}
 async function loadAdminHabits(){
   await loadHabitsData();
   const picker=document.getElementById('adm-habit-week-picker');
-  picker.innerHTML=[-3,-2,-1,0].map(off=>{
-    const dates=getWeekDates(off);
-    const[y,m,d]=dates[0].split('-');
-    const lbl=off===0?'This Week':off===-1?'Last Week':new Date(y,m-1,d).toLocaleDateString('en-IN',{month:'short',day:'numeric'});
-    const sel=off===0;
-    return `<button onclick="renderAdminHabitWeek(${off},this)" style="padding:5px 10px;border-radius:var(--radius-sm);border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'var(--accent-dim)':'var(--surface2)'};color:${sel?'var(--accent)':'var(--text2)'};font-size:11px;font-weight:600;cursor:pointer;">${lbl}</button>`;
-  }).join('');
-  renderAdminHabitWeek(0,null);
+  // Init nav label
+  renderAdminHabitWeek(admHabitWeekOffset);
   renderAdminHabitsList();
 }
 
-async function renderAdminHabitWeek(offset,btn){
-  if(btn){
-    document.querySelectorAll('#adm-habit-week-picker button').forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--surface2)';b.style.color='var(--text2)';});
-    btn.style.borderColor='var(--accent)';btn.style.background='var(--accent-dim)';btn.style.color='var(--accent)';
-  }
+async function renderAdminHabitWeek(offset){
   const weekDates=getWeekDates(offset);
+  // Update nav labels
+  const lbl=document.getElementById('adm-habit-week-label');
+  const sub=document.getElementById('adm-habit-week-sub');
+  if(lbl)lbl.textContent=offset===0?'This Week':offset===-1?'Last Week':`${Math.abs(offset)} Weeks Ago`;
+  if(sub){const[y,m,d]=weekDates[0].split('-');const[y2,m2,d3]=weekDates[6].split('-');sub.textContent=new Date(y,m-1,d).toLocaleDateString('en-IN',{month:'short',day:'numeric'})+' – '+new Date(y2,m2-1,d3).toLocaleDateString('en-IN',{month:'short',day:'numeric'});}
+  const nextBtn=document.getElementById('adm-habit-week-next');
+  if(nextBtn)nextBtn.style.opacity=offset>=0?'0.3':'1';
   allHabitLogs=await sb('GET','habit_logs?select=*');
   const el=document.getElementById('adm-habit-overview');
   const members=allMembers.length?allMembers.map(m=>m.name):[];
