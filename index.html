@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Vidial Steps King & Queen</title>
+<title>Vidial Vidial Wellness Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -103,9 +103,23 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
 <div id="home-page">
   <div class="home-box">
     <div class="brand">
-      <span class="brand-icon">👑</span>
-      <h1>Steps King & Queen</h1>
-      <p>Vidial Wellness · Highest steps wins the crown</p>
+      <h1>Vidial Wellness Hub</h1>
+      <p>Vidial · Move. Eat. Sleep. Repeat. 🌿</p>
+    </div>
+    <!-- Habit avg tiles -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;" id="habit-avg-row">
+      <div style="border-radius:var(--radius);padding:12px;text-align:center;background:rgba(24,95,165,0.08);border:1px solid rgba(24,95,165,0.2);">
+        <div style="font-size:18px;margin-bottom:4px;">♂️</div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#185FA5;margin-bottom:3px;">Boys Habits</div>
+        <div style="font-size:22px;font-weight:700;color:#185FA5;font-family:'DM Mono',monospace;" id="boys-habit-avg">—</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;">this week avg</div>
+      </div>
+      <div style="border-radius:var(--radius);padding:12px;text-align:center;background:rgba(212,83,126,0.08);border:1px solid rgba(212,83,126,0.2);">
+        <div style="font-size:18px;margin-bottom:4px;">♀️</div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#D4537E;margin-bottom:3px;">Girls Habits</div>
+        <div style="font-size:22px;font-weight:700;color:#D4537E;font-family:'DM Mono',monospace;" id="girls-habit-avg">—</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;">this week avg</div>
+      </div>
     </div>
     <div class="crown-row">
       <div class="crown-card king"><div class="crown-icon">🤴</div><div class="crown-title">King of Steps</div><div class="crown-name" id="king-name">—</div><div class="crown-steps" id="king-steps"></div><div class="crown-month" id="king-month"></div></div>
@@ -272,7 +286,7 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
   <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;">
     <div style="display:flex;align-items:center;gap:10px;">
       <div style="width:32px;height:32px;border-radius:50%;background:rgba(168,85,247,0.15);border:1.5px solid var(--purple);display:flex;align-items:center;justify-content:center;font-size:14px;">🔐</div>
-      <div><div style="font-size:14px;font-weight:700;color:var(--text);">The Coach</div><div style="font-size:11px;color:var(--text3);">Steps King & Queen</div></div>
+      <div><div style="font-size:14px;font-weight:700;color:var(--text);">The Coach</div><div style="font-size:11px;color:var(--text3);">Vidial Wellness Hub</div></div>
     </div>
     <button onclick="exitAdmin()" style="padding:6px 14px;border-radius:999px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;cursor:pointer;">Exit</button>
   </div>
@@ -354,17 +368,31 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
   <!-- ADMIN HABITS TAB -->
   <div id="adm-habits" style="display:none;flex:1;overflow-y:auto;padding:16px 16px 32px;">
     <button onclick="openAddHabitModal()" style="width:100%;padding:12px;background:var(--accent-dim);border:1.5px dashed rgba(168,85,247,0.4);border-radius:var(--radius-sm);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px;">+ Add New Habit</button>
-    <!-- Habit overview week picker -->
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Member Overview</div>
-    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;align-items:center;" id="adm-habit-week-picker">
+    <!-- Week nav -->
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;border:1px solid var(--border);margin-bottom:12px;">
       <button onclick="admHabitChangeWeek(-1)" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;">‹</button>
-      <div style="flex:1;text-align:center;">
+      <div style="text-align:center;">
         <div style="font-size:13px;font-weight:600;color:var(--text);" id="adm-habit-week-label">This Week</div>
         <div style="font-size:10px;color:var(--text3);margin-top:2px;" id="adm-habit-week-sub"></div>
       </div>
       <button onclick="admHabitChangeWeek(1)" id="adm-habit-week-next" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;opacity:0.3;">›</button>
     </div>
-    <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;" id="adm-habit-overview"></div>
+    <!-- Summary cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px;" id="adm-habit-summary-cards"></div>
+    <!-- Chart -->
+    <div style="background:var(--surface);border-radius:var(--radius);padding:14px;border:1px solid var(--border);margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:700;color:var(--text);">Boys vs Girls — Habit Completion</div>
+        <div style="display:flex;gap:12px;font-size:10px;color:var(--text2);">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#185FA5;display:inline-block;"></span>Boys</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#D4537E;display:inline-block;"></span>Girls</span>
+        </div>
+      </div>
+      <div style="position:relative;height:220px;">
+        <canvas id="adm-habits-chart" role="img" aria-label="Boys vs Girls habit completion bar chart"></canvas>
+      </div>
+      <div id="adm-habit-icon-legend" style="margin-top:10px;"></div>
+    </div>
     <!-- Habits list -->
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Configured Habits</div>
     <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);" id="adm-habits-list"></div>
@@ -1370,69 +1398,119 @@ function admHabitChangeWeek(dir){
   admHabitWeekOffset=Math.min(0,admHabitWeekOffset+dir);
   const nextBtn=document.getElementById('adm-habit-week-next');
   if(nextBtn)nextBtn.style.opacity=admHabitWeekOffset>=0?'0.3':'1';
-  renderAdminHabitWeek(admHabitWeekOffset);
+  loadHabitsData().then(()=>renderAdminHabitWeek(admHabitWeekOffset));
 }
 async function loadAdminHabits(){
-  await loadHabitsData();
-  const picker=document.getElementById('adm-habit-week-picker');
-  // Init nav label
-  renderAdminHabitWeek(admHabitWeekOffset);
+  await Promise.all([loadHabitsData(), loadMembers()]);
+  await renderAdminHabitWeek(admHabitWeekOffset);
   renderAdminHabitsList();
 }
 
+let admHabitChartInst=null;
+
 async function renderAdminHabitWeek(offset){
   const weekDates=getWeekDates(offset);
-  // Update nav labels
+  // Nav labels
   const lbl=document.getElementById('adm-habit-week-label');
   const sub=document.getElementById('adm-habit-week-sub');
   if(lbl)lbl.textContent=offset===0?'This Week':offset===-1?'Last Week':`${Math.abs(offset)} Weeks Ago`;
   if(sub){const[y,m,d]=weekDates[0].split('-');const[y2,m2,d3]=weekDates[6].split('-');sub.textContent=new Date(y,m-1,d).toLocaleDateString('en-IN',{month:'short',day:'numeric'})+' – '+new Date(y2,m2-1,d3).toLocaleDateString('en-IN',{month:'short',day:'numeric'});}
   const nextBtn=document.getElementById('adm-habit-week-next');
   if(nextBtn)nextBtn.style.opacity=offset>=0?'0.3':'1';
+
   allHabitLogs=await sb('GET','habit_logs?select=*');
-  const el=document.getElementById('adm-habit-overview');
-  const members=allMembers.length?allMembers.map(m=>m.name):[];
-  if(!members.length){el.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No members found</div>';return;}
+  if(!allHabits.length)return;
 
-  // Header row — day labels
-  const dayLabels=weekDates.map((d,i)=>{
-    const isToday=d===new Date().toISOString().split('T')[0];
-    const dayNum=parseInt(d.split('-')[2]);
-    return `<div style="text-align:center;font-size:9px;font-weight:700;color:${isToday?'var(--accent)':'var(--text3)'};text-transform:uppercase;">${DAY_NAMES[i]}<br/><span style="font-size:10px;">${dayNum}</span></div>`;
-  }).join('');
+  const males=allMembers.filter(m=>m.gender==='M').map(m=>m.name);
+  const females=allMembers.filter(m=>m.gender==='F').map(m=>m.name);
+  const totalDays=weekDates.length;
 
-  el.innerHTML=`
-    <!-- Sticky header -->
-    <div style="display:grid;grid-template-columns:130px repeat(7,1fr) 36px;gap:3px;padding:8px 12px;background:var(--surface2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1;">
-      <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;">Member</div>
-      ${dayLabels}
-      <div style="font-size:9px;font-weight:700;color:var(--text3);text-align:center;">%</div>
+  // Per habit % for boys and girls
+  const boysData=allHabits.map(h=>{
+    if(!males.length)return 0;
+    const possible=males.length*totalDays;
+    const done=allHabitLogs.filter(l=>males.includes(l.user_name)&&l.habit_id===h.id&&weekDates.includes(l.log_date)).length;
+    return possible>0?Math.round(done/possible*100):0;
+  });
+  const girlsData=allHabits.map(h=>{
+    if(!females.length)return 0;
+    const possible=females.length*totalDays;
+    const done=allHabitLogs.filter(l=>females.includes(l.user_name)&&l.habit_id===h.id&&weekDates.includes(l.log_date)).length;
+    return possible>0?Math.round(done/possible*100):0;
+  });
+
+  // Summary cards
+  const boysAvg=boysData.length?Math.round(boysData.reduce((s,v)=>s+v,0)/boysData.length):0;
+  const girlsAvg=girlsData.length?Math.round(girlsData.reduce((s,v)=>s+v,0)/girlsData.length):0;
+  const boysLeadIdx=allHabits.reduce((bi,_,i)=>boysData[i]-girlsData[i]>boysData[bi]-girlsData[bi]?i:bi,0);
+  const girlsLeadIdx=allHabits.reduce((gi,_,i)=>girlsData[i]-boysData[i]>girlsData[gi]-boysData[gi]?i:gi,0);
+
+  const cards=document.getElementById('adm-habit-summary-cards');
+  if(cards)cards.innerHTML=`
+    <div style="background:rgba(24,95,165,0.1);border-radius:var(--radius-sm);padding:12px;border:1px solid rgba(24,95,165,0.2);text-align:center;">
+      <div style="font-size:22px;font-weight:700;color:#185FA5;font-family:'DM Mono',monospace;">${boysAvg}%</div>
+      <div style="font-size:10px;color:var(--text2);margin-top:2px;">Boys avg · ${males.length} members</div>
     </div>
-    ${members.map(name=>{
-      const weekLogs=allHabitLogs.filter(l=>l.user_name===name&&weekDates.includes(l.log_date));
-      const total=allHabits.length*7;
-      const pct=total>0?Math.round(weekLogs.length/total*100):0;
-      const pctColor=pct>=80?'#22c55e':pct>=50?'#f59e0b':pct>0?'#ef4444':'var(--text3)';
-      const hasAny=weekLogs.length>0;
+    <div style="background:rgba(212,83,126,0.1);border-radius:var(--radius-sm);padding:12px;border:1px solid rgba(212,83,126,0.2);text-align:center;">
+      <div style="font-size:22px;font-weight:700;color:#D4537E;font-family:'DM Mono',monospace;">${girlsAvg}%</div>
+      <div style="font-size:10px;color:var(--text2);margin-top:2px;">Girls avg · ${females.length} members</div>
+    </div>
+    <div style="background:rgba(24,95,165,0.07);border-radius:var(--radius-sm);padding:12px;border:1px solid rgba(24,95,165,0.15);text-align:center;">
+      <div style="font-size:20px;">${allHabits[boysLeadIdx]?.icon||'—'}</div>
+      <div style="font-size:11px;font-weight:700;color:#185FA5;margin-top:2px;">${allHabits[boysLeadIdx]?.name||'—'}</div>
+      <div style="font-size:10px;color:var(--text2);margin-top:1px;">Boys lead (+${Math.max(0,boysData[boysLeadIdx]-girlsData[boysLeadIdx])}%)</div>
+    </div>
+    <div style="background:rgba(212,83,126,0.07);border-radius:var(--radius-sm);padding:12px;border:1px solid rgba(212,83,126,0.15);text-align:center;">
+      <div style="font-size:20px;">${allHabits[girlsLeadIdx]?.icon||'—'}</div>
+      <div style="font-size:11px;font-weight:700;color:#D4537E;margin-top:2px;">${allHabits[girlsLeadIdx]?.name||'—'}</div>
+      <div style="font-size:10px;color:var(--text2);margin-top:1px;">Girls lead (+${Math.max(0,girlsData[girlsLeadIdx]-boysData[girlsLeadIdx])}%)</div>
+    </div>`;
 
-      // For each day: show done habit icons
-      const dayCells=weekDates.map(d=>{
-        const dayHabitIds=weekLogs.filter(l=>l.log_date===d).map(l=>l.habit_id);
-        if(!dayHabitIds.length)return`<div style="display:flex;align-items:center;justify-content:center;min-height:32px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--surface3);"></div></div>`;
-        const icons=allHabits.filter(h=>dayHabitIds.includes(h.id)).map(h=>`<span title="${h.name}" style="font-size:13px;line-height:1;">${h.icon}</span>`).join('');
-        const missedCount=allHabits.length-dayHabitIds.length;
-        return `<div style="display:flex;flex-wrap:wrap;gap:1px;align-items:center;justify-content:center;min-height:32px;padding:2px;">${icons}${missedCount>0&&dayHabitIds.length>0?`<span style="font-size:9px;color:var(--text3);">+${missedCount}✗</span>`:''}</div>`;
-      }).join('');
+  // Icon legend — 5 per row
+  const legendEl=document.getElementById('adm-habit-icon-legend');
+  if(legendEl){
+    const chunks=[];
+    for(let i=0;i<allHabits.length;i+=5)chunks.push(allHabits.slice(i,i+5));
+    legendEl.innerHTML=chunks.map(row=>`<div style="display:grid;grid-template-columns:repeat(${row.length},1fr);gap:4px;">${row.map(h=>`<div style="text-align:center;font-size:11px;color:var(--text3);">${h.icon} ${h.name}</div>`).join('')}</div>`).join('');
+  }
 
-      return `<div style="display:grid;grid-template-columns:130px repeat(7,1fr) 36px;gap:3px;padding:6px 12px;border-bottom:1px solid var(--border);align-items:center;${!hasAny?'opacity:0.4':''}">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <div style="width:24px;height:24px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--text2);flex-shrink:0;">${name.slice(0,2).toUpperCase()}</div>
-          <div style="font-size:11px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div>
-        </div>
-        ${dayCells}
-        <div style="font-size:11px;font-weight:800;color:${pctColor};text-align:center;font-family:'DM Mono',monospace;">${pct}%</div>
-      </div>`;
-    }).join('')}`;
+  // Chart
+  const canvas=document.getElementById('adm-habits-chart');
+  if(!canvas)return;
+  if(typeof Chart==='undefined'){
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';
+    s.onload=()=>drawAdmHabitChart(canvas,allHabits,boysData,girlsData);
+    document.head.appendChild(s);
+  }else{drawAdmHabitChart(canvas,allHabits,boysData,girlsData);}
+}
+
+function drawAdmHabitChart(canvas,habits,boysData,girlsData){
+  if(admHabitChartInst)admHabitChartInst.destroy();
+  admHabitChartInst=new Chart(canvas,{
+    type:'bar',
+    data:{
+      labels:habits.map(h=>h.icon),
+      datasets:[
+        {label:'Boys',data:boysData,backgroundColor:'rgba(24,95,165,0.85)',borderColor:'#185FA5',borderWidth:1,borderRadius:4},
+        {label:'Girls',data:girlsData,backgroundColor:'rgba(212,83,126,0.85)',borderColor:'#D4537E',borderWidth:1,borderRadius:4},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          title:ctx=>habits[ctx[0].dataIndex]?.name||'',
+          label:ctx=>`${ctx.dataset.label}: ${ctx.raw}%`
+        }}
+      },
+      scales:{
+        x:{ticks:{font:{size:18},color:'#888',maxRotation:0,autoSkip:false},grid:{display:false}},
+        y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11},color:'#888',stepSize:20},grid:{color:'rgba(128,128,128,0.1)'}}
+      }
+    }
+  });
 }
 
 async function renderAdminHabitsList(){
@@ -1504,6 +1582,33 @@ async function init(){
   document.getElementById('month-label').textContent=mLabel(curMonth);
   await loadMembers();
   loadLB();loadHistory();
+  loadHomeHabitAvg();
+}
+
+async function loadHomeHabitAvg(){
+  try{
+    const [habits, logs] = await Promise.all([
+      sb('GET','habits?active=eq.true&select=id'),
+      sb('GET','habit_logs?select=user_name,habit_id,log_date')
+    ]);
+    if(!habits.length||!allMembers.length)return;
+    const weekDates=getWeekDates(0);
+    const males=allMembers.filter(m=>m.gender==='M').map(m=>m.name);
+    const females=allMembers.filter(m=>m.gender==='F').map(m=>m.name);
+    const weekLogs=logs.filter(l=>weekDates.includes(l.log_date));
+    function avgPct(members){
+      if(!members.length||!habits.length)return null;
+      const possible=members.length*habits.length*weekDates.length;
+      const done=weekLogs.filter(l=>members.includes(l.user_name)).length;
+      return possible>0?Math.round(done/possible*100):0;
+    }
+    const boysAvg=avgPct(males);
+    const girlsAvg=avgPct(females);
+    const bEl=document.getElementById('boys-habit-avg');
+    const gEl=document.getElementById('girls-habit-avg');
+    if(bEl)bEl.textContent=boysAvg!==null?boysAvg+'%':'—';
+    if(gEl)gEl.textContent=girlsAvg!==null?girlsAvg+'%':'—';
+  }catch(e){console.warn('Habit avg load failed:',e.message);}
 }
 init();
 </script>
