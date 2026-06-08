@@ -369,44 +369,18 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
   <!-- ADMIN HABITS TAB -->
   <div id="adm-habits" style="display:none;flex:1;overflow-y:auto;padding:16px 16px 32px;">
     <button onclick="openAddHabitModal()" style="width:100%;padding:12px;background:var(--accent-dim);border:1.5px dashed rgba(168,85,247,0.4);border-radius:var(--radius-sm);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px;">+ Add New Habit</button>
-    <!-- Week nav -->
-    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;border:1px solid var(--border);margin-bottom:12px;">
-      <button onclick="admHabitChangeWeek(-1)" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;">‹</button>
-      <div style="text-align:center;">
-        <div style="font-size:13px;font-weight:600;color:var(--text);" id="adm-habit-week-label">This Week</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:2px;" id="adm-habit-week-sub"></div>
-      </div>
-      <button onclick="admHabitChangeWeek(1)" id="adm-habit-week-next" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;opacity:0.3;">›</button>
-    </div>
     <!-- Summary cards -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px;" id="adm-habit-summary-cards"></div>
     <!-- Chart -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;" id="rpt-summary-cards"></div>
     <div style="background:var(--surface);border-radius:var(--radius);padding:14px;border:1px solid var(--border);margin-bottom:12px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <div style="font-size:12px;font-weight:700;color:var(--text);">Boys vs Girls — Habit Completion</div>
-        <div style="display:flex;gap:12px;font-size:10px;color:var(--text2);">
-          <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#185FA5;display:inline-block;"></span>Boys</span>
-          <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#D4537E;display:inline-block;"></span>Girls</span>
-        </div>
-      </div>
-      <!-- Physical Activity chart -->
-      <div style="margin-bottom:14px;">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
-          <div style="width:3px;height:14px;background:#185FA5;border-radius:2px;"></div>
-          <span style="font-size:11px;font-weight:700;color:#185FA5;text-transform:uppercase;letter-spacing:0.07em;">Physical Activity</span>
-        </div>
-        <div style="position:relative;height:160px;"><canvas id="adm-habits-chart-physical"></canvas></div>
-        <div id="adm-habit-legend-physical" style="margin-top:6px;"></div>
-      </div>
-      <!-- Food Related chart -->
-      <div>
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
-          <div style="width:3px;height:14px;background:#3B6D11;border-radius:2px;"></div>
-          <span style="font-size:11px;font-weight:700;color:#3B6D11;text-transform:uppercase;letter-spacing:0.07em;">Food Related</span>
-        </div>
-        <div style="position:relative;height:160px;"><canvas id="adm-habits-chart-food"></canvas></div>
-        <div id="adm-habit-legend-food" style="margin-top:6px;"></div>
-      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;">Daily completion trend</div>
+
+      <div style="position:relative;height:180px;"><canvas id="rpt-trend-chart" role="img" aria-label="Daily completion trend boys vs girls"></canvas></div>
+    </div>
+    <div style="background:var(--surface);border-radius:var(--radius);padding:14px;border:1px solid var(--border);margin-bottom:12px;">
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;">Completion rate by habit</div>
+
+      <div style="position:relative;height:220px;"><canvas id="rpt-habit-chart" role="img" aria-label="Habit completion boys vs girls"></canvas></div>
     </div>
     <!-- Habits list -->
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Configured Habits</div>
@@ -1443,88 +1417,39 @@ function renderMonthlyBars(){
 }
 
 // ── ADMIN HABITS ──
-let admHabitWeekOffset=0;
-function admHabitChangeWeek(dir){
-  admHabitWeekOffset=Math.min(0,admHabitWeekOffset+dir);
-  const nextBtn=document.getElementById('adm-habit-week-next');
-  if(nextBtn)nextBtn.style.opacity=admHabitWeekOffset>=0?'0.3':'1';
-  loadHabitsData().then(()=>renderAdminHabitWeek(admHabitWeekOffset));
-}
 async function loadAdminHabits(){
   await Promise.all([loadHabitsData(), loadMembers()]);
-  await renderAdminHabitWeek(admHabitWeekOffset);
   renderAdminHabitsList();
+  loadChallengeReport();
 }
 
 let admHabitChartInst=null;
 
-async function renderAdminHabitWeek(offset){
-  const weekDates=getWeekDates(offset);
-  // Nav labels
-  const lbl=document.getElementById('adm-habit-week-label');
-  const sub=document.getElementById('adm-habit-week-sub');
-  if(lbl)lbl.textContent=offset===0?'This Week':offset===-1?'Last Week':`${Math.abs(offset)} Weeks Ago`;
-  if(sub){const[y,m,d]=weekDates[0].split('-');const[y2,m2,d3]=weekDates[6].split('-');sub.textContent=new Date(y,m-1,d).toLocaleDateString('en-IN',{month:'short',day:'numeric'})+' – '+new Date(y2,m2-1,d3).toLocaleDateString('en-IN',{month:'short',day:'numeric'});}
-  const nextBtn=document.getElementById('adm-habit-week-next');
-  if(nextBtn)nextBtn.style.opacity=offset>=0?'0.3':'1';
-
+async function renderAdminHabitWeek(){
   allHabitLogs=await sb('GET','habit_logs?select=*');
   if(!allHabits.length)return;
-
+  const dates=getChallengeDate();
   const males=allMembers.filter(m=>m.gender==='M').map(m=>m.name);
   const females=allMembers.filter(m=>m.gender==='F').map(m=>m.name);
-  const totalDays=weekDates.length;
 
-  // Per habit % for boys and girls
   const boysData=allHabits.map(h=>{
     if(!males.length)return 0;
-    const possible=males.length*totalDays;
-    const done=allHabitLogs.filter(l=>males.includes(l.user_name)&&l.habit_id===h.id&&weekDates.includes(l.log_date)).length;
+    const possible=males.length*dates.length;
+    const done=allHabitLogs.filter(l=>males.includes(l.user_name)&&l.habit_id===h.id&&dates.includes(l.log_date)).length;
     return possible>0?Math.round(done/possible*100):0;
   });
   const girlsData=allHabits.map(h=>{
     if(!females.length)return 0;
-    const possible=females.length*totalDays;
-    const done=allHabitLogs.filter(l=>females.includes(l.user_name)&&l.habit_id===h.id&&weekDates.includes(l.log_date)).length;
+    const possible=females.length*dates.length;
+    const done=allHabitLogs.filter(l=>females.includes(l.user_name)&&l.habit_id===h.id&&dates.includes(l.log_date)).length;
     return possible>0?Math.round(done/possible*100):0;
   });
 
-  // Summary cards
   const boysAvg=boysData.length?Math.round(boysData.reduce((s,v)=>s+v,0)/boysData.length):0;
   const girlsAvg=girlsData.length?Math.round(girlsData.reduce((s,v)=>s+v,0)/girlsData.length):0;
-  const boysLeadIdx=allHabits.reduce((bi,_,i)=>boysData[i]-girlsData[i]>boysData[bi]-girlsData[bi]?i:bi,0);
-  const girlsLeadIdx=allHabits.reduce((gi,_,i)=>girlsData[i]-boysData[i]>girlsData[gi]-boysData[gi]?i:gi,0);
 
-  const cards=document.getElementById('adm-habit-summary-cards');
-  if(cards)cards.innerHTML=`
-    <div style="background:rgba(24,95,165,0.1);border-radius:var(--radius-sm);padding:12px;border:1px solid rgba(24,95,165,0.2);text-align:center;">
-      <div style="font-size:22px;font-weight:700;color:#185FA5;font-family:'DM Mono',monospace;">${boysAvg}%</div>
-      <div style="font-size:10px;color:var(--text2);margin-top:2px;">Boys avg · ${males.length} members</div>
-    </div>
-    <div style="background:rgba(212,83,126,0.1);border-radius:var(--radius-sm);padding:12px;border:1px solid rgba(212,83,126,0.2);text-align:center;">
-      <div style="font-size:22px;font-weight:700;color:#D4537E;font-family:'DM Mono',monospace;">${girlsAvg}%</div>
-      <div style="font-size:10px;color:var(--text2);margin-top:2px;">Girls avg · ${females.length} members</div>
-    </div>
-    <div style="background:rgba(24,95,165,0.07);border-radius:var(--radius-sm);padding:12px;border:1px solid rgba(24,95,165,0.15);text-align:center;">
-      <div style="font-size:20px;">${allHabits[boysLeadIdx]?.icon||'—'}</div>
-      <div style="font-size:11px;font-weight:700;color:#185FA5;margin-top:2px;">${allHabits[boysLeadIdx]?.name||'—'}</div>
-      <div style="font-size:10px;color:var(--text2);margin-top:1px;">Boys lead (+${Math.max(0,boysData[boysLeadIdx]-girlsData[boysLeadIdx])}%)</div>
-    </div>
-    <div style="background:rgba(212,83,126,0.07);border-radius:var(--radius-sm);padding:12px;border:1px solid rgba(212,83,126,0.15);text-align:center;">
-      <div style="font-size:20px;">${allHabits[girlsLeadIdx]?.icon||'—'}</div>
-      <div style="font-size:11px;font-weight:700;color:#D4537E;margin-top:2px;">${allHabits[girlsLeadIdx]?.name||'—'}</div>
-      <div style="font-size:10px;color:var(--text2);margin-top:1px;">Girls lead (+${Math.max(0,girlsData[girlsLeadIdx]-boysData[girlsLeadIdx])}%)</div>
-    </div>`;
 
-  // Icon legend — 5 per row
-  const legendEl=document.getElementById('adm-habit-icon-legend');
-  if(legendEl){
-    const chunks=[];
-    for(let i=0;i<allHabits.length;i+=5)chunks.push(allHabits.slice(i,i+5));
-    legendEl.innerHTML=chunks.map(row=>`<div style="display:grid;grid-template-columns:repeat(${row.length},1fr);gap:4px;">${row.map(h=>`<div style="text-align:center;font-size:11px;color:var(--text3);">${h.icon} ${h.name}</div>`).join('')}</div>`).join('');
-  }
 
-  // Chart
   const drawFn=()=>{
     HABIT_CATEGORIES.forEach(cat=>{
       const catHabits=allHabits.filter(h=>cat.habits.some(n=>n.toLowerCase()===h.name.toLowerCase().trim()));
@@ -1532,7 +1457,6 @@ async function renderAdminHabitWeek(offset){
       const catBoysData=catHabits.map((_,i)=>boysData[allHabits.findIndex(h=>h.name===catHabits[i].name)]||0);
       const catGirlsData=catHabits.map((_,i)=>girlsData[allHabits.findIndex(h=>h.name===catHabits[i].name)]||0);
       const canvasId='adm-habits-chart-'+cat.key;
-      const legendId='adm-habit-legend-'+cat.key;
       const canvas=document.getElementById(canvasId);
       if(!canvas)return;
       if(admHabitChartInst&&admHabitChartInst[cat.key])admHabitChartInst[cat.key].destroy();
@@ -1556,9 +1480,6 @@ async function renderAdminHabitWeek(offset){
       });
       if(!admHabitChartInst)admHabitChartInst={};
       admHabitChartInst[cat.key]=inst;
-      // Legend
-      const legendEl=document.getElementById(legendId);
-      if(legendEl)legendEl.innerHTML=`<div style="display:grid;grid-template-columns:repeat(${Math.min(catHabits.length,5)},1fr);gap:3px;">${catHabits.map(h=>`<div style="text-align:center;font-size:10px;color:var(--text3);">${h.icon} ${h.name}</div>`).join('')}</div>`;
     });
   };
   if(typeof Chart==='undefined'){
@@ -1567,6 +1488,7 @@ async function renderAdminHabitWeek(offset){
     s.onload=drawFn;document.head.appendChild(s);
   }else{drawFn();}
 }
+
 
 async function renderAdminHabitsList(){
   const habits=await sb('GET','habits?order=id.asc');
@@ -1630,6 +1552,118 @@ async function toggleHabitActive(id,current,btn){
   btn.onclick=()=>toggleHabitActive(id,newVal,btn);
   showToast(newVal?'Habit enabled ✓':'Habit disabled');
   renderAdminHabitsList();
+}
+// ── CHALLENGE REPORT ──
+const CHALLENGE_START='2026-06-01';
+const CHALLENGE_END='2026-06-15';
+let rptTrendInst=null;
+let rptHabitInst=null;
+
+function getChallengeDate(){
+  const dates=[];
+  const d=new Date(CHALLENGE_START+'T00:00:00');
+  const end=new Date(CHALLENGE_END+'T00:00:00');
+  while(d<=end){dates.push(d.toISOString().split('T')[0]);d.setDate(d.getDate()+1);}
+  return dates;
+}
+
+async function loadChallengeReport(){
+  const el=document.getElementById('rpt-summary-cards');
+  if(el)el.innerHTML='<div style="grid-column:span 2;text-align:center;padding:20px;color:var(--text3);font-size:13px;">Loading...</div>';
+  await Promise.all([loadHabitsData(),loadMembers()]);
+  const dates=getChallengeDate();
+  const logs=allHabitLogs.filter(l=>dates.includes(l.log_date));
+  const males=allMembers.filter(m=>m.gender==='M').map(m=>m.name);
+  const females=allMembers.filter(m=>m.gender==='F').map(m=>m.name);
+  const totalHabits=allHabits.length;
+
+  // Summary metrics
+  function metrics(members){
+    const mLogs=logs.filter(l=>members.includes(l.user_name));
+    const totalCheckins=mLogs.length;
+    const active=[...new Set(mLogs.map(l=>l.user_name))].length;
+    const possible=members.length*totalHabits*dates.length;
+    const completionRate=possible>0?Math.round(mLogs.length/possible*100):0;
+    const loggedDays=members.reduce((s,m)=>{
+      const daysLogged=[...new Set(mLogs.filter(l=>l.user_name===m).map(l=>l.log_date))].length;
+      return s+daysLogged;
+    },0);
+    const avgPerDay=active>0&&loggedDays>0?Math.round((mLogs.length/loggedDays)*10)/10:0;
+    return{totalCheckins,active,completionRate,avgPerDay};
+  }
+  const bM=metrics(males);
+  const gM=metrics(females);
+
+  // Cards
+  const cardData=[
+    {label:'Total check-ins',bVal:bM.totalCheckins,gVal:gM.totalCheckins,max:Math.max(bM.totalCheckins,gM.totalCheckins)},
+    {label:'Active participants',bVal:`${bM.active}/${males.length}`,gVal:`${gM.active}/${females.length}`,bBar:bM.active/males.length,gBar:gM.active/females.length},
+    {label:'Avg habits / day',bVal:bM.avgPerDay,gVal:gM.avgPerDay,max:totalHabits},
+    {label:'Completion rate',bVal:bM.completionRate+'%',gVal:gM.completionRate+'%',bBar:bM.completionRate/100,gBar:gM.completionRate/100},
+  ];
+  if(el)el.innerHTML=cardData.map(c=>{
+    const bBar=c.bBar!==undefined?c.bBar:(c.max?c.bVal/c.max:0);
+    const gBar=c.gBar!==undefined?c.gBar:(c.max?c.gVal/c.max:0);
+    return `<div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">${c.label}</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+        <div style="height:5px;border-radius:999px;background:#185FA5;flex:${bBar};min-width:4px;"></div>
+        <span style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;">${c.bVal}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="height:5px;border-radius:999px;background:#D4537E;flex:${gBar};min-width:4px;"></div>
+        <span style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;">${c.gVal}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Daily trend
+  const boysDaily=dates.map(d=>{ const dl=logs.filter(l=>males.includes(l.user_name)&&l.log_date===d).length; return males.length*totalHabits>0?Math.round(dl/(males.length*totalHabits)*100):0; });
+  const girlsDaily=dates.map(d=>{ const dl=logs.filter(l=>females.includes(l.user_name)&&l.log_date===d).length; return females.length*totalHabits>0?Math.round(dl/(females.length*totalHabits)*100):0; });
+  const dayLabels=dates.map(d=>parseInt(d.split('-')[2])+' Jun');
+  const trendCanvas=document.getElementById('rpt-trend-chart');
+  if(trendCanvas){
+    if(typeof Chart==='undefined'){const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';s.onload=()=>drawRptCharts(trendCanvas,dayLabels,boysDaily,girlsDaily,logs,males,females,dates,totalHabits);document.head.appendChild(s);}
+    else{drawRptCharts(trendCanvas,dayLabels,boysDaily,girlsDaily,logs,males,females,dates,totalHabits);}
+  }
+}
+
+function drawRptCharts(trendCanvas,dayLabels,boysDaily,girlsDaily,logs,males,females,dates,totalHabits){
+  if(rptTrendInst)rptTrendInst.destroy();
+  rptTrendInst=new Chart(trendCanvas,{
+    type:'line',
+    data:{labels:dayLabels,datasets:[
+      {label:'Boys',data:boysDaily,borderColor:'#185FA5',backgroundColor:'rgba(24,95,165,0.08)',borderWidth:2,pointRadius:3,fill:true,tension:0.35},
+      {label:'Girls',data:girlsDaily,borderColor:'#D4537E',backgroundColor:'rgba(212,83,126,0.08)',borderWidth:2,pointRadius:3,fill:true,tension:0.35,borderDash:[5,3]},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw}%`}}},
+      scales:{
+        x:{ticks:{font:{size:10},color:'#888',maxRotation:0,autoSkip:true},grid:{display:false}},
+        y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:10},color:'#888',stepSize:25},grid:{color:'rgba(128,128,128,0.1)'}}
+      }}
+  });
+
+  // Habit breakdown
+  const boysH=allHabits.map(h=>{ const possible=males.length*dates.length; const done=logs.filter(l=>males.includes(l.user_name)&&l.habit_id===h.id).length; return possible>0?Math.round(done/possible*100):0; });
+  const girlsH=allHabits.map(h=>{ const possible=females.length*dates.length; const done=logs.filter(l=>females.includes(l.user_name)&&l.habit_id===h.id).length; return possible>0?Math.round(done/possible*100):0; });
+  const habitCanvas=document.getElementById('rpt-habit-chart');
+  if(habitCanvas){
+    if(rptHabitInst)rptHabitInst.destroy();
+    rptHabitInst=new Chart(habitCanvas,{
+      type:'bar',
+      data:{labels:allHabits.map(h=>h.icon),datasets:[
+        {label:'Boys',data:boysH,backgroundColor:'rgba(24,95,165,0.85)',borderColor:'#185FA5',borderWidth:1,borderRadius:3},
+        {label:'Girls',data:girlsH,backgroundColor:'rgba(212,83,126,0.85)',borderColor:'#D4537E',borderWidth:1,borderRadius:3},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>allHabits[c[0].dataIndex]?.name||'',label:c=>`${c.dataset.label}: ${c.raw}%`}}},
+        scales:{
+          x:{ticks:{font:{size:18},maxRotation:0,autoSkip:false},grid:{display:false}},
+          y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:10},color:'#888',stepSize:25},grid:{color:'rgba(128,128,128,0.1)'}}
+        }}
+    });
+  }
 }
 // END HABITS FEATURE
 
