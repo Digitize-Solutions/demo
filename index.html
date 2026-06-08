@@ -113,13 +113,13 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
         <div style="font-size:18px;margin-bottom:4px;">♂️</div>
         <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#185FA5;margin-bottom:3px;">Boys Habits</div>
         <div style="font-size:22px;font-weight:700;color:#185FA5;font-family:'DM Mono',monospace;" id="boys-habit-avg">—</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:2px;">this week avg</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;">completion rate</div>
       </div>
       <div style="border-radius:var(--radius);padding:12px;text-align:center;background:rgba(212,83,126,0.08);border:1px solid rgba(212,83,126,0.2);">
         <div style="font-size:18px;margin-bottom:4px;">♀️</div>
         <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#D4537E;margin-bottom:3px;">Girls Habits</div>
         <div style="font-size:22px;font-weight:700;color:#D4537E;font-family:'DM Mono',monospace;" id="girls-habit-avg">—</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:2px;">this week avg</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;">completion rate</div>
       </div>
     </div>
     <div class="crown-row">
@@ -1681,14 +1681,14 @@ async function loadHomeHabitAvg(){
       sb('GET','habit_logs?select=user_name,habit_id,log_date')
     ]);
     if(!habits.length||!allMembers.length)return;
-    const weekDates=getWeekDates(0);
+    const dates=getChallengeDate();
     const males=allMembers.filter(m=>m.gender==='M').map(m=>m.name);
     const females=allMembers.filter(m=>m.gender==='F').map(m=>m.name);
-    const weekLogs=logs.filter(l=>weekDates.includes(l.log_date));
+    const challengeLogs=logs.filter(l=>dates.includes(l.log_date));
     function avgPct(members){
       if(!members.length||!habits.length)return null;
-      const possible=members.length*habits.length*weekDates.length;
-      const done=weekLogs.filter(l=>members.includes(l.user_name)).length;
+      const possible=members.length*habits.length*dates.length;
+      const done=challengeLogs.filter(l=>members.includes(l.user_name)).length;
       return possible>0?Math.round(done/possible*100):0;
     }
     const boysAvg=avgPct(males);
