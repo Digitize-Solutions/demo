@@ -1237,23 +1237,21 @@ async function loadHabitsTab(){
   await loadHabitsData();
   const weekDates=getChallengeDate();
   const td=new Date().toISOString().split('T')[0];
-
-
-
+  const todayInChallenge=weekDates.includes(td);
 
 
   // Stats
-  const todayDone=allHabits.filter(h=>allHabitLogs.some(l=>l.user_name===selEntry&&l.habit_id===h.id&&l.log_date===td)).length;
+  const todayDone=todayInChallenge?allHabits.filter(h=>allHabitLogs.some(l=>l.user_name===selEntry&&l.habit_id===h.id&&l.log_date===td)).length:0;
   const challengeLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&weekDates.includes(l.log_date));
   const weekPct=allHabits.length*weekDates.length>0?Math.round(challengeLogs.length/(allHabits.length*weekDates.length)*100):0;
   const statsEl=document.getElementById('habit-stats-row');
   if(statsEl)statsEl.innerHTML=`
-    <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
+    ${todayInChallenge?`<div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
       <div style="font-size:24px;font-weight:800;color:#22c55e;font-family:'DM Mono',monospace;" id="today-done-count">${todayDone}<span style="font-size:14px;color:var(--text3);">/${allHabits.length}</span></div>
       <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">Today</div>
-    </div>
+    </div>`:''}
     <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
-      <div style="font-size:24px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;">${weekPct}%</div>
+      <div style="font-size:24px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;" id="habit-challenge-pct">${weekPct}%</div>
       <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">Challenge</div>
     </div>`;
 
@@ -1341,29 +1339,35 @@ async function toggleHabit(habitId,date,cell){
     const s=calcHabitStreak(habitId);
     if(sEl)sEl.textContent=s>0?`🔥 ${s}d`:'';
     const td=new Date().toISOString().split('T')[0];
-    const todayDone=allHabits.filter(h=>allHabitLogs.some(l=>l.user_name===selEntry&&l.habit_id===h.id&&l.log_date===td)).length;
-    const cEl=document.getElementById('today-done-count');
-    if(cEl)cEl.innerHTML=`${todayDone}<span style="font-size:14px;color:var(--text3);">/${allHabits.length}</span>`;
+    const cDates2=getChallengeDate();
+    if(cDates2.includes(td)){
+      const todayDone=allHabits.filter(h=>allHabitLogs.some(l=>l.user_name===selEntry&&l.habit_id===h.id&&l.log_date===td)).length;
+      const cEl=document.getElementById('today-done-count');
+      if(cEl)cEl.innerHTML=`${todayDone}<span style="font-size:14px;color:var(--text3);">/${allHabits.length}</span>`;
+    }
+    // Update challenge %
+    const cDates=getChallengeDate();
+    const cLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&cDates.includes(l.log_date));
+    const cPct=allHabits.length*cDates.length>0?Math.round(cLogs.length/(allHabits.length*cDates.length)*100):0;
+    const pctEl=document.getElementById('habit-challenge-pct');
+    if(pctEl)pctEl.textContent=cPct+'%';
     renderMonthlyBars();
   }catch(e){showToast('Error: '+e.message.slice(0,40));}
 }
 
 function renderMonthlyBars(){
-  const now=new Date();
-  const monthStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const daysInMonth=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
-  const monthLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&l.log_date.startsWith(monthStr));
-  const totalPossible=allHabits.length*daysInMonth;
-  const overallPct=totalPossible>0?Math.round(monthLogs.length/totalPossible*100):0;
-  const monthName=now.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  const dates=getChallengeDate();
+  const challengeLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&dates.includes(l.log_date));
+  const totalPossible=allHabits.length*dates.length;
+  const overallPct=totalPossible>0?Math.round(challengeLogs.length/totalPossible*100):0;
   const el=document.getElementById('habit-month-label');
-  if(el)el.textContent=`${monthName} — ${overallPct}% consistent`;
+  if(el)el.textContent=`Challenge · ${overallPct}% consistent`;
   const barsEl=document.getElementById('habit-monthly-bars');
   if(!barsEl||!allHabits.length)return;
   barsEl.innerHTML=`<div style="background:var(--surface);border-radius:var(--radius);padding:14px;border:1px solid var(--border);">
     ${allHabits.map(h=>{
-      const done=monthLogs.filter(l=>l.habit_id===h.id).length;
-      const pct=Math.round(done/daysInMonth*100);
+      const done=challengeLogs.filter(l=>l.habit_id===h.id).length;
+      const pct=Math.round(done/dates.length*100);
       const c=pct>=80?'#22c55e':pct>=50?'#f59e0b':'#ef4444';
       return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
         <div style="font-size:16px;width:22px;text-align:center;flex-shrink:0;">${h.icon}</div>
@@ -1522,9 +1526,14 @@ let rptHabitInst=null;
 
 function getChallengeDate(){
   const dates=[];
-  const d=new Date(CHALLENGE_START+'T00:00:00');
-  const end=new Date(CHALLENGE_END+'T00:00:00');
-  while(d<=end){dates.push(d.toISOString().split('T')[0]);d.setDate(d.getDate()+1);}
+  const [sy,sm,sd]=CHALLENGE_START.split('-').map(Number);
+  const [ey,em,ed]=CHALLENGE_END.split('-').map(Number);
+  const d=new Date(sy,sm-1,sd);
+  const end=new Date(ey,em-1,ed);
+  while(d<=end){
+    dates.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
+    d.setDate(d.getDate()+1);
+  }
   return dates;
 }
 
