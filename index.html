@@ -450,6 +450,18 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
       </div>
     </div>
     <button onclick="saveBvgPoints()" style="width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;">Save Points</button>
+
+    <!-- Drill-down section -->
+    <div style="margin-top:20px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px;">Habit Check-in Drill Down</div>
+      <!-- Segment buttons -->
+      <div style="display:flex;gap:6px;margin-bottom:12px;">
+        <button id="bvg-seg-date" onclick="bvgShowSeg('date')" style="padding:6px 14px;border-radius:999px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent-dim);color:var(--accent);">By Date</button>
+        <button id="bvg-seg-habit" onclick="bvgShowSeg('habit')" style="padding:6px 14px;border-radius:999px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);">By Habit</button>
+      </div>
+      <div id="bvg-drill-date"></div>
+      <div id="bvg-drill-habit" style="display:none;"></div>
+    </div>
   </div>
 
   <!-- MEMBERS TAB -->
@@ -1708,6 +1720,7 @@ async function loadBvgTab(){
     </div>`;
   }).join('');
   bvgRecalc();
+  loadBvgDrilldown();
 }
 
 function bvgRecalc(){
@@ -1737,6 +1750,127 @@ function bvgRecalc(){
     lbl.textContent='Tied';lbl.style.color='var(--text2)';
     diff.textContent='0 pts';diff.style.color='var(--text2)';
   }
+}
+
+function bvgShowSeg(seg){
+  ['date','habit'].forEach(s=>{
+    const el=document.getElementById('bvg-drill-'+s);
+    const btn=document.getElementById('bvg-seg-'+s);
+    if(el)el.style.display=s===seg?'block':'none';
+    if(btn){
+      btn.style.borderColor=s===seg?'var(--accent)':'var(--border)';
+      btn.style.background=s===seg?'var(--accent-dim)':'var(--surface2)';
+      btn.style.color=s===seg?'var(--accent)':'var(--text2)';
+    }
+  });
+}
+
+async function loadBvgDrilldown(){
+  const [habits, logs, members] = await Promise.all([
+    sb('GET','habits?active=eq.true&order=id.asc'),
+    sb('GET','habit_logs?select=*'),
+    sb('GET','vidial_members?select=name,gender')
+  ]);
+  const dates=getChallengeDate();
+  const challengeLogs=logs.filter(l=>dates.includes(l.log_date));
+  const males=members.filter(m=>m.gender==='M').map(m=>m.name);
+  const females=members.filter(m=>m.gender==='F').map(m=>m.name);
+  const habitMap={};habits.forEach(h=>habitMap[h.id]=h);
+
+  function pill(name,gender){
+    const isM=males.includes(name);
+    const bg=isM?'rgba(24,95,165,0.15)':'rgba(212,83,126,0.15)';
+    const col=isM?'#185FA5':'#D4537E';
+    const border=isM?'rgba(24,95,165,0.3)':'rgba(212,83,126,0.3)';
+    return `<span style="display:inline-block;font-size:10px;padding:2px 7px;border-radius:999px;margin:2px;background:${bg};color:${col};border:1px solid ${border};">${name}</span>`;
+  }
+
+  function genderSection(names){
+    const boys=names.filter(n=>males.includes(n)).sort();
+    const girls=names.filter(n=>females.includes(n)).sort();
+    let html='';
+    if(boys.length)html+=`<div style="font-size:10px;font-weight:700;color:#185FA5;margin:5px 0 3px;">Boys (${boys.length})</div><div>${boys.map(n=>pill(n,'M')).join('')}</div>`;
+    if(girls.length)html+=`<div style="font-size:10px;font-weight:700;color:#D4537E;margin:5px 0 3px;">Girls (${girls.length})</div><div>${girls.map(n=>pill(n,'F')).join('')}</div>`;
+    return html;
+  }
+
+  // BY DATE
+  const byDate={};
+  challengeLogs.forEach(l=>{
+    if(!byDate[l.log_date])byDate[l.log_date]={};
+    if(!byDate[l.log_date][l.habit_id])byDate[l.log_date][l.habit_id]=[];
+    byDate[l.log_date][l.habit_id].push(l.user_name);
+  });
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  const dateEl=document.getElementById('bvg-drill-date');
+  if(dateEl){
+    const sortedDates=Object.keys(byDate).sort();
+    if(!sortedDates.length){dateEl.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">No logs yet</div>';return;}
+    dateEl.innerHTML=`<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);">${
+      sortedDates.map((d,di)=>{
+        const [y,m,day]=d.split('-');
+        const dt=new Date(parseInt(y),parseInt(m)-1,parseInt(day));
+        const total=Object.values(byDate[d]).reduce((s,a)=>s+a.length,0);
+        const habitsHtml=Object.entries(byDate[d]).map(([hid,users])=>{
+          const h=habitMap[hid];
+          const uniqueUsers=[...new Set(users)];
+          return `<div style="padding:8px 14px;border-bottom:1px solid var(--border);">
+            <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px;">${h?h.icon+' '+h.name:'Habit '+hid} · ${uniqueUsers.length}</div>
+            ${genderSection(uniqueUsers)}
+          </div>`;
+        }).join('');
+        return `<div>
+          <div onclick="bvgToggle('dd${di}')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);cursor:pointer;${di>0?'border-top:1px solid var(--border);':''}">
+            <div style="font-size:13px;font-weight:600;color:var(--text);">${parseInt(day)} ${months[dt.getMonth()]} <span style="font-size:10px;color:var(--text3);font-weight:400;">${days[dt.getDay()]}</span></div>
+            <div style="font-size:11px;color:var(--text2);">${total} check-ins ›</div>
+          </div>
+          <div id="dd${di}" style="display:none;">${habitsHtml}</div>
+        </div>`;
+      }).join('')
+    }</div>`;
+  }
+
+  // BY HABIT
+  const byHabit={};
+  challengeLogs.forEach(l=>{
+    if(!byHabit[l.habit_id])byHabit[l.habit_id]={};
+    if(!byHabit[l.habit_id][l.log_date])byHabit[l.habit_id][l.log_date]=[];
+    byHabit[l.habit_id][l.log_date].push(l.user_name);
+  });
+
+  const habitEl=document.getElementById('bvg-drill-habit');
+  if(habitEl){
+    const sortedHabits=habits.filter(h=>byHabit[h.id]);
+    if(!sortedHabits.length){habitEl.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">No logs yet</div>';return;}
+    habitEl.innerHTML=`<div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);">${
+      sortedHabits.map((h,hi)=>{
+        const total=Object.values(byHabit[h.id]).reduce((s,a)=>s+new Set(a).size,0);
+        const datesHtml=Object.entries(byHabit[h.id]).sort().map(([d,users])=>{
+          const [y,m,day]=d.split('-');
+          const dt=new Date(parseInt(y),parseInt(m)-1,parseInt(day));
+          const uniqueUsers=[...new Set(users)];
+          return `<div style="padding:8px 14px;border-bottom:1px solid var(--border);">
+            <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:4px;">${parseInt(day)} ${months[dt.getMonth()]} · ${uniqueUsers.length} members</div>
+            ${genderSection(uniqueUsers)}
+          </div>`;
+        }).join('');
+        return `<div>
+          <div onclick="bvgToggle('dh${hi}')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);cursor:pointer;${hi>0?'border-top:1px solid var(--border);':''}">
+            <div style="font-size:13px;font-weight:600;color:var(--text);">${h.icon} ${h.name}</div>
+            <div style="font-size:11px;color:var(--text2);">${total} check-ins ›</div>
+          </div>
+          <div id="dh${hi}" style="display:none;">${datesHtml}</div>
+        </div>`;
+      }).join('')
+    }</div>`;
+  }
+}
+
+function bvgToggle(id){
+  const el=document.getElementById(id);
+  if(el)el.style.display=el.style.display==='none'?'block':'none';
 }
 
 async function saveBvgPoints(){
