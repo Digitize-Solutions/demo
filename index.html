@@ -1875,19 +1875,30 @@ function bvgToggle(id){
 
 async function saveBvgPoints(){
   const dates=getChallengeDate();
-  const rows=dates.map(d=>{
-    const b=document.querySelector(`input[data-date="${d}"][data-team="b"]`);
-    const g=document.querySelector(`input[data-date="${d}"][data-team="g"]`);
-    return{date:d,boys_points:parseInt(b?.value||0),girls_points:parseInt(g?.value||0)};
-  });
   try{
-    const res=await fetch(`${SB_URL}/rest/v1/bvg_points`,{
-      method:'POST',
-      headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
-      body:JSON.stringify(rows)
-    });
-    if(!res.ok)throw new Error(await res.text());
+    for(const d of dates){
+      const b=document.querySelector(`input[data-date="${d}"][data-team="b"]`);
+      const g=document.querySelector(`input[data-date="${d}"][data-team="g"]`);
+      const bp=parseInt(b?.value||0);
+      const gp=parseInt(g?.value||0);
+      // Try update first, then insert if not found
+      const patch=await fetch(`${SB_URL}/rest/v1/bvg_points?date=eq.${d}`,{
+        method:'PATCH',
+        headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':'application/json','Prefer':'return=representation'},
+        body:JSON.stringify({boys_points:bp,girls_points:gp})
+      });
+      const patched=await patch.json();
+      if(!patched||patched.length===0){
+        // Row doesn't exist yet — insert
+        await fetch(`${SB_URL}/rest/v1/bvg_points`,{
+          method:'POST',
+          headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':'application/json'},
+          body:JSON.stringify({date:d,boys_points:bp,girls_points:gp})
+        });
+      }
+    }
     showToast('Points saved! ✓');
+    loadHomeHabitAvg();
   }catch(e){showToast('Error: '+e.message.slice(0,40));}
 }
 
@@ -1896,6 +1907,10 @@ async function init(){
   await loadMembers();
   loadLB();loadHistory();
   loadHomeHabitAvg();
+  // Refresh scores whenever page becomes visible again
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden)loadHomeHabitAvg();
+  });
 }
 
 async function loadHomeHabitAvg(){
