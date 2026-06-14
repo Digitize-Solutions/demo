@@ -111,15 +111,15 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;" id="habit-avg-row">
       <div style="border-radius:var(--radius);padding:12px;text-align:center;background:rgba(24,95,165,0.08);border:1px solid rgba(24,95,165,0.2);">
         <div style="font-size:18px;margin-bottom:4px;">♂️</div>
-        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#185FA5;margin-bottom:3px;">Boys Habits</div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#185FA5;margin-bottom:3px;">Boys</div>
         <div style="font-size:22px;font-weight:700;color:#185FA5;font-family:'DM Mono',monospace;" id="boys-habit-avg">—</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:2px;">completion rate</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;">total points</div>
       </div>
       <div style="border-radius:var(--radius);padding:12px;text-align:center;background:rgba(212,83,126,0.08);border:1px solid rgba(212,83,126,0.2);">
         <div style="font-size:18px;margin-bottom:4px;">♀️</div>
-        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#D4537E;margin-bottom:3px;">Girls Habits</div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#D4537E;margin-bottom:3px;">Girls</div>
         <div style="font-size:22px;font-weight:700;color:#D4537E;font-family:'DM Mono',monospace;" id="girls-habit-avg">—</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:2px;">completion rate</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;">total points</div>
       </div>
     </div>
     <div class="crown-row">
@@ -287,6 +287,7 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
     <button class="adm-tab" id="adm-tab-insights" onclick="switchAdmTab('insights')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">✨ Insights</button>
     <button class="adm-tab" id="adm-tab-habits" onclick="switchAdmTab('habits')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">🌿 Habits</button>
     <button class="adm-tab" id="adm-tab-entry" onclick="switchAdmTab('entry')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">📋 Steps</button>
+    <button class="adm-tab" id="adm-tab-bvg" onclick="switchAdmTab('bvg')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">⚔️ B vs G</button>
     <button class="adm-tab" id="adm-tab-members" onclick="switchAdmTab('members')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">👥 Members</button>
   </div>
 
@@ -409,6 +410,46 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin:8px 0 10px;">Members — tap to enter/update steps</div>
       <div id="a-member-list"></div>
     </div>
+  </div>
+
+  <!-- BOYS VS GIRLS TAB -->
+  <div id="adm-bvg" style="display:none;flex:1;overflow-y:auto;padding:16px 16px 32px;">
+    <!-- Scoreboard -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div style="background:rgba(24,95,165,0.1);border-radius:var(--radius);padding:14px;text-align:center;border-left:3px solid #185FA5;">
+        <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">Boys Total</div>
+        <div style="font-size:30px;font-weight:800;color:#185FA5;font-family:'DM Mono',monospace;" id="bvg-boys-total">0</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px;">pts</div>
+      </div>
+      <div style="background:rgba(212,83,126,0.1);border-radius:var(--radius);padding:14px;text-align:center;border-left:3px solid #D4537E;">
+        <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">Girls Total</div>
+        <div style="font-size:30px;font-weight:800;color:#D4537E;font-family:'DM Mono',monospace;" id="bvg-girls-total">0</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px;">pts</div>
+      </div>
+    </div>
+    <!-- Lead bar -->
+    <div style="background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;border:1px solid var(--border);">
+      <span style="font-size:11px;color:var(--text2);white-space:nowrap;" id="bvg-lead-label">Tied</span>
+      <div style="flex:1;height:6px;background:var(--surface2);border-radius:999px;overflow:hidden;">
+        <div style="height:100%;width:50%;background:#888;border-radius:999px;transition:all 0.3s;" id="bvg-lead-bar"></div>
+      </div>
+      <span style="font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap;font-family:'DM Mono',monospace;" id="bvg-lead-diff">0 pts</span>
+    </div>
+    <!-- Points table -->
+    <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;">
+      <div style="display:grid;grid-template-columns:1fr 80px 80px;gap:6px;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);">
+        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;">Date</div>
+        <div style="font-size:10px;font-weight:700;color:#185FA5;text-align:center;">Boys</div>
+        <div style="font-size:10px;font-weight:700;color:#D4537E;text-align:center;">Girls</div>
+      </div>
+      <div id="bvg-rows"></div>
+      <div style="display:grid;grid-template-columns:1fr 80px 80px;gap:6px;padding:10px 14px;background:var(--surface2);border-top:1px solid var(--border);">
+        <div style="font-size:12px;font-weight:700;color:var(--text);">Total</div>
+        <div style="font-size:14px;font-weight:800;color:#185FA5;text-align:center;font-family:'DM Mono',monospace;" id="bvg-boys-total-row">0</div>
+        <div style="font-size:14px;font-weight:800;color:#D4537E;text-align:center;font-family:'DM Mono',monospace;" id="bvg-girls-total-row">0</div>
+      </div>
+    </div>
+    <button onclick="saveBvgPoints()" style="width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;">Save Points</button>
   </div>
 
   <!-- MEMBERS TAB -->
@@ -869,7 +910,7 @@ function exitAdmin(){
   loadLB();loadHistory();
 }
 function switchAdmTab(tab){
-  const tabs=['dash','insights','habits','entry','members'];
+  const tabs=['dash','insights','habits','entry','bvg','members'];
   tabs.forEach(t=>{
     const panel=document.getElementById('adm-'+t);
     if(panel)panel.style.display='none';
@@ -884,6 +925,7 @@ function switchAdmTab(tab){
   if(tab==='dash'){loadDashboard();}
   else if(tab==='insights'){loadInsights();}
   else if(tab==='habits'){loadAdminHabits();}
+  else if(tab==='bvg'){loadBvgTab();}
   else if(tab==='entry'){buildMonthGrid();renderAdminMemberList();}
   else{
     document.getElementById('new-name').value='';newG=null;resetG('new');
@@ -1637,6 +1679,79 @@ function drawRptCharts(trendCanvas,dayLabels,boysDaily,girlsDaily,logs,males,fem
 }
 // END HABITS FEATURE
 
+// ── BOYS VS GIRLS POINTS ──
+const BVG_TABLE='bvg_points';
+const MONTHS_ARR=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAYS_ARR=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+async function loadBvgTab(){
+  // Build date rows
+  const dates=getChallengeDate();
+  const el=document.getElementById('bvg-rows');
+  // Load existing points
+  let existing={};
+  try{
+    const rows=await sb('GET','bvg_points?select=*');
+    rows.forEach(r=>{existing[r.date]={boys:r.boys_points,girls:r.girls_points};});
+  }catch(e){}
+
+  el.innerHTML=dates.map(d=>{
+    const [y,m,day]=d.split('-');
+    const dt=new Date(parseInt(y),parseInt(m)-1,parseInt(day));
+    const lbl=`${parseInt(day)} ${MONTHS_ARR[dt.getMonth()]} <span style="font-size:10px;color:var(--text3);">${DAYS_ARR[dt.getDay()]}</span>`;
+    const b=existing[d]?.boys||0;
+    const g=existing[d]?.girls||0;
+    return `<div style="display:grid;grid-template-columns:1fr 80px 80px;gap:6px;padding:9px 14px;border-bottom:1px solid var(--border);align-items:center;">
+      <div style="font-size:12px;color:var(--text);">${lbl}</div>
+      <input type="number" min="0" value="${b}" data-date="${d}" data-team="b" oninput="bvgRecalc()" style="text-align:center;padding:5px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Mono',monospace;width:100%;"/>
+      <input type="number" min="0" value="${g}" data-date="${d}" data-team="g" oninput="bvgRecalc()" style="text-align:center;padding:5px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'DM Mono',monospace;width:100%;"/>
+    </div>`;
+  }).join('');
+  bvgRecalc();
+}
+
+function bvgRecalc(){
+  const bInputs=document.querySelectorAll('#bvg-rows input[data-team="b"]');
+  const gInputs=document.querySelectorAll('#bvg-rows input[data-team="g"]');
+  let b=0,g=0;
+  bInputs.forEach(i=>b+=parseInt(i.value||0));
+  gInputs.forEach(i=>g+=parseInt(i.value||0));
+  document.getElementById('bvg-boys-total').textContent=b;
+  document.getElementById('bvg-girls-total').textContent=g;
+  document.getElementById('bvg-boys-total-row').textContent=b;
+  document.getElementById('bvg-girls-total-row').textContent=g;
+  const total=b+g||1;
+  const bar=document.getElementById('bvg-lead-bar');
+  const lbl=document.getElementById('bvg-lead-label');
+  const diff=document.getElementById('bvg-lead-diff');
+  if(b>g){
+    bar.style.width=Math.round(b/total*100)+'%';bar.style.background='#185FA5';
+    lbl.textContent='Boys lead by';lbl.style.color='#185FA5';
+    diff.textContent=(b-g)+' pts';diff.style.color='#185FA5';
+  }else if(g>b){
+    bar.style.width=Math.round(g/total*100)+'%';bar.style.background='#D4537E';
+    lbl.textContent='Girls lead by';lbl.style.color='#D4537E';
+    diff.textContent=(g-b)+' pts';diff.style.color='#D4537E';
+  }else{
+    bar.style.width='50%';bar.style.background='var(--text3)';
+    lbl.textContent='Tied';lbl.style.color='var(--text2)';
+    diff.textContent='0 pts';diff.style.color='var(--text2)';
+  }
+}
+
+async function saveBvgPoints(){
+  const dates=getChallengeDate();
+  const rows=dates.map(d=>{
+    const b=document.querySelector(`input[data-date="${d}"][data-team="b"]`);
+    const g=document.querySelector(`input[data-date="${d}"][data-team="g"]`);
+    return{date:d,boys_points:parseInt(b?.value||0),girls_points:parseInt(g?.value||0)};
+  });
+  try{
+    await sb('POST','bvg_points',rows);
+    showToast('Points saved! ✓');
+  }catch(e){showToast('Error: '+e.message.slice(0,40));}
+}
+
 async function init(){
   document.getElementById('month-label').textContent=mLabel(curMonth);
   await loadMembers();
@@ -1646,28 +1761,14 @@ async function init(){
 
 async function loadHomeHabitAvg(){
   try{
-    const [habits, logs] = await Promise.all([
-      sb('GET','habits?active=eq.true&select=id'),
-      sb('GET','habit_logs?select=user_name,habit_id,log_date')
-    ]);
-    if(!habits.length||!allMembers.length)return;
-    const dates=getChallengeDate();
-    const males=allMembers.filter(m=>m.gender==='M').map(m=>m.name);
-    const females=allMembers.filter(m=>m.gender==='F').map(m=>m.name);
-    const challengeLogs=logs.filter(l=>dates.includes(l.log_date));
-    function avgPct(members){
-      if(!members.length||!habits.length)return null;
-      const possible=members.length*habits.length*dates.length;
-      const done=challengeLogs.filter(l=>members.includes(l.user_name)).length;
-      return possible>0?Math.round(done/possible*100):0;
-    }
-    const boysAvg=avgPct(males);
-    const girlsAvg=avgPct(females);
+    const rows=await sb('GET','bvg_points?select=boys_points,girls_points');
+    const boysTotal=rows.reduce((s,r)=>s+(r.boys_points||0),0);
+    const girlsTotal=rows.reduce((s,r)=>s+(r.girls_points||0),0);
     const bEl=document.getElementById('boys-habit-avg');
     const gEl=document.getElementById('girls-habit-avg');
-    if(bEl)bEl.textContent=boysAvg!==null?boysAvg+'%':'—';
-    if(gEl)gEl.textContent=girlsAvg!==null?girlsAvg+'%':'—';
-  }catch(e){console.warn('Habit avg load failed:',e.message);}
+    if(bEl)bEl.textContent=boysTotal||'—';
+    if(gEl)gEl.textContent=girlsTotal||'—';
+  }catch(e){console.warn('BvG points load failed:',e.message);}
 }
 init();
 </script>
