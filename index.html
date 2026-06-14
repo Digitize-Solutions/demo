@@ -1881,7 +1881,17 @@ async function saveBvgPoints(){
     return{date:d,boys_points:parseInt(b?.value||0),girls_points:parseInt(g?.value||0)};
   });
   try{
-    await sb('POST','bvg_points',rows);
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/bvg_points`,{
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_ANON_KEY,
+        'Authorization':`Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type':'application/json',
+        'Prefer':'resolution=merge-duplicates'
+      },
+      body:JSON.stringify(rows)
+    });
+    if(!res.ok)throw new Error(await res.text());
     showToast('Points saved! ✓');
   }catch(e){showToast('Error: '+e.message.slice(0,40));}
 }
