@@ -107,21 +107,7 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
       <h1>Vidial Wellness Hub</h1>
       <p>Small Steps, Big Changes</p>
     </div>
-    <!-- Habit avg tiles -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;" id="habit-avg-row">
-      <div style="border-radius:var(--radius);padding:12px;text-align:center;background:rgba(24,95,165,0.08);border:1px solid rgba(24,95,165,0.2);">
-        <div style="font-size:18px;margin-bottom:4px;">♂️</div>
-        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#185FA5;margin-bottom:3px;">Boys</div>
-        <div style="font-size:22px;font-weight:700;color:#185FA5;font-family:'DM Mono',monospace;" id="boys-habit-avg">—</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:2px;">total points</div>
-      </div>
-      <div style="border-radius:var(--radius);padding:12px;text-align:center;background:rgba(212,83,126,0.08);border:1px solid rgba(212,83,126,0.2);">
-        <div style="font-size:18px;margin-bottom:4px;">♀️</div>
-        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#D4537E;margin-bottom:3px;">Girls</div>
-        <div style="font-size:22px;font-weight:700;color:#D4537E;font-family:'DM Mono',monospace;" id="girls-habit-avg">—</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:2px;">total points</div>
-      </div>
-    </div>
+
     <div class="crown-row">
       <div class="crown-card king"><div class="crown-icon">🤴</div><div class="crown-title">King of Steps</div><div class="crown-name" id="king-name">—</div><div class="crown-steps" id="king-steps"></div><div class="crown-month" id="king-month"></div></div>
       <div class="crown-card queen"><div class="crown-icon">👸</div><div class="crown-title">Queen of Steps</div><div class="crown-name" id="queen-name">—</div><div class="crown-steps" id="queen-steps"></div><div class="crown-month" id="queen-month"></div></div>
@@ -172,10 +158,10 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
   </div>
   <!-- User Tabs -->
   <div style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;">
-    <button id="user-tab-mydata" onclick="switchUserTab('mydata')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;">📅 Data</button>
+    <button id="user-tab-insights" onclick="switchUserTab('insights')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;">✨ Insights</button>
+    <button id="user-tab-dash" onclick="switchUserTab('dash')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">👟 Team Steps</button>
+    <button id="user-tab-mydata" onclick="switchUserTab('mydata')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">📅 Steps Data</button>
     <button id="user-tab-habits" onclick="switchUserTab('habits')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">🌿 Habits</button>
-    <button id="user-tab-insights" onclick="switchUserTab('insights')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">✨ Insights</button>
-    <button id="user-tab-dash" onclick="switchUserTab('dash')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">📊 Dashboard</button>
   </div>
 
   <!-- MY DATA TAB -->
@@ -185,7 +171,15 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
 
   <!-- USER HABITS TAB -->
   <div id="user-habits" style="display:none;flex:1;overflow-y:auto;padding:14px 14px 80px;">
-
+    <!-- Week navigator -->
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;border:1px solid var(--border);margin-bottom:12px;">
+      <button onclick="changeHabitWeek(-1)" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;">‹</button>
+      <div style="text-align:center;">
+        <div style="font-size:13px;font-weight:600;color:var(--text);" id="habit-week-label">This Week</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;" id="habit-week-sub"></div>
+      </div>
+      <button onclick="changeHabitWeek(1)" id="habit-week-next" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;opacity:0.3;">›</button>
+    </div>
     <!-- Stats row -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;" id="habit-stats-row"></div>
     <!-- Habit grid -->
@@ -287,7 +281,6 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
     <button class="adm-tab" id="adm-tab-insights" onclick="switchAdmTab('insights')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">✨ Insights</button>
     <button class="adm-tab" id="adm-tab-habits" onclick="switchAdmTab('habits')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">🌿 Habits</button>
     <button class="adm-tab" id="adm-tab-entry" onclick="switchAdmTab('entry')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">📋 Steps</button>
-    <button class="adm-tab" id="adm-tab-bvg" onclick="switchAdmTab('bvg')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">⚔️ B vs G</button>
     <button class="adm-tab" id="adm-tab-members" onclick="switchAdmTab('members')" style="flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">👥 Members</button>
   </div>
 
@@ -360,20 +353,18 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
   <!-- ADMIN HABITS TAB -->
   <div id="adm-habits" style="display:none;flex:1;overflow-y:auto;padding:16px 16px 32px;">
     <button onclick="openAddHabitModal()" style="width:100%;padding:12px;background:var(--accent-dim);border:1.5px dashed rgba(168,85,247,0.4);border-radius:var(--radius-sm);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px;">+ Add New Habit</button>
-    <!-- Summary cards -->
-    <!-- Chart -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;" id="rpt-summary-cards"></div>
-    <div style="background:var(--surface);border-radius:var(--radius);padding:14px;border:1px solid var(--border);margin-bottom:12px;">
-      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;">Daily completion trend</div>
-
-      <div style="position:relative;height:180px;"><canvas id="rpt-trend-chart" role="img" aria-label="Daily completion trend boys vs girls"></canvas></div>
+    <!-- Member Overview -->
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">👥 Member Overview</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;border:1px solid var(--border);margin-bottom:10px;">
+      <button onclick="admHabitChangeWeek(-1)" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;">‹</button>
+      <div style="text-align:center;">
+        <div style="font-size:13px;font-weight:600;color:var(--text);" id="adm-habit-week-label">This Week</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;" id="adm-habit-week-sub"></div>
+      </div>
+      <button onclick="admHabitChangeWeek(1)" id="adm-habit-week-next" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;opacity:0.3;">›</button>
     </div>
-    <div style="background:var(--surface);border-radius:var(--radius);padding:14px;border:1px solid var(--border);margin-bottom:12px;">
-      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;">Completion rate by habit</div>
-
-      <div style="position:relative;height:220px;"><canvas id="rpt-habit-chart" role="img" aria-label="Habit completion boys vs girls"></canvas></div>
-    </div>
-    <!-- Habits list -->
+    <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;" id="adm-habit-overview"></div>
+    <!-- Configured Habits -->
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;">Configured Habits</div>
     <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);" id="adm-habits-list"></div>
   </div>
@@ -409,58 +400,6 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
     <div style="flex:1;overflow-y:auto;padding:8px 16px 24px;">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin:8px 0 10px;">Members — tap to enter/update steps</div>
       <div id="a-member-list"></div>
-    </div>
-  </div>
-
-  <!-- BOYS VS GIRLS TAB -->
-  <div id="adm-bvg" style="display:none;flex:1;overflow-y:auto;padding:16px 16px 32px;">
-    <!-- Scoreboard -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-      <div style="background:rgba(24,95,165,0.1);border-radius:var(--radius);padding:14px;text-align:center;border-left:3px solid #185FA5;">
-        <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">Boys Total</div>
-        <div style="font-size:30px;font-weight:800;color:#185FA5;font-family:'DM Mono',monospace;" id="bvg-boys-total">0</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:3px;">pts</div>
-      </div>
-      <div style="background:rgba(212,83,126,0.1);border-radius:var(--radius);padding:14px;text-align:center;border-left:3px solid #D4537E;">
-        <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">Girls Total</div>
-        <div style="font-size:30px;font-weight:800;color:#D4537E;font-family:'DM Mono',monospace;" id="bvg-girls-total">0</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:3px;">pts</div>
-      </div>
-    </div>
-    <!-- Lead bar -->
-    <div style="background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;border:1px solid var(--border);">
-      <span style="font-size:11px;color:var(--text2);white-space:nowrap;" id="bvg-lead-label">Tied</span>
-      <div style="flex:1;height:6px;background:var(--surface2);border-radius:999px;overflow:hidden;">
-        <div style="height:100%;width:50%;background:#888;border-radius:999px;transition:all 0.3s;" id="bvg-lead-bar"></div>
-      </div>
-      <span style="font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap;font-family:'DM Mono',monospace;" id="bvg-lead-diff">0 pts</span>
-    </div>
-    <!-- Points table -->
-    <div style="background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;">
-      <div style="display:grid;grid-template-columns:1fr 80px 80px;gap:6px;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);">
-        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;">Date</div>
-        <div style="font-size:10px;font-weight:700;color:#185FA5;text-align:center;">Boys</div>
-        <div style="font-size:10px;font-weight:700;color:#D4537E;text-align:center;">Girls</div>
-      </div>
-      <div id="bvg-rows"></div>
-      <div style="display:grid;grid-template-columns:1fr 80px 80px;gap:6px;padding:10px 14px;background:var(--surface2);border-top:1px solid var(--border);">
-        <div style="font-size:12px;font-weight:700;color:var(--text);">Total</div>
-        <div style="font-size:14px;font-weight:800;color:#185FA5;text-align:center;font-family:'DM Mono',monospace;" id="bvg-boys-total-row">0</div>
-        <div style="font-size:14px;font-weight:800;color:#D4537E;text-align:center;font-family:'DM Mono',monospace;" id="bvg-girls-total-row">0</div>
-      </div>
-    </div>
-    <button onclick="saveBvgPoints()" style="width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;">Save Points</button>
-
-    <!-- Drill-down section -->
-    <div style="margin-top:20px;">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px;">Habit Check-in Drill Down</div>
-      <!-- Segment buttons -->
-      <div style="display:flex;gap:6px;margin-bottom:12px;">
-        <button id="bvg-seg-date" onclick="bvgShowSeg('date')" style="padding:6px 14px;border-radius:999px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent-dim);color:var(--accent);">By Date</button>
-        <button id="bvg-seg-habit" onclick="bvgShowSeg('habit')" style="padding:6px 14px;border-radius:999px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);">By Habit</button>
-      </div>
-      <div id="bvg-drill-date"></div>
-      <div id="bvg-drill-habit" style="display:none;"></div>
     </div>
   </div>
 
@@ -666,7 +605,7 @@ function goToUserPage(){
   document.getElementById('user-header-name').textContent=selEntry;
   document.getElementById('user-header-sub').textContent=g==='F'?'♀ Female':'♂ Male';
   const up=document.getElementById('user-page');up.style.display='flex';
-  switchUserTab('mydata');
+  switchUserTab('insights');
 }
 
 function exitUser(){
@@ -922,7 +861,7 @@ function exitAdmin(){
   loadLB();loadHistory();
 }
 function switchAdmTab(tab){
-  const tabs=['dash','insights','habits','entry','bvg','members'];
+  const tabs=['dash','insights','habits','entry','members'];
   tabs.forEach(t=>{
     const panel=document.getElementById('adm-'+t);
     if(panel)panel.style.display='none';
@@ -937,7 +876,6 @@ function switchAdmTab(tab){
   if(tab==='dash'){loadDashboard();}
   else if(tab==='insights'){loadInsights();}
   else if(tab==='habits'){loadAdminHabits();}
-  else if(tab==='bvg'){loadBvgTab();}
   else if(tab==='entry'){buildMonthGrid();renderAdminMemberList();}
   else{
     document.getElementById('new-name').value='';newG=null;resetG('new');
@@ -1285,28 +1223,53 @@ async function loadHabitsData(){
   ]);
 }
 
+let habitWeekOffset=0;
+
+function changeHabitWeek(dir){
+  // Calculate max weeks back — don't go before week of 8 Jun 2026
+  const minDate=new Date(2026,5,8); // 8 June 2026
+  const today=new Date();
+  const weekStart=new Date(today);
+  weekStart.setDate(today.getDate()-((today.getDay()+6)%7)); // Monday this week
+  const maxBack=-Math.floor((weekStart-minDate)/(7*24*60*60*1000));
+  habitWeekOffset=Math.min(0,Math.max(maxBack,habitWeekOffset+dir));
+  const nextBtn=document.getElementById('habit-week-next');
+  const prevBtn=document.querySelector('[onclick="changeHabitWeek(-1)"]');
+  if(nextBtn)nextBtn.style.opacity=habitWeekOffset>=0?'0.3':'1';
+  if(prevBtn)prevBtn.style.opacity=habitWeekOffset<=maxBack?'0.3':'1';
+  loadHabitsTab();
+}
+
 async function loadHabitsTab(){
   const el=document.getElementById('habit-grid');
   if(el)el.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">Loading...</div>';
   await loadHabitsData();
-  const weekDates=getChallengeDate();
+  const weekDates=getWeekDates(habitWeekOffset);
   const td=new Date().toISOString().split('T')[0];
   const todayInChallenge=weekDates.includes(td);
 
+  // Week nav labels
+  const wNavEl=document.getElementById('habit-week-label');
+  const wSubEl=document.getElementById('habit-week-sub');
+  if(wNavEl)wNavEl.textContent=habitWeekOffset===0?'This Week':habitWeekOffset===-1?'Last Week':`${Math.abs(habitWeekOffset)} Weeks Ago`;
+  if(wSubEl){const[y,m,d2]=weekDates[0].split('-');const[y2,m2,d3]=weekDates[6].split('-');wSubEl.textContent=new Date(y,m-1,d2).toLocaleDateString('en-IN',{month:'short',day:'numeric'})+' – '+new Date(y2,m2-1,d3).toLocaleDateString('en-IN',{month:'short',day:'numeric'});}
+  const nextBtn=document.getElementById('habit-week-next');
+  if(nextBtn)nextBtn.style.opacity=habitWeekOffset>=0?'0.3':'1';
+
 
   // Stats
-  const todayDone=todayInChallenge?allHabits.filter(h=>allHabitLogs.some(l=>l.user_name===selEntry&&l.habit_id===h.id&&l.log_date===td)).length:0;
-  const challengeLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&weekDates.includes(l.log_date));
-  const weekPct=allHabits.length*weekDates.length>0?Math.round(challengeLogs.length/(allHabits.length*weekDates.length)*100):0;
+  const todayDone=allHabits.filter(h=>allHabitLogs.some(l=>l.user_name===selEntry&&l.habit_id===h.id&&l.log_date===td)).length;
+  const weekLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&weekDates.includes(l.log_date));
+  const weekPct=allHabits.length*7>0?Math.round(weekLogs.length/(allHabits.length*7)*100):0;
   const statsEl=document.getElementById('habit-stats-row');
   if(statsEl)statsEl.innerHTML=`
-    ${todayInChallenge?`<div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
+    <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
       <div style="font-size:24px;font-weight:800;color:#22c55e;font-family:'DM Mono',monospace;" id="today-done-count">${todayDone}<span style="font-size:14px;color:var(--text3);">/${allHabits.length}</span></div>
       <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">Today</div>
-    </div>`:''}
+    </div>
     <div style="background:var(--surface);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);text-align:center;">
       <div style="font-size:24px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;" id="habit-challenge-pct">${weekPct}%</div>
-      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">Challenge</div>
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">This Week</div>
     </div>`;
 
   if(!allHabits.length){if(el)el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">No habits configured yet.<br/>Ask admin to add habits!</div>';renderMonthlyBars();return;}
@@ -1332,7 +1295,7 @@ async function loadHabitsTab(){
         </div>
         <div id="streak-${h.id}" style="font-size:11px;font-weight:700;color:var(--amber);">${streak>0?`🔥 ${streak}d`:''}</div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:3px;">${dayCells}</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">${dayCells}</div>
     </div>`;
   }
 
@@ -1393,35 +1356,35 @@ async function toggleHabit(habitId,date,cell){
     const s=calcHabitStreak(habitId);
     if(sEl)sEl.textContent=s>0?`🔥 ${s}d`:'';
     const td=new Date().toISOString().split('T')[0];
-    const cDates2=getChallengeDate();
-    if(cDates2.includes(td)){
-      const todayDone=allHabits.filter(h=>allHabitLogs.some(l=>l.user_name===selEntry&&l.habit_id===h.id&&l.log_date===td)).length;
-      const cEl=document.getElementById('today-done-count');
-      if(cEl)cEl.innerHTML=`${todayDone}<span style="font-size:14px;color:var(--text3);">/${allHabits.length}</span>`;
-    }
-    // Update challenge %
-    const cDates=getChallengeDate();
-    const cLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&cDates.includes(l.log_date));
-    const cPct=allHabits.length*cDates.length>0?Math.round(cLogs.length/(allHabits.length*cDates.length)*100):0;
+    const todayDone2=allHabits.filter(h=>allHabitLogs.some(l=>l.user_name===selEntry&&l.habit_id===h.id&&l.log_date===td)).length;
+    const cEl=document.getElementById('today-done-count');
+    if(cEl)cEl.innerHTML=`${todayDone2}<span style="font-size:14px;color:var(--text3);">/${allHabits.length}</span>`;
+    // Update weekly %
+    const wDates=getWeekDates(habitWeekOffset);
+    const wLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&wDates.includes(l.log_date));
+    const wPct=allHabits.length*7>0?Math.round(wLogs.length/(allHabits.length*7)*100):0;
     const pctEl=document.getElementById('habit-challenge-pct');
-    if(pctEl)pctEl.textContent=cPct+'%';
+    if(pctEl)pctEl.textContent=wPct+'%';
     renderMonthlyBars();
   }catch(e){showToast('Error: '+e.message.slice(0,40));}
 }
 
 function renderMonthlyBars(){
-  const dates=getChallengeDate();
-  const challengeLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&dates.includes(l.log_date));
-  const totalPossible=allHabits.length*dates.length;
-  const overallPct=totalPossible>0?Math.round(challengeLogs.length/totalPossible*100):0;
+  const now=new Date();
+  const monthStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const daysInMonth=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const monthLogs=allHabitLogs.filter(l=>l.user_name===selEntry&&l.log_date.startsWith(monthStr));
+  const totalPossible=allHabits.length*daysInMonth;
+  const overallPct=totalPossible>0?Math.round(monthLogs.length/totalPossible*100):0;
+  const monthName=now.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
   const el=document.getElementById('habit-month-label');
-  if(el)el.textContent=`Challenge · ${overallPct}% consistent`;
+  if(el)el.textContent=`${monthName} — ${overallPct}% consistent`;
   const barsEl=document.getElementById('habit-monthly-bars');
   if(!barsEl||!allHabits.length)return;
   barsEl.innerHTML=`<div style="background:var(--surface);border-radius:var(--radius);padding:14px;border:1px solid var(--border);">
     ${allHabits.map(h=>{
-      const done=challengeLogs.filter(l=>l.habit_id===h.id).length;
-      const pct=Math.round(done/dates.length*100);
+      const done=monthLogs.filter(l=>l.habit_id===h.id).length;
+      const pct=Math.round(done/daysInMonth*100);
       const c=pct>=80?'#22c55e':pct>=50?'#f59e0b':'#ef4444';
       return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
         <div style="font-size:16px;width:22px;text-align:center;flex-shrink:0;">${h.icon}</div>
@@ -1436,77 +1399,70 @@ function renderMonthlyBars(){
 }
 
 // ── ADMIN HABITS ──
+let admHabitWeekOffset=0;
+
+function admHabitChangeWeek(dir){
+  admHabitWeekOffset=Math.min(0,admHabitWeekOffset+dir);
+  const nextBtn=document.getElementById('adm-habit-week-next');
+  if(nextBtn)nextBtn.style.opacity=admHabitWeekOffset>=0?'0.3':'1';
+  loadHabitsData().then(()=>renderAdminHabitWeek(admHabitWeekOffset));
+}
+
 async function loadAdminHabits(){
   await Promise.all([loadHabitsData(), loadMembers()]);
+  renderAdminHabitWeek(admHabitWeekOffset);
   renderAdminHabitsList();
-  loadChallengeReport();
+}
+
+async function renderAdminHabitWeek(offset){
+  const weekDates=getWeekDates(offset);
+  const lbl=document.getElementById('adm-habit-week-label');
+  const sub=document.getElementById('adm-habit-week-sub');
+  if(lbl)lbl.textContent=offset===0?'This Week':offset===-1?'Last Week':`${Math.abs(offset)} Weeks Ago`;
+  if(sub){const[y,m,d]=weekDates[0].split('-');const[y2,m2,d3]=weekDates[6].split('-');sub.textContent=new Date(y,m-1,d).toLocaleDateString('en-IN',{month:'short',day:'numeric'})+' – '+new Date(y2,m2-1,d3).toLocaleDateString('en-IN',{month:'short',day:'numeric'});}
+  const nextBtn=document.getElementById('adm-habit-week-next');
+  if(nextBtn)nextBtn.style.opacity=offset>=0?'0.3':'1';
+  allHabitLogs=await sb('GET','habit_logs?select=*');
+  const el=document.getElementById('adm-habit-overview');
+  if(!el)return;
+  const members=allMembers.length?allMembers.map(m=>m.name):[];
+  if(!members.length){el.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No members found</div>';return;}
+  const dayLabels=weekDates.map((d,i)=>{
+    const isToday=d===new Date().toISOString().split('T')[0];
+    return `<div style="text-align:center;font-size:9px;font-weight:700;color:${isToday?'var(--accent)':'var(--text3)'};text-transform:uppercase;">${DAY_NAMES[i]}<br/><span style="font-size:10px;">${parseInt(d.split('-')[2])}</span></div>`;
+  }).join('');
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:130px repeat(7,1fr) 36px;gap:3px;padding:8px 12px;background:var(--surface2);border-bottom:1px solid var(--border);">
+      <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;">Member</div>
+      ${dayLabels}
+      <div style="font-size:9px;font-weight:700;color:var(--text3);text-align:center;">%</div>
+    </div>
+    ${members.map(name=>{
+      const weekLogs=allHabitLogs.filter(l=>l.user_name===name&&weekDates.includes(l.log_date));
+      const total=allHabits.length*7;
+      const pct=total>0?Math.round(weekLogs.length/total*100):0;
+      const pctColor=pct>=80?'#22c55e':pct>=50?'#f59e0b':pct>0?'#ef4444':'var(--text3)';
+      const hasAny=weekLogs.length>0;
+      const dayCells=weekDates.map(d=>{
+        const dayHabitIds=weekLogs.filter(l=>l.log_date===d).map(l=>l.habit_id);
+        if(!dayHabitIds.length)return`<div style="display:flex;align-items:center;justify-content:center;min-height:32px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--surface3);"></div></div>`;
+        const icons=allHabits.filter(h=>dayHabitIds.includes(h.id)).map(h=>`<span title="${h.name}" style="font-size:12px;line-height:1;">${h.icon}</span>`).join('');
+        const missedCount=allHabits.length-dayHabitIds.length;
+        return `<div style="display:flex;flex-wrap:wrap;gap:1px;align-items:center;justify-content:center;min-height:32px;padding:2px;">${icons}${missedCount>0&&dayHabitIds.length>0?`<span style="font-size:9px;color:var(--text3);">+${missedCount}✗</span>`:''}</div>`;
+      }).join('');
+      return `<div style="display:grid;grid-template-columns:130px repeat(7,1fr) 36px;gap:3px;padding:6px 12px;border-bottom:1px solid var(--border);align-items:center;${!hasAny?'opacity:0.4':''}">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--text2);flex-shrink:0;">${name.slice(0,2).toUpperCase()}</div>
+          <div style="font-size:11px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div>
+        </div>
+        ${dayCells}
+        <div style="font-size:11px;font-weight:800;color:${pctColor};text-align:center;font-family:'DM Mono',monospace;">${pct}%</div>
+      </div>`;
+    }).join('')}`;
 }
 
 let admHabitChartInst=null;
 
-async function renderAdminHabitWeek(){
-  allHabitLogs=await sb('GET','habit_logs?select=*');
-  if(!allHabits.length)return;
-  const dates=getChallengeDate();
-  const males=allMembers.filter(m=>m.gender==='M').map(m=>m.name);
-  const females=allMembers.filter(m=>m.gender==='F').map(m=>m.name);
-
-  const boysData=allHabits.map(h=>{
-    if(!males.length)return 0;
-    const possible=males.length*dates.length;
-    const done=allHabitLogs.filter(l=>males.includes(l.user_name)&&l.habit_id===h.id&&dates.includes(l.log_date)).length;
-    return possible>0?Math.round(done/possible*100):0;
-  });
-  const girlsData=allHabits.map(h=>{
-    if(!females.length)return 0;
-    const possible=females.length*dates.length;
-    const done=allHabitLogs.filter(l=>females.includes(l.user_name)&&l.habit_id===h.id&&dates.includes(l.log_date)).length;
-    return possible>0?Math.round(done/possible*100):0;
-  });
-
-  const boysAvg=boysData.length?Math.round(boysData.reduce((s,v)=>s+v,0)/boysData.length):0;
-  const girlsAvg=girlsData.length?Math.round(girlsData.reduce((s,v)=>s+v,0)/girlsData.length):0;
-
-
-
-  const drawFn=()=>{
-    HABIT_CATEGORIES.forEach(cat=>{
-      const catHabits=allHabits.filter(h=>cat.habits.some(n=>n.toLowerCase()===h.name.toLowerCase().trim()));
-      if(!catHabits.length)return;
-      const catBoysData=catHabits.map((_,i)=>boysData[allHabits.findIndex(h=>h.name===catHabits[i].name)]||0);
-      const catGirlsData=catHabits.map((_,i)=>girlsData[allHabits.findIndex(h=>h.name===catHabits[i].name)]||0);
-      const canvasId='adm-habits-chart-'+cat.key;
-      const canvas=document.getElementById(canvasId);
-      if(!canvas)return;
-      if(admHabitChartInst&&admHabitChartInst[cat.key])admHabitChartInst[cat.key].destroy();
-      const inst=new Chart(canvas,{
-        type:'bar',
-        data:{
-          labels:catHabits.map(h=>h.icon),
-          datasets:[
-            {label:'Boys',data:catBoysData,backgroundColor:'rgba(24,95,165,0.85)',borderColor:'#185FA5',borderWidth:1,borderRadius:4},
-            {label:'Girls',data:catGirlsData,backgroundColor:'rgba(212,83,126,0.85)',borderColor:'#D4537E',borderWidth:1,borderRadius:4},
-          ]
-        },
-        options:{
-          responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{callbacks:{title:ctx=>catHabits[ctx[0].dataIndex]?.name||'',label:ctx=>`${ctx.dataset.label}: ${ctx.raw}%`}}},
-          scales:{
-            x:{ticks:{font:{size:18},color:'#888',maxRotation:0,autoSkip:false},grid:{display:false}},
-            y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11},color:'#888',stepSize:50},grid:{color:'rgba(128,128,128,0.1)'}}
-          }
-        }
-      });
-      if(!admHabitChartInst)admHabitChartInst={};
-      admHabitChartInst[cat.key]=inst;
-    });
-  };
-  if(typeof Chart==='undefined'){
-    const s=document.createElement('script');
-    s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';
-    s.onload=drawFn;document.head.appendChild(s);
-  }else{drawFn();}
-}
 
 
 async function renderAdminHabitsList(){
@@ -1906,11 +1862,6 @@ async function init(){
   document.getElementById('month-label').textContent=mLabel(curMonth);
   await loadMembers();
   loadLB();loadHistory();
-  loadHomeHabitAvg();
-  // Refresh scores whenever page becomes visible again
-  document.addEventListener('visibilitychange',()=>{
-    if(!document.hidden)loadHomeHabitAvg();
-  });
 }
 
 async function loadHomeHabitAvg(){
