@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0f0a;font-family:'DM Sans',sans-serif;color:#e8f5e8;min-height:100vh;padding:20px;}
+.hero{text-align:center;padding:32px 20px 24px;max-width:480px;margin:0 auto;}
+.event-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4caf50;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.25);border-radius:999px;padding:4px 14px;margin-bottom:16px;}
+.hero h1{font-size:26px;font-weight:800;line-height:1.2;color:#f0faf0;margin-bottom:8px;}
+.hero h1 span{color:#4caf50;}
+.hero p{font-size:13px;color:#7aad7a;line-height:1.6;margin-bottom:6px;}
+.dates{font-size:12px;color:#4caf50;font-weight:600;margin-top:8px;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:480px;margin:0 auto 20px;}
+.stat{background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;padding:12px;text-align:center;}
+.stat-num{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:#4caf50;margin-bottom:3px;}
+.stat-lbl{font-size:9px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;}
+.prog-section{max-width:480px;margin:0 auto 20px;background:#0f1a0f;border:1px solid #1a2e1a;border-radius:14px;padding:16px;}
+.prog-title{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a8a5a;margin-bottom:12px;}
+.prog-km{display:flex;align-items:baseline;gap:6px;margin-bottom:8px;}
+.prog-km-num{font-family:'DM Mono',monospace;font-size:32px;font-weight:500;color:#4caf50;}
+.prog-km-unit{font-size:12px;color:#5a8a5a;}
+.prog-km-total{font-size:12px;color:#5a8a5a;margin-left:auto;}
+.prog-bar{height:8px;background:#162116;border-radius:999px;overflow:visible;position:relative;margin-bottom:6px;border:1px solid #1a2e1a;}
+.prog-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#2e7d32,#4caf50,#81c784);width:34%;position:relative;}
+.walker{position:absolute;right:-12px;top:-10px;font-size:18px;animation:walk 1.5s ease-in-out infinite;}
+@keyframes walk{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.prog-labels{display:flex;justify-content:space-between;}
+.prog-lbl{font-size:10px;color:#5a8a5a;}
+.prog-pct{font-size:10px;color:#4caf50;font-weight:700;}
+.cause-card{max-width:480px;margin:0 auto 20px;background:#0f1a0f;border:1px solid #1a2e1a;border-radius:14px;padding:16px;text-align:center;}
+.cause-icon{font-size:32px;margin-bottom:8px;}
+.cause-title{font-size:15px;font-weight:700;color:#f0faf0;margin-bottom:6px;}
+.cause-text{font-size:12px;color:#7aad7a;line-height:1.6;}
+.cause-stat{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:#4caf50;margin:10px 0 4px;}
+.cause-stat-lbl{font-size:11px;color:#5a8a5a;}
+.route-section{max-width:480px;margin:0 auto 20px;}
+.route-title{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a8a5a;margin-bottom:12px;padding:0 4px;}
+.ms-container{position:relative;}
+.ms-spine{position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,#4caf50 0%,#4caf50 34%,#1a2e1a 34%);z-index:0;}
+.ms-row{display:flex;align-items:flex-start;gap:12px;padding:8px 4px;position:relative;z-index:1;}
+.ms-dot{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;position:relative;}
+.ms-dot.done{background:#162116;border:2px solid #4caf50;}
+.ms-dot.current{background:#162116;border:2px solid #81c784;box-shadow:0 0 14px rgba(76,175,80,0.5);animation:gpulse 2s infinite;}
+@keyframes gpulse{0%,100%{box-shadow:0 0 8px rgba(76,175,80,0.4)}50%{box-shadow:0 0 20px rgba(76,175,80,0.7)}}
+.ms-dot.locked{background:#0a120a;border:2px solid #1a2e1a;filter:grayscale(1);opacity:0.3;}
+.ms-content{flex:1;padding-top:6px;}
+.ms-district{font-size:13px;font-weight:600;color:#e8f5e8;}
+.ms-district.locked{color:#2a4a2a;}
+.ms-meta{font-size:11px;color:#5a8a5a;margin-top:2px;}
+.ms-schools{font-size:11px;color:#4caf50;margin-top:1px;font-weight:600;}
+.ms-schools.locked{color:#2a4a2a;}
+.ms-badge{flex-shrink:0;padding-top:6px;}
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;}
+.badge.done{background:#162116;color:#4caf50;border:1px solid #2e5a2e;}
+.badge.current{background:rgba(76,175,80,0.1);color:#81c784;border:1px solid rgba(76,175,80,0.3);}
+.badge.locked{background:#0a120a;color:#2a4a2a;border:1px solid #1a2e1a;}
+.divider{height:1px;background:#1a2e1a;margin:0 4px 4px;}
+.pace-card{max-width:480px;margin:0 auto 20px;background:#0f1a0f;border:1px solid #1a2e1a;border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
+.pace-lbl{font-size:10px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}
+.pace-val{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:#4caf50;}
+.eta-val{font-size:15px;font-weight:700;color:#ffb74d;text-align:right;}
+.donate-card{max-width:480px;margin:0 auto 24px;border-radius:14px;padding:18px;background:linear-gradient(135deg,#1a3a1a,#0f2a0f);border:1px solid #2a5a2a;text-align:center;}
+.donate-title{font-size:14px;font-weight:700;color:#f0faf0;margin-bottom:4px;}
+.donate-sub{font-size:12px;color:#7aad7a;margin-bottom:12px;}
+.donate-min{font-size:11px;color:#4caf50;font-weight:600;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.2);border-radius:999px;padding:4px 14px;display:inline-block;margin-bottom:12px;}
+.donate-btn{background:#4caf50;color:#fff;border:none;border-radius:10px;padding:13px 32px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="event-tag">Independence Day · 15 Aug 2026</div>
+  <h1>Give it Back to<br><span>Community</span></h1>
+  <p>Every step we take walks a child closer to education. Walk with us across Tamil Nadu — district by district — for the Right to Education.</p>
+  <div class="dates">15 Aug – 5 Sep 2026 · 3 Weeks</div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num">58,000+</div><div class="stat-lbl">Schools in TN</div></div>
+  <div class="stat"><div class="stat-num">38</div><div class="stat-lbl">Districts</div></div>
+  <div class="stat"><div class="stat-num">3,300 km</div><div class="stat-lbl">Our Journey</div></div>
+</div>
+
+<div class="prog-section">
+  <div class="prog-title">Our Journey Progress</div>
+  <div class="prog-km">
+    <span class="prog-km-num">1,122</span>
+    <span class="prog-km-unit">km walked</span>
+    <span class="prog-km-total">of 3,300 km</span>
+  </div>
+  <div class="prog-bar">
+    <div class="prog-fill"><div class="walker">🚶</div></div>
+  </div>
+  <div class="prog-labels">
+    <span class="prog-lbl">🏁 Chennai</span>
+    <span class="prog-pct">34% complete</span>
+    <span class="prog-lbl">🏆 Kanyakumari</span>
+  </div>
+</div>
+
+<div class="cause-card">
+  <div class="cause-icon">📚</div>
+  <div class="cause-title">Right to Education</div>
+  <div class="cause-text">As important as health is education. Every child in Tamil Nadu deserves the right to learn, grow and dream. Your steps and donations make that possible.</div>
+  <div class="cause-stat">58,000+</div>
+  <div class="cause-stat-lbl">schools across Tamil Nadu — every district, every child</div>
+</div>
+
+<div class="route-section">
+  <div class="route-title">District by District Route</div>
+  <div class="ms-container">
+    <div class="ms-spine"></div>
+
+    <div class="ms-row">
+      <div class="ms-dot done">🏁</div>
+      <div class="ms-content"><div class="ms-district">Chennai</div><div class="ms-meta">0 km · Departure</div><div class="ms-schools">3,200+ schools</div></div>
+      <div class="ms-badge"><span class="badge done">Started</span></div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="ms-row">
+      <div class="ms-dot done">🏙️</div>
+      <div class="ms-content"><div class="ms-district">Chengalpattu</div><div class="ms-meta">120 km · District 2</div><div class="ms-schools">1,800+ schools</div></div>
+      <div class="ms-badge"><span class="badge done">Passed</span></div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="ms-row">
+      <div class="ms-dot done">🌿</div>
+      <div class="ms-content"><div class="ms-district">Villupuram</div><div class="ms-meta">280 km · District 3</div><div class="ms-schools">2,100+ schools</div></div>
+      <div class="ms-badge"><span class="badge done">Passed</span></div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="ms-row">
+      <div class="ms-dot done">🌾</div>
+      <div class="ms-content"><div class="ms-district">Cuddalore</div><div class="ms-meta">420 km · District 4</div><div class="ms-schools">1,600+ schools</div></div>
+      <div class="ms-badge"><span class="badge done">Passed</span></div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="ms-row">
+      <div class="ms-dot current">📍</div>
+      <div class="ms-content"><div class="ms-district">Thanjavur</div><div class="ms-meta">650 km · District 5</div><div class="ms-schools">1,900+ schools</div></div>
+      <div class="ms-badge"><span class="badge current">We're here!</span></div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="ms-row">
+      <div class="ms-dot locked">🏛️</div>
+      <div class="ms-content"><div class="ms-district locked">Tiruchirappalli</div><div class="ms-meta">820 km · District 6</div><div class="ms-schools locked">2,000+ schools</div></div>
+      <div class="ms-badge"><span class="badge locked">🔒 Next</span></div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="ms-row">
+      <div class="ms-dot locked">🌊</div>
+      <div class="ms-content"><div class="ms-district locked">Madurai</div><div class="ms-meta">1,100 km · District 7</div><div class="ms-schools locked">2,400+ schools</div></div>
+      <div class="ms-badge"><span class="badge locked">🔒 Locked</span></div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="ms-row">
+      <div class="ms-dot locked">🏔️</div>
+      <div class="ms-content"><div class="ms-district locked">Tirunelveli</div><div class="ms-meta">1,600 km · District 8</div><div class="ms-schools locked">1,700+ schools</div></div>
+      <div class="ms-badge"><span class="badge locked">🔒 Locked</span></div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="ms-row">
+      <div class="ms-dot locked">🏆</div>
+      <div class="ms-content"><div class="ms-district locked">Kanyakumari</div><div class="ms-meta">3,300 km · Final Destination</div><div class="ms-schools locked">900+ schools · 58,000 total</div></div>
+      <div class="ms-badge"><span class="badge locked">🔒 Goal</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="pace-card">
+  <div>
+    <div class="pace-lbl">Group Pace</div>
+    <div class="pace-val">179 km/day</div>
+  </div>
+  <div>
+    <div class="pace-lbl" style="text-align:right;">Est. Completion</div>
+    <div class="eta-val">12 days left</div>
+  </div>
+</div>
+
+<div class="donate-card">
+  <div class="cause-icon">🙏</div>
+  <div class="donate-title">Walk with Us. Give Back.</div>
+  <div class="donate-sub">Every rupee goes directly to support education for underprivileged children in Tamil Nadu. Friends and family welcome!</div>
+  <div class="donate-min">Minimum contribution: Rs. 500</div>
+  <div style="font-size:12px;color:#7aad7a;margin-bottom:14px;">No maximum · Give as much as you wish</div>
+  <button class="donate-btn">Join the Walk</button>
+</div>
+
+</body>
+</html>
