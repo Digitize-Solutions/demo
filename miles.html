@@ -97,12 +97,12 @@ body{padding-bottom:40px;}
 /* ── MODAL ── */
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:50;align-items:flex-end;justify-content:center;}
 .modal.active{display:flex;}
-.modal-box{background:#0d1a0d;border:1px solid #1a2e1a;border-top:2px solid #4caf50;border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;}
-.modal-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
-.modal-title{font-size:16px;font-weight:700;color:#f0faf0;}
+.modal-box{background:#0d1a0d;border:1px solid #1a2e1a;border-top:2px solid #4caf50;border-radius:20px 20px 0 0;padding:20px 16px 32px;width:100%;max-width:100%;box-sizing:border-box;max-height:88vh;overflow-y:auto;}
+.modal-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.modal-title{font-size:15px;font-weight:700;color:#f0faf0;}
 .modal-sub{font-size:12px;color:#5a8a5a;margin-top:3px;}
 .modal-close{background:rgba(255,255,255,0.06);border:none;color:#7aad7a;font-size:16px;cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.search-box{width:100%;padding:11px 14px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#e8f5e8;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;}
+.search-box{width:100%;padding:11px 14px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#e8f5e8;font-size:16px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;box-sizing:border-box;}
 .search-box:focus{border-color:#4caf50;}
 .name-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;max-height:55vh;overflow-y:auto;}
 .name-btn{display:flex;align-items:center;justify-content:center;padding:10px 6px;border-radius:10px;background:#0f1a0f;border:1px solid #1a2e1a;cursor:pointer;text-align:center;transition:all 0.15s;width:100%;}
@@ -113,7 +113,7 @@ body{padding-bottom:40px;}
 .name-btn:hover{border-color:#4caf50;}
 
 /* ── PWD MODAL ── */
-.finput{width:100%;padding:12px 14px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#e8f5e8;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:10px;}
+.finput{width:100%;padding:12px 14px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#e8f5e8;font-size:16px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:10px;box-sizing:border-box;}
 .finput:focus{border-color:#4caf50;}
 .err{font-size:12px;color:#ef5350;margin-bottom:8px;display:none;}
 .modal-btns{display:flex;gap:8px;}
@@ -133,7 +133,7 @@ body{padding-bottom:40px;}
 .date-lbl{flex:1;}
 .date-day{font-size:13px;font-weight:600;color:#e8f5e8;}
 .date-sub{font-size:10px;color:#5a8a5a;margin-top:1px;}
-.step-input{width:120px;padding:9px 12px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#4caf50;font-size:14px;font-family:'DM Mono',monospace;text-align:right;outline:none;}
+.step-input{width:120px;padding:9px 12px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#4caf50;font-size:16px;font-family:'DM Mono',monospace;text-align:right;outline:none;}
 .step-input:focus{border-color:#4caf50;background:#0d1e0d;}
 .save-row-btn{padding:9px 12px;background:#162116;border:1.5px solid #2a5a2a;border-radius:10px;color:#4caf50;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
 .save-row-btn:active{transform:scale(0.96);background:#1a3a1a;}
@@ -147,7 +147,7 @@ body{padding-bottom:40px;}
 
 .add-user-form{background:#0f1a0f;border:1px solid #1a2e1a;border-radius:14px;padding:16px;margin-bottom:16px;}
 .flabel{font-size:11px;font-weight:600;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;}
-.fselect{width:100%;padding:11px 14px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#e8f5e8;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;appearance:none;}
+.fselect{width:100%;padding:11px 14px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#e8f5e8;font-size:16px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;appearance:none;box-sizing:border-box;}
 .fcheckbox{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
 .fcheckbox input{width:18px;height:18px;accent-color:#4caf50;}
 .fcheckbox label{font-size:13px;color:#e8f5e8;}
@@ -329,12 +329,12 @@ body{padding-bottom:40px;}
 
 <!-- Admin password -->
 <div class="modal" id="pwd-modal">
-  <div class="modal-box">
+  <div class="modal-box" style="max-width:100%;width:100%;">
     <div class="modal-hdr">
       <div><div class="modal-title">Admin Access</div><div class="modal-sub">Enter your password to continue</div></div>
       <button class="modal-close" onclick="closeModal('pwd-modal')">✕</button>
     </div>
-    <input type="password" class="finput" id="admin-pwd" placeholder="Password" style="margin-bottom:8px;"/>
+    <input type="password" class="finput" id="admin-pwd" placeholder="Password" style="margin-bottom:8px;font-size:16px;"/>
     <div class="err" id="pwd-err">Incorrect password. Try again.</div>
     <div class="modal-btns">
       <button class="modal-btn cancel" onclick="closeModal('pwd-modal')">Cancel</button>
@@ -651,18 +651,32 @@ async function saveAllAdminSteps(){
 }
 
 async function loadUserList(){
-  const data=await sb('GET','miles_participants?select=*&order=name.asc');
+  const [data, stepsData] = await Promise.all([
+    sb('GET','miles_participants?select=*&order=name.asc'),
+    sb('GET','miles_steps?select=participant_name,steps')
+  ]);
+  // Sum steps per participant
+  const stepsMap={};
+  stepsData.forEach(r=>{
+    stepsMap[r.participant_name]=(stepsMap[r.participant_name]||0)+(r.steps||0);
+  });
   const el=document.getElementById('user-list');
-  el.innerHTML=data.map(p=>`
-    <div class="user-list-row">
+  el.innerHTML=data.map(p=>{
+    const totalSteps=(stepsMap[p.name]||0).toLocaleString('en-IN');
+    const km=Math.round((stepsMap[p.name]||0)/1300);
+    return `<div class="user-list-row">
       <div class="ul-av">${p.name.slice(0,2).toUpperCase()}</div>
       <div class="ul-info">
         <div class="ul-name">${p.name}</div>
         <div class="ul-meta">${p.gender==='M'?'Male':'Female'} · ${p.is_vidial_member?'Vidial Member':'External'}</div>
+        <div style="font-size:11px;color:#4caf50;margin-top:3px;font-family:'DM Mono',monospace;">${totalSteps} steps · ${km} km</div>
       </div>
-      <div class="ul-amount">Rs. ${(p.amount||0).toLocaleString('en-IN')}</div>
-      <button onclick="openEditModal(${p.id},'${p.name}','${p.gender}',${p.amount},${p.is_vidial_member})" style="padding:6px 10px;border-radius:8px;border:1px solid #1a2e1a;background:#162116;color:#7aad7a;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;">Edit</button>
-    </div>`).join('') || '<div style="text-align:center;padding:20px;color:#5a8a5a;">No participants yet</div>';
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+        <div class="ul-amount">Rs. ${(p.amount||0).toLocaleString('en-IN')}</div>
+        <button onclick="openEditModal(${p.id},'${p.name}','${p.gender}',${p.amount},${p.is_vidial_member})" style="padding:5px 10px;border-radius:8px;border:1px solid #1a2e1a;background:#162116;color:#7aad7a;font-size:11px;font-weight:600;cursor:pointer;">Edit</button>
+      </div>
+    </div>`;
+  }).join('') || '<div style="text-align:center;padding:20px;color:#5a8a5a;">No participants yet</div>';
 }
 
 async function addParticipant(){
