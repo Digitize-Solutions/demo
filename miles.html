@@ -104,13 +104,12 @@ body{padding-bottom:40px;}
 .modal-close{background:rgba(255,255,255,0.06);border:none;color:#7aad7a;font-size:16px;cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .search-box{width:100%;padding:11px 14px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#e8f5e8;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;}
 .search-box:focus{border-color:#4caf50;}
-.name-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;max-height:55vh;overflow-y:auto;}
-.name-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 8px;border-radius:12px;background:#0f1a0f;border:1px solid #1a2e1a;color:#e8f5e8;font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all 0.15s;width:100%;}
+.name-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;max-height:55vh;overflow-y:auto;}
+.name-btn{display:flex;align-items:center;justify-content:center;padding:10px 6px;border-radius:10px;background:#0f1a0f;border:1px solid #1a2e1a;cursor:pointer;text-align:center;transition:all 0.15s;width:100%;}
 .name-btn:active{transform:scale(0.96);}
-.name-btn .n-av{width:36px;height:36px;border-radius:50%;background:#162116;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#4caf50;flex-shrink:0;}
-.name-btn .n-name{font-size:12px;font-weight:600;color:#e8f5e8;line-height:1.2;}
+.name-btn .n-name{font-size:12px;font-weight:600;color:#e8f5e8;line-height:1.3;}
 .name-btn.admin-tag{border-color:#2a5a2a;}
-.name-btn.admin-tag .n-av{color:#81c784;}
+.name-btn.admin-tag .n-name{color:#81c784;}
 .name-btn:hover{border-color:#4caf50;}
 
 /* ── PWD MODAL ── */
@@ -489,9 +488,7 @@ function openNameModal(){
     if(!data.length){grid.innerHTML='<div style="text-align:center;color:#5a8a5a;font-size:13px;grid-column:span 2;">No participants yet.<br/>Ask admin to add you!</div>';return;}
     grid.innerHTML=data.map(p=>{
       const isAdmin=ADMINS.includes(p.name);
-      const av=p.name.slice(0,2).toUpperCase();
       return `<button class="name-btn${isAdmin?' admin-tag':''}" onclick="selectUser('${p.name}')" data-name="${p.name.toLowerCase()}">
-        <div class="n-av">${av}</div>
         <div class="n-name">${p.name}</div>
       </button>`;
     }).join('');
