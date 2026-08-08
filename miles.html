@@ -502,13 +502,15 @@ function openNameModal(){
   const grid=document.getElementById('name-grid');
   grid.innerHTML='<div style="text-align:center;color:#5a8a5a;font-size:13px;grid-column:span 2;">Loading...</div>';
   document.getElementById('name-modal').classList.add('active');
-  sb('GET','miles_participants?select=name,alias_name&order=name.asc').then(data=>{
+  sb('GET','miles_participants?select=name,alias_name,gender,participant_type&order=name.asc').then(data=>{
     if(!data.length){grid.innerHTML='<div style="text-align:center;color:#5a8a5a;font-size:13px;grid-column:span 2;">No participants yet.<br/>Ask admin to add you!</div>';return;}
     grid.innerHTML=data.map(p=>{
       const isAdmin=ADMINS.includes(p.name);
       const displayName=p.alias_name||p.name;
+      const isKid=p.participant_type==='kid';
+      const nameColor=isKid?'#fcd34d':p.gender==='F'?'#f9a8d4':'#60a5fa';
       return `<button class="name-btn${isAdmin?' admin-tag':''}" onclick="selectUser('${p.name}')" data-name="${(p.alias_name||p.name).toLowerCase()}">
-        <div class="n-name">${displayName}</div>
+        <div class="n-name" style="color:${nameColor};">${displayName}</div>
       </button>`;
     }).join('');
   }).catch(()=>{grid.innerHTML='<div style="text-align:center;color:#ef5350;font-size:13px;grid-column:span 2;">Error loading. Try again.</div>';});
