@@ -293,14 +293,23 @@ body{padding-bottom:40px;}
         <div style="font-size:13px;font-weight:700;color:#f0faf0;margin-bottom:12px;">+ Add Participant</div>
         <div class="flabel">Name</div>
         <input type="text" class="finput" id="add-name" placeholder="Full name" style="margin-bottom:12px;"/>
+        <div class="flabel">Alias Name <span style="color:#5a8a5a;font-weight:400;">(optional — shown in UI if entered)</span></div>
+        <input type="text" class="finput" id="add-alias" placeholder="Nickname or short name" style="margin-bottom:12px;"/>
         <div class="flabel">Gender</div>
         <select class="fselect" id="add-gender">
           <option value="">Select gender</option>
           <option value="M">Male</option>
           <option value="F">Female</option>
         </select>
+        <div class="flabel">Type</div>
+        <select class="fselect" id="add-type" onchange="if(this.value==='kid'){document.getElementById('add-amount').value=0;document.getElementById('add-amount').disabled=true;}else{document.getElementById('add-amount').value=500;document.getElementById('add-amount').disabled=false;}">
+          <option value="adult">Adult</option>
+          <option value="kid">Kid (Free)</option>
+        </select>
         <div class="flabel">Amount (Rs.)</div>
         <input type="number" class="finput" id="add-amount" placeholder="500" value="500" style="margin-bottom:12px;"/>
+        <div class="flabel">Place</div>
+        <input type="text" class="finput" id="add-place" placeholder="City or location" style="margin-bottom:12px;"/>
         <div class="fcheckbox">
           <input type="checkbox" id="add-vidial"/>
           <label for="add-vidial">Vidial Member</label>
@@ -355,13 +364,22 @@ body{padding-bottom:40px;}
     <input type="hidden" id="edit-id"/>
     <div class="flabel">Name</div>
     <input type="text" class="finput" id="edit-name" style="margin-bottom:12px;"/>
+    <div class="flabel">Alias Name</div>
+    <input type="text" class="finput" id="edit-alias" placeholder="Optional" style="margin-bottom:12px;"/>
     <div class="flabel">Gender</div>
     <select class="fselect" id="edit-gender">
       <option value="M">Male</option>
       <option value="F">Female</option>
     </select>
+    <div class="flabel">Type</div>
+    <select class="fselect" id="edit-type">
+      <option value="adult">Adult</option>
+      <option value="kid">Kid (Free)</option>
+    </select>
     <div class="flabel">Amount (Rs.)</div>
     <input type="number" class="finput" id="edit-amount" style="margin-bottom:12px;"/>
+    <div class="flabel">Place</div>
+    <input type="text" class="finput" id="edit-place" placeholder="City or location" style="margin-bottom:12px;"/>
     <div class="fcheckbox">
       <input type="checkbox" id="edit-vidial"/>
       <label for="edit-vidial">Vidial Member</label>
@@ -467,7 +485,7 @@ async function loadHome(){
     document.getElementById('prog-pct').textContent=pct+'%';
     buildMilestones(totalKm);
 
-    const participants=await sb('GET','miles_participants?select=name,amount');
+    const participants=await sb('GET','miles_participants?select=name,alias_name,amount');
     allParticipants=participants;
     document.getElementById('registered-count').textContent=participants.length;
     const total=participants.reduce((s,r)=>s+(r.amount||0),0);
@@ -484,12 +502,13 @@ function openNameModal(){
   const grid=document.getElementById('name-grid');
   grid.innerHTML='<div style="text-align:center;color:#5a8a5a;font-size:13px;grid-column:span 2;">Loading...</div>';
   document.getElementById('name-modal').classList.add('active');
-  sb('GET','miles_participants?select=name&order=name.asc').then(data=>{
+  sb('GET','miles_participants?select=name,alias_name&order=name.asc').then(data=>{
     if(!data.length){grid.innerHTML='<div style="text-align:center;color:#5a8a5a;font-size:13px;grid-column:span 2;">No participants yet.<br/>Ask admin to add you!</div>';return;}
     grid.innerHTML=data.map(p=>{
       const isAdmin=ADMINS.includes(p.name);
-      return `<button class="name-btn${isAdmin?' admin-tag':''}" onclick="selectUser('${p.name}')" data-name="${p.name.toLowerCase()}">
-        <div class="n-name">${p.name}</div>
+      const displayName=p.alias_name||p.name;
+      return `<button class="name-btn${isAdmin?' admin-tag':''}" onclick="selectUser('${p.name}')" data-name="${(p.alias_name||p.name).toLowerCase()}">
+        <div class="n-name">${displayName}</div>
       </button>`;
     }).join('');
   }).catch(()=>{grid.innerHTML='<div style="text-align:center;color:#ef5350;font-size:13px;grid-column:span 2;">Error loading. Try again.</div>';});
@@ -519,7 +538,9 @@ function verifyAdminPwd(){
 
 // ── STEPS PAGE ──
 async function openStepsPage(name){
-  document.getElementById('steps-user-name').textContent=name+"'s Steps";
+  const parts=await sb('GET',`miles_participants?name=eq.${encodeURIComponent(name)}&select=alias_name`);
+  const displayName=(parts[0]?.alias_name)||name;
+  document.getElementById('steps-user-name').textContent=displayName+"'s Steps";
   showPage('steps-page');
   const dates=getEventDates();
   const existing=await sb('GET',`miles_steps?participant_name=eq.${encodeURIComponent(name)}&select=step_date,steps`);
@@ -652,7 +673,7 @@ async function saveAllAdminSteps(){
 
 async function loadUserList(){
   const [data, stepsData] = await Promise.all([
-    sb('GET','miles_participants?select=*&order=name.asc'),
+    sb('GET','miles_participants?select=id,name,alias_name,gender,participant_type,amount,place,is_vidial_member&order=name.asc'),
     sb('GET','miles_steps?select=participant_name,steps')
   ]);
   // Sum steps per participant
@@ -673,7 +694,16 @@ async function loadUserList(){
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
         <div class="ul-amount">Rs. ${(p.amount||0).toLocaleString('en-IN')}</div>
-        <button onclick="openEditModal(${p.id},'${p.name}','${p.gender}',${p.amount},${p.is_vidial_member})" style="padding:5px 10px;border-radius:8px;border:1px solid #1a2e1a;background:#162116;color:#7aad7a;font-size:11px;font-weight:600;cursor:pointer;">Edit</button>
+        <button onclick="openEditModal(this)"
+          data-id="${p.id}"
+          data-name="${(p.name||'').replace(/'/g,'\'')}"
+          data-alias="${(p.alias_name||'').replace(/'/g,'\'')}"
+          data-gender="${p.gender||''}"
+          data-type="${p.participant_type||'adult'}"
+          data-amount="${p.amount||0}"
+          data-place="${(p.place||'').replace(/'/g,'\'')}"
+          data-vidial="${p.is_vidial_member}"
+          style="padding:6px 10px;border-radius:8px;border:1px solid #1a2e1a;background:#162116;color:#7aad7a;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;">Edit</button>
       </div>
     </div>`;
   }).join('') || '<div style="text-align:center;padding:20px;color:#5a8a5a;">No participants yet</div>';
@@ -681,44 +711,57 @@ async function loadUserList(){
 
 async function addParticipant(){
   const name=document.getElementById('add-name').value.trim();
+  const alias=document.getElementById('add-alias').value.trim();
   const gender=document.getElementById('add-gender').value;
-  const amount=parseInt(document.getElementById('add-amount').value||500);
+  const type=document.getElementById('add-type').value;
+  const amount=type==='kid'?0:parseInt(document.getElementById('add-amount').value||500);
+  const place=document.getElementById('add-place').value.trim();
   const isVidial=document.getElementById('add-vidial').checked;
   if(!name){showToast('Please enter a name');return;}
   if(!gender){showToast('Please select gender');return;}
   try{
-    await sb('POST','miles_participants',{name,gender,amount,is_vidial_member:isVidial});
-    showToast(name+' added! ✓');
+    await sb('POST','miles_participants',{name,alias_name:alias||null,gender,participant_type:type,amount,place:place||null,is_vidial_member:isVidial});
+    showToast((alias||name)+' added! ✓');
     document.getElementById('add-name').value='';
+    document.getElementById('add-alias').value='';
     document.getElementById('add-gender').value='';
+    document.getElementById('add-type').value='adult';
     document.getElementById('add-amount').value='500';
+    document.getElementById('add-place').value='';
     document.getElementById('add-vidial').checked=false;
     loadUserList();
     loadHome();
   }catch(e){showToast('Error: '+e.message.slice(0,40));}
 }
 
-function openEditModal(id,name,gender,amount,isVidial){
-  document.getElementById('edit-id').value=id;
-  document.getElementById('edit-name').value=name;
-  document.getElementById('edit-gender').value=gender;
-  document.getElementById('edit-amount').value=amount;
-  document.getElementById('edit-vidial').checked=isVidial;
+function openEditModal(btn){
+  const d=btn.dataset;
+  document.getElementById('edit-id').value=d.id;
+  document.getElementById('edit-name').value=d.name||'';
+  document.getElementById('edit-alias').value=d.alias||'';
+  document.getElementById('edit-gender').value=d.gender||'M';
+  document.getElementById('edit-type').value=d.type||'adult';
+  document.getElementById('edit-amount').value=d.amount||0;
+  document.getElementById('edit-place').value=d.place||'';
+  document.getElementById('edit-vidial').checked=d.vidial==='true';
   document.getElementById('edit-modal').classList.add('active');
 }
 
 async function saveEditParticipant(){
   const id=document.getElementById('edit-id').value;
   const name=document.getElementById('edit-name').value.trim();
+  const alias=document.getElementById('edit-alias').value.trim();
   const gender=document.getElementById('edit-gender').value;
-  const amount=parseInt(document.getElementById('edit-amount').value||500);
+  const type=document.getElementById('edit-type').value;
+  const amount=parseInt(document.getElementById('edit-amount').value||0);
+  const place=document.getElementById('edit-place').value.trim();
   const isVidial=document.getElementById('edit-vidial').checked;
   if(!name){showToast('Please enter a name');return;}
   try{
     await fetch(`${SB_URL}/rest/v1/miles_participants?id=eq.${id}`,{
       method:'PATCH',
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
-      body:JSON.stringify({name,gender,amount,is_vidial_member:isVidial})
+      body:JSON.stringify({name,alias_name:alias||null,gender,participant_type:type,amount,place:place||null,is_vidial_member:isVidial})
     });
     showToast('Updated! ✓');
     closeModal('edit-modal');
