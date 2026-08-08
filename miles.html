@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{min-height:100%;background:#0a0f0a;font-family:'DM Sans',sans-serif;color:#e8f5e8;}
+.wrap{max-width:480px;margin:0 auto;padding:0 16px;}
+
+/* ── HOME ── */
+.page{display:none;}
+.page.active{display:block;}
+body{padding-bottom:40px;}
+
+.hero{text-align:center;padding:32px 0 20px;}
+.event-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4caf50;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.25);border-radius:999px;padding:4px 14px;margin-bottom:14px;}
+.hero h1{font-size:26px;font-weight:800;line-height:1.2;color:#f0faf0;margin-bottom:6px;}
+.hero h1 span{color:#4caf50;}
+.hero p{font-size:13px;color:#7aad7a;line-height:1.6;}
+.dates{font-size:12px;color:#4caf50;font-weight:600;margin-top:6px;}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.stat{background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;padding:12px;text-align:center;}
+.stat-num{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:#4caf50;margin-bottom:3px;}
+.stat-lbl{font-size:9px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;}
+
+.new-tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.new-tile{background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;padding:14px;}
+.nt-label{font-size:9px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
+.nt-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:#4caf50;margin-bottom:2px;}
+.nt-sub{font-size:10px;color:#5a8a5a;}
+.nt-bar-track{height:5px;background:#162116;border-radius:999px;overflow:hidden;margin:7px 0 4px;}
+.nt-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#2e7d32,#4caf50);}
+
+.prog-section{background:#0f1a0f;border:1px solid #1a2e1a;border-radius:14px;padding:16px;margin-bottom:16px;}
+.prog-title{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a8a5a;margin-bottom:10px;}
+.prog-km{display:flex;align-items:baseline;gap:6px;margin-bottom:8px;}
+.prog-km-num{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:#4caf50;}
+.prog-km-unit{font-size:12px;color:#5a8a5a;}
+.prog-km-total{font-size:12px;color:#5a8a5a;margin-left:auto;}
+.prog-bar{height:8px;background:#162116;border-radius:999px;overflow:visible;position:relative;margin-bottom:6px;border:1px solid #1a2e1a;}
+.prog-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#2e7d32,#4caf50,#81c784);width:0%;position:relative;transition:width 1s ease;}
+.walker{position:absolute;right:-12px;top:-10px;font-size:18px;animation:walk 1.5s ease-in-out infinite;}
+@keyframes walk{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.prog-labels{display:flex;justify-content:space-between;}
+.prog-lbl{font-size:10px;color:#5a8a5a;}
+.prog-pct{font-size:10px;color:#4caf50;font-weight:700;}
+
+.cause-card{background:#0f1a0f;border:1px solid #1a2e1a;border-radius:14px;padding:16px;text-align:center;margin-bottom:16px;}
+.cause-icon{font-size:28px;margin-bottom:6px;}
+.cause-title{font-size:14px;font-weight:700;color:#f0faf0;margin-bottom:4px;}
+.cause-text{font-size:12px;color:#7aad7a;line-height:1.6;}
+.cause-stat{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:#4caf50;margin:8px 0 3px;}
+.cause-stat-lbl{font-size:11px;color:#5a8a5a;}
+
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#5a8a5a;}
+.leg-dot{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;}
+.leg-dot.done{background:#0f2240;border:2px solid #4caf50;color:#4caf50;}
+.leg-dot.current{background:#0f2240;border:2px solid #81c784;color:#81c784;}
+.leg-dot.locked{background:#0a120a;border:2px solid #1a2e1a;color:#2a4a2a;}
+.leg-dot.goal{background:#1b5e20;border:2px solid #4caf50;color:#4caf50;}
+
+.route-section{margin-bottom:16px;}
+.route-title{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a8a5a;margin-bottom:10px;}
+.ms-container{position:relative;}
+.ms-spine{position:absolute;left:19px;top:0;bottom:0;width:2px;background:#1a2e1a;z-index:0;}
+.ms-row{display:flex;align-items:center;gap:12px;padding:6px 4px;position:relative;z-index:1;}
+.ms-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.ms-dot.done{background:#0f2240;border:2px solid #4caf50;color:#4caf50;}
+.ms-dot.current{background:#0f2240;border:2px solid #81c784;color:#81c784;box-shadow:0 0 12px rgba(76,175,80,0.5);animation:gpulse 2s infinite;}
+@keyframes gpulse{0%,100%{box-shadow:0 0 8px rgba(76,175,80,0.4)}50%{box-shadow:0 0 18px rgba(76,175,80,0.7)}}
+.ms-dot.locked{background:#0a120a;border:2px solid #1a2e1a;color:#2a4a2a;}
+.ms-dot.goal{background:#1b5e20;border:2px solid #4caf50;color:#4caf50;}
+.ms-content{flex:1;}
+.ms-district{font-size:13px;font-weight:600;color:#e8f5e8;}
+.ms-district.locked{color:#2a4a2a;}
+.ms-meta{font-size:11px;color:#5a8a5a;margin-top:1px;}
+.ms-badge-wrap{flex-shrink:0;}
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;}
+.badge.done{background:#162116;color:#4caf50;border:1px solid #2e5a2e;}
+.badge.current{background:rgba(76,175,80,0.1);color:#81c784;border:1px solid rgba(76,175,80,0.3);}
+.badge.locked{background:#0a120a;color:#2a4a2a;border:1px solid #1a2e1a;}
+.badge.goal{background:#1b5e20;color:#a5d6a7;border:1px solid #4caf50;}
+.divider{height:1px;background:#1a2e1a;margin:0 4px 2px 52px;}
+
+.donate-card{border-radius:14px;padding:16px;background:linear-gradient(135deg,#1a3a1a,#0f2a0f);border:1px solid #2a5a2a;text-align:center;margin-bottom:14px;}
+.donate-title{font-size:14px;font-weight:700;color:#f0faf0;margin-bottom:4px;}
+.donate-sub{font-size:12px;color:#7aad7a;margin-bottom:10px;}
+.donate-min{font-size:11px;color:#4caf50;font-weight:600;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.2);border-radius:999px;padding:4px 14px;display:inline-block;margin-bottom:10px;}
+.donate-btn{background:#4caf50;color:#fff;border:none;border-radius:10px;padding:13px 32px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;}
+.donate-btn:active{transform:scale(0.98);}
+
+.payment-card{background:rgba(76,175,80,0.06);border:1px solid rgba(76,175,80,0.2);border-radius:12px;padding:14px 20px;margin-bottom:24px;}
+.pay-label{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#4caf50;margin-bottom:10px;}
+.pay-row{display:flex;justify-content:space-between;gap:12px;}
+.pay-name{font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:2px;}
+.pay-num{font-size:13px;font-weight:600;color:#f0faf0;letter-spacing:0.04em;}
+
+/* ── MODAL ── */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:50;align-items:flex-end;justify-content:center;}
+.modal.active{display:flex;}
+.modal-box{background:#0d1a0d;border:1px solid #1a2e1a;border-top:2px solid #4caf50;border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;}
+.modal-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+.modal-title{font-size:16px;font-weight:700;color:#f0faf0;}
+.modal-sub{font-size:12px;color:#5a8a5a;margin-top:3px;}
+.modal-close{background:rgba(255,255,255,0.06);border:none;color:#7aad7a;font-size:16px;cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.search-box{width:100%;padding:11px 14px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#e8f5e8;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;}
+.search-box:focus{border-color:#4caf50;}
+.name-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;max-height:55vh;overflow-y:auto;}
+.name-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 8px;border-radius:12px;background:#0f1a0f;border:1px solid #1a2e1a;color:#e8f5e8;font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all 0.15s;width:100%;}
+.name-btn:active{transform:scale(0.96);}
+.name-btn .n-av{width:36px;height:36px;border-radius:50%;background:#162116;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#4caf50;flex-shrink:0;}
+.name-btn .n-name{font-size:12px;font-weight:600;color:#e8f5e8;line-height:1.2;}
+.name-btn.admin-tag{border-color:#2a5a2a;}
+.name-btn.admin-tag .n-av{color:#81c784;}
+.name-btn:hover{border-color:#4caf50;}
+
+/* ── PWD MODAL ── */
+.finput{width:100%;padding:12px 14px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#e8f5e8;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:10px;}
+.finput:focus{border-color:#4caf50;}
+.err{font-size:12px;color:#ef5350;margin-bottom:8px;display:none;}
+.modal-btns{display:flex;gap:8px;}
+.modal-btn{flex:1;padding:12px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:none;}
+.modal-btn.cancel{background:none;border:1px solid #1a2e1a;color:#5a8a5a;}
+.modal-btn.submit{background:#4caf50;color:#fff;}
+
+/* ── USER STEPS PAGE ── */
+.steps-page{max-width:480px;margin:0 auto;padding:20px;}
+.steps-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #1a2e1a;}
+.steps-hdr-left h2{font-size:18px;font-weight:800;color:#f0faf0;}
+.steps-hdr-left p{font-size:12px;color:#5a8a5a;margin-top:3px;}
+.back-btn{display:flex;align-items:center;gap:5px;padding:8px 16px;border-radius:999px;border:1px solid #1a2e1a;background:#0f1a0f;color:#7aad7a;font-size:12px;font-weight:600;cursor:pointer;}
+.back-btn:active{transform:scale(0.97);}
+
+.date-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;margin-bottom:8px;}
+.date-lbl{flex:1;}
+.date-day{font-size:13px;font-weight:600;color:#e8f5e8;}
+.date-sub{font-size:10px;color:#5a8a5a;margin-top:1px;}
+.step-input{width:120px;padding:9px 12px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#4caf50;font-size:14px;font-family:'DM Mono',monospace;text-align:right;outline:none;}
+.step-input:focus{border-color:#4caf50;background:#0d1e0d;}
+.save-row-btn{padding:9px 12px;background:#162116;border:1.5px solid #2a5a2a;border-radius:10px;color:#4caf50;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.save-row-btn:active{transform:scale(0.96);background:#1a3a1a;}
+
+.save-all-btn{width:100%;padding:14px;background:#4caf50;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:14px;}
+
+/* ── ADMIN PAGE ── */
+.admin-tabs{display:flex;gap:8px;margin-bottom:16px;}
+.admin-tab{flex:1;padding:11px;background:#0f1a0f;border:1px solid #1a2e1a;border-radius:10px;color:#5a8a5a;font-size:13px;font-weight:600;cursor:pointer;}
+.admin-tab.active{background:#162116;border-color:#4caf50;color:#4caf50;}
+
+.add-user-form{background:#0f1a0f;border:1px solid #1a2e1a;border-radius:14px;padding:16px;margin-bottom:16px;}
+.flabel{font-size:11px;font-weight:600;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;}
+.fselect{width:100%;padding:11px 14px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#e8f5e8;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;appearance:none;}
+.fcheckbox{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.fcheckbox input{width:18px;height:18px;accent-color:#4caf50;}
+.fcheckbox label{font-size:13px;color:#e8f5e8;}
+
+.user-list-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;margin-bottom:8px;}
+.ul-av{width:36px;height:36px;border-radius:50%;background:#162116;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#4caf50;flex-shrink:0;border:1.5px solid #2a5a2a;}
+.ul-info{flex:1;}
+.ul-name{font-size:13px;font-weight:600;color:#e8f5e8;}
+.ul-meta{font-size:11px;color:#5a8a5a;margin-top:2px;}
+.ul-amount{font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#4caf50;}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#e8f5e8;color:#0a0f0a;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:500;opacity:0;transition:all 0.25s;pointer-events:none;z-index:100;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- ══ HOME PAGE ══ -->
+<div id="home-page" class="page active">
+  <div class="wrap">
+  <div class="hero">
+    <div class="event-tag">Independence Day · 15 Aug 2026</div>
+    <h1>Miles that <span>Matter</span></h1>
+    <p>Every step takes a child closer to their dream.<br/>Walk with us across Tamil Nadu for the Right to Education.</p>
+    <div class="dates">15 Aug – 30 Aug 2026 · 2 Weeks</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num">58,000+</div><div class="stat-lbl">Schools in TN</div></div>
+    <div class="stat"><div class="stat-num">38</div><div class="stat-lbl">Districts</div></div>
+    <div class="stat"><div class="stat-num">3,300 km</div><div class="stat-lbl">Our Journey</div></div>
+  </div>
+
+  <div class="new-tiles">
+    <div class="new-tile">
+      <div class="nt-label">Registered</div>
+      <div class="nt-val" id="registered-count">—</div>
+      <div class="nt-sub">participants</div>
+    </div>
+    <div class="new-tile">
+      <div class="nt-label">Amount raised</div>
+      <div class="nt-val" id="amount-raised">—</div>
+      <div class="nt-bar-track"><div class="nt-bar-fill" id="amount-bar" style="width:0%;"></div></div>
+      <div class="nt-sub" id="amount-pct">of Rs. 30,000 goal</div>
+    </div>
+  </div>
+
+  <div class="prog-section">
+    <div class="prog-title">Our Journey Progress</div>
+    <div class="prog-km">
+      <span class="prog-km-num" id="km-covered">0</span>
+      <span class="prog-km-unit">km walked</span>
+      <span class="prog-km-total">of 3,300 km</span>
+    </div>
+    <div class="prog-bar">
+      <div class="prog-fill" id="prog-fill"><div class="walker">🚶</div></div>
+    </div>
+    <div class="prog-labels">
+      <span class="prog-lbl">Start · Chennai</span>
+      <span class="prog-pct" id="prog-pct">0%</span>
+      <span class="prog-lbl">Goal · Kanyakumari</span>
+    </div>
+  </div>
+
+  <div class="cause-card">
+    <div class="cause-icon">📚</div>
+    <div class="cause-title">Right to Education</div>
+    <div class="cause-text">As important as health is education. Every child in Tamil Nadu deserves the right to learn, grow and dream.</div>
+    <button onclick="openNameModal()" style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#162116;border:1.5px solid #2a5a2a;border-radius:999px;color:#81c784;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">
+      <span style="font-size:18px;">👣</span> Enter your steps
+    </button>
+  </div>
+
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot done">✓</div> Passed</div>
+    <div class="leg-item"><div class="leg-dot current">●</div> On the way</div>
+    <div class="leg-item"><div class="leg-dot locked">○</div> Locked</div>
+    <div class="leg-item"><div class="leg-dot goal">★</div> Goal</div>
+  </div>
+
+  <div class="route-section">
+    <div class="route-title">District by District Route</div>
+    <div class="ms-container" id="milestone-list">
+      <div class="ms-spine"></div>
+    </div>
+  </div>
+
+  <div class="donate-card">
+    <div class="cause-icon">🙏</div>
+    <div class="donate-title">Walk with Us. Give Back.</div>
+    <div class="donate-sub">Every rupee supports education for children in Tamil Nadu.</div>
+    <div class="donate-min">Minimum contribution: Rs. 500</div>
+    <div style="font-size:12px;color:#7aad7a;margin-bottom:12px;">No maximum · Friends and family welcome</div>
+    <button class="donate-btn" onclick="openNameModal()">Enter your steps</button>
+  </div>
+
+  <div class="payment-card">
+    <div class="pay-label">Pay via GPay</div>
+    <div class="pay-row">
+      <div><div class="pay-name">Snega</div><div class="pay-num">+91 98842 90382</div></div>
+      <div style="width:1px;background:rgba(255,255,255,0.08);"></div>
+      <div style="text-align:right;"><div class="pay-name">Deepa</div><div class="pay-num">+91 95661 47774</div></div>
+    </div>
+  </div>
+  </div><!-- end wrap -->
+</div>
+
+<!-- ══ USER STEPS PAGE ══ -->
+<div id="steps-page" class="page">
+  <div class="steps-page">
+    <div class="steps-hdr">
+      <div class="steps-hdr-left">
+        <h2 id="steps-user-name">My Steps</h2>
+        <p>15 Aug – 30 Aug 2026</p>
+      </div>
+      <button class="back-btn" onclick="goHome()">← Back</button>
+    </div>
+    <div id="date-rows"></div>
+    <button class="save-all-btn" onclick="saveAllSteps()">Save All Steps</button>
+  </div>
+</div>
+
+<!-- ══ ADMIN PAGE ══ -->
+<div id="admin-page" class="page">
+  <div class="steps-page">
+    <div class="steps-hdr">
+      <div class="steps-hdr-left">
+        <h2 id="admin-user-name">Admin</h2>
+        <p>Miles that Matter</p>
+      </div>
+      <button class="back-btn" onclick="goHome()">← Back</button>
+    </div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" id="tab-steps" onclick="switchAdminTab('steps')">📅 Steps Data</button>
+      <button class="admin-tab" id="tab-users" onclick="switchAdminTab('users')">👥 Participants</button>
+    </div>
+    <div id="admin-steps-panel">
+      <div id="admin-date-rows"></div>
+      <button class="save-all-btn" onclick="saveAllAdminSteps()">Save All Steps</button>
+    </div>
+    <div id="admin-users-panel" style="display:none;">
+      <!-- Add user form -->
+      <div class="add-user-form">
+        <div style="font-size:13px;font-weight:700;color:#f0faf0;margin-bottom:12px;">+ Add Participant</div>
+        <div class="flabel">Name</div>
+        <input type="text" class="finput" id="add-name" placeholder="Full name" style="margin-bottom:12px;"/>
+        <div class="flabel">Gender</div>
+        <select class="fselect" id="add-gender">
+          <option value="">Select gender</option>
+          <option value="M">Male</option>
+          <option value="F">Female</option>
+        </select>
+        <div class="flabel">Amount (Rs.)</div>
+        <input type="number" class="finput" id="add-amount" placeholder="500" value="500" style="margin-bottom:12px;"/>
+        <div class="fcheckbox">
+          <input type="checkbox" id="add-vidial"/>
+          <label for="add-vidial">Vidial Member</label>
+        </div>
+        <button class="save-all-btn" onclick="addParticipant()">Add Participant</button>
+      </div>
+      <!-- User list -->
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#5a8a5a;margin-bottom:8px;">Registered Participants</div>
+      <div id="user-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODALS ══ -->
+<!-- Name picker -->
+<div class="modal" id="name-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div><div class="modal-title">Who are you?</div><div class="modal-sub">Select your name to log steps</div></div>
+      <button class="modal-close" onclick="closeModal('name-modal')">✕</button>
+    </div>
+    <input type="text" class="search-box" id="name-search" placeholder="Search name..." oninput="filterNames(this.value)"/>
+    <div class="name-grid" id="name-grid"></div>
+  </div>
+</div>
+
+<!-- Admin password -->
+<div class="modal" id="pwd-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div><div class="modal-title">Admin Access</div><div class="modal-sub">Enter your password to continue</div></div>
+      <button class="modal-close" onclick="closeModal('pwd-modal')">✕</button>
+    </div>
+    <input type="password" class="finput" id="admin-pwd" placeholder="Password" style="margin-bottom:8px;"/>
+    <div class="err" id="pwd-err">Incorrect password. Try again.</div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="closeModal('pwd-modal')">Cancel</button>
+      <button class="modal-btn submit" onclick="verifyAdminPwd()">Login</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Edit participant modal -->
+<div class="modal" id="edit-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div><div class="modal-title">Edit Participant</div><div class="modal-sub">Update details</div></div>
+      <button class="modal-close" onclick="closeModal('edit-modal')">✕</button>
+    </div>
+    <input type="hidden" id="edit-id"/>
+    <div class="flabel">Name</div>
+    <input type="text" class="finput" id="edit-name" style="margin-bottom:12px;"/>
+    <div class="flabel">Gender</div>
+    <select class="fselect" id="edit-gender">
+      <option value="M">Male</option>
+      <option value="F">Female</option>
+    </select>
+    <div class="flabel">Amount (Rs.)</div>
+    <input type="number" class="finput" id="edit-amount" style="margin-bottom:12px;"/>
+    <div class="fcheckbox">
+      <input type="checkbox" id="edit-vidial"/>
+      <label for="edit-vidial">Vidial Member</label>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="closeModal('edit-modal')">Cancel</button>
+      <button class="modal-btn submit" onclick="saveEditParticipant()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB_URL='https://osunxzedvlpcmaplntub.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdW54emVkdmxwY21hcGxudHViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDE5MzAsImV4cCI6MjA5MDcxNzkzMH0.VgfNj_0LUfeTlT-07pSpf5lJk7uFQVuBW4VpE_PihAg';
+const ADMIN_PW='miles';
+const ADMINS=['Prashant','Snega','Deepa'];
+const DEFAULT_ADMIN='Prashant';
+const EVENT_START='2026-08-15';
+const EVENT_END='2026-08-30';
+const TOTAL_KM=3300;
+const GOAL_AMOUNT=30000;
+
+let currentUser=null;
+let pendingAdmin=null;
+let allParticipants=[];
+
+async function sb(method,path,body){
+  const h={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Cache-Control':'no-cache'};
+  if(method==='POST')h['Prefer']='resolution=merge-duplicates,return=representation';
+  const r=await fetch(`${SB_URL}/rest/v1/${path}`,{method,headers:h,body:body?JSON.stringify(body):undefined});
+  const t=await r.text();return t?JSON.parse(t):[];
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function closeModal(id){document.getElementById(id).classList.remove('active');}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+// Event dates
+function getEventDates(){
+  const dates=[];
+  const d=new Date(EVENT_START+'T00:00:00');
+  const end=new Date(EVENT_END+'T00:00:00');
+  while(d<=end){
+    const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+    dates.push(`${y}-${m}-${day}`);
+    d.setDate(d.getDate()+1);
+  }
+  return dates;
+}
+
+function fmtDate(d){
+  const dt=new Date(d+'T00:00:00');
+  return dt.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+}
+
+// ── HOME LOAD ──
+const MILESTONES=[
+  {km:0,d:'Chennai',n:1},{km:87,d:'Tiruvallur',n:2},{km:174,d:'Chengalpattu',n:3},
+  {km:261,d:'Kanchipuram',n:4},{km:348,d:'Ranipet',n:5},{km:435,d:'Vellore',n:6},
+  {km:522,d:'Tirupattur',n:7},{km:609,d:'Krishnagiri',n:8},{km:696,d:'Dharmapuri',n:9},
+  {km:783,d:'Salem',n:10},{km:870,d:'Namakkal',n:11},{km:957,d:'Erode',n:12},
+  {km:1044,d:'Tiruppur',n:13},{km:1131,d:'Coimbatore',n:14},{km:1218,d:'The Nilgiris',n:15},
+  {km:1305,d:'Karur',n:16},{km:1392,d:'Tiruchirappalli',n:17},{km:1479,d:'Ariyalur',n:18},
+  {km:1566,d:'Perambalur',n:19},{km:1653,d:'Kallakurichi',n:20},{km:1740,d:'Villupuram',n:21},
+  {km:1827,d:'Cuddalore',n:22},{km:1914,d:'Mayiladuthurai',n:23},{km:2001,d:'Nagapattinam',n:24},
+  {km:2088,d:'Tiruvarur',n:25},{km:2175,d:'Thanjavur',n:26},{km:2262,d:'Pudukottai',n:27},
+  {km:2349,d:'Dindigul',n:28},{km:2436,d:'Theni',n:29},{km:2523,d:'Madurai',n:30},
+  {km:2610,d:'Sivaganga',n:31},{km:2697,d:'Ramanathapuram',n:32},{km:2784,d:'Virudhunagar',n:33},
+  {km:2871,d:'Tenkasi',n:34},{km:2958,d:'Tirunelveli',n:35},{km:3045,d:'Thoothukudi',n:36},
+  {km:3132,d:'Nagercoil',n:37},{km:3300,d:'Kanyakumari',n:38},
+];
+
+function buildMilestones(coveredKm){
+  const container=document.getElementById('milestone-list');
+  container.innerHTML='<div class="ms-spine"></div>';
+  let currentSet=false;
+  MILESTONES.forEach((m,i)=>{
+    const isGoal=i===MILESTONES.length-1;
+    let status=isGoal?'goal':coveredKm>m.km?'done':(!currentSet?(currentSet=true,'current'):'locked');
+    if(isGoal&&coveredKm>=m.km)status='done';
+    const badgeText=status==='done'?'Passed':status==='current'?'On the way':status==='goal'?'Goal':'Locked';
+    const dotSymbol=status==='done'?'✓':status==='current'?'●':status==='goal'?'★':'○';
+    const row=document.createElement('div');row.className='ms-row';
+    row.innerHTML=`<div class="ms-dot ${status}">${dotSymbol}</div>
+      <div class="ms-content">
+        <div class="ms-district${status==='locked'?' locked':''}">${m.d}</div>
+        <div class="ms-meta">${m.km.toLocaleString('en-IN')} km · District ${m.n}</div>
+      </div>
+      <div class="ms-badge-wrap"><span class="badge ${status}">${badgeText}</span></div>`;
+    container.appendChild(row);
+    if(i<MILESTONES.length-1){const div=document.createElement('div');div.className='divider';container.appendChild(div);}
+  });
+}
+
+async function loadHome(){
+  try{
+    const steps=await sb('GET','miles_steps?select=steps');
+    const totalSteps=steps.reduce((s,r)=>s+(r.steps||0),0);
+    const totalKm=Math.round(totalSteps/1300);
+    const pct=Math.min(100,Math.round(totalKm/TOTAL_KM*100));
+    document.getElementById('km-covered').textContent=totalKm.toLocaleString('en-IN');
+    document.getElementById('prog-fill').style.width=Math.max(1,pct)+'%';
+    document.getElementById('prog-pct').textContent=pct+'%';
+    buildMilestones(totalKm);
+
+    const participants=await sb('GET','miles_participants?select=name,amount');
+    allParticipants=participants;
+    document.getElementById('registered-count').textContent=participants.length;
+    const total=participants.reduce((s,r)=>s+(r.amount||0),0);
+    const amtPct=Math.min(100,Math.round(total/GOAL_AMOUNT*100));
+    document.getElementById('amount-raised').textContent='Rs. '+total.toLocaleString('en-IN');
+    document.getElementById('amount-bar').style.width=amtPct+'%';
+    document.getElementById('amount-pct').textContent=amtPct+'% of Rs. 30,000 goal';
+  }catch(e){console.warn(e);}
+}
+
+// ── NAME MODAL ──
+function openNameModal(){
+  const grid=document.getElementById('name-grid');
+  grid.innerHTML='<div style="text-align:center;color:#5a8a5a;font-size:13px;grid-column:span 2;">Loading...</div>';
+  document.getElementById('name-modal').classList.add('active');
+  sb('GET','miles_participants?select=name&order=name.asc').then(data=>{
+    if(!data.length){grid.innerHTML='<div style="text-align:center;color:#5a8a5a;font-size:13px;grid-column:span 2;">No participants yet.<br/>Ask admin to add you!</div>';return;}
+    grid.innerHTML=data.map(p=>{
+      const isAdmin=ADMINS.includes(p.name);
+      const av=p.name.slice(0,2).toUpperCase();
+      return `<button class="name-btn${isAdmin?' admin-tag':''}" onclick="selectUser('${p.name}')" data-name="${p.name.toLowerCase()}">
+        <div class="n-av">${av}</div>
+        <div class="n-name">${p.name}</div>
+      </button>`;
+    }).join('');
+  }).catch(()=>{grid.innerHTML='<div style="text-align:center;color:#ef5350;font-size:13px;grid-column:span 2;">Error loading. Try again.</div>';});
+}
+
+function selectUser(name){
+  closeModal('name-modal');
+  if(ADMINS.includes(name)){
+    pendingAdmin=name;
+    document.getElementById('admin-pwd').value='';
+    document.getElementById('pwd-err').style.display='none';
+    document.getElementById('pwd-modal').classList.add('active');
+  }else{
+    currentUser=name;
+    openStepsPage(name);
+  }
+}
+
+function verifyAdminPwd(){
+  if(document.getElementById('admin-pwd').value!==ADMIN_PW){
+    document.getElementById('pwd-err').style.display='block';return;
+  }
+  closeModal('pwd-modal');
+  currentUser=pendingAdmin;
+  openAdminPage(pendingAdmin);
+}
+
+// ── STEPS PAGE ──
+async function openStepsPage(name){
+  document.getElementById('steps-user-name').textContent=name+"'s Steps";
+  showPage('steps-page');
+  const dates=getEventDates();
+  const existing=await sb('GET',`miles_steps?participant_name=eq.${encodeURIComponent(name)}&select=step_date,steps`);
+  const stepMap={};existing.forEach(r=>stepMap[r.step_date]=r.steps);
+  const container=document.getElementById('date-rows');
+  container.innerHTML=dates.map(d=>`
+    <div class="date-row">
+      <div class="date-lbl">
+        <div class="date-day">${fmtDate(d)}</div>
+      </div>
+      <input type="number" class="step-input" id="steps-${d}" value="${stepMap[d]||''}" placeholder="0" min="0"/>
+      <button class="save-row-btn" onclick="saveSingleStep('${name}','${d}')">Save</button>
+    </div>`).join('');
+}
+
+async function saveSingleStep(name,date){
+  const val=parseInt(document.getElementById(`steps-${date}`)?.value||0);
+  try{
+    const patch=await fetch(`${SB_URL}/rest/v1/miles_steps?participant_name=eq.${encodeURIComponent(name)}&step_date=eq.${date}`,{
+      method:'PATCH',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+      body:JSON.stringify({steps:val})
+    });
+    const patched=await patch.json();
+    if(!patched||patched.length===0){
+      await fetch(`${SB_URL}/rest/v1/miles_steps`,{
+        method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+        body:JSON.stringify({participant_name:name,step_date:date,steps:val})
+      });
+    }
+    showToast('Saved! ✓');
+    loadHome();
+  }catch(e){showToast('Error saving. Try again.');}
+}
+
+async function saveAllSteps(){
+  const name=currentUser;
+  const dates=getEventDates();
+  let saved=0;
+  for(const d of dates){
+    const val=parseInt(document.getElementById(`steps-${d}`)?.value||0);
+    if(val===0)continue;
+    const patch=await fetch(`${SB_URL}/rest/v1/miles_steps?participant_name=eq.${encodeURIComponent(name)}&step_date=eq.${d}`,{
+      method:'PATCH',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+      body:JSON.stringify({steps:val})
+    });
+    const patched=await patch.json();
+    if(!patched||patched.length===0){
+      await fetch(`${SB_URL}/rest/v1/miles_steps`,{
+        method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+        body:JSON.stringify({participant_name:name,step_date:d,steps:val})
+      });
+    }
+    saved++;
+  }
+  showToast(`${saved} day${saved!==1?'s':''} saved! ✓`);
+  loadHome();
+}
+
+// ── ADMIN PAGE ──
+async function openAdminPage(name){
+  document.getElementById('admin-user-name').textContent=name+' (Admin)';
+  showPage('admin-page');
+  switchAdminTab('steps');
+}
+
+function switchAdminTab(tab){
+  document.getElementById('admin-steps-panel').style.display=tab==='steps'?'block':'none';
+  document.getElementById('admin-users-panel').style.display=tab==='users'?'block':'none';
+  document.getElementById('tab-steps').className='admin-tab'+(tab==='steps'?' active':'');
+  document.getElementById('tab-users').className='admin-tab'+(tab==='users'?' active':'');
+  if(tab==='steps')loadAdminSteps();
+  else loadUserList();
+}
+
+async function loadAdminSteps(){
+  const name=currentUser;
+  const dates=getEventDates();
+  const existing=await sb('GET',`miles_steps?participant_name=eq.${encodeURIComponent(name)}&select=step_date,steps`);
+  const stepMap={};existing.forEach(r=>stepMap[r.step_date]=r.steps);
+  const container=document.getElementById('admin-date-rows');
+  container.innerHTML=dates.map(d=>`
+    <div class="date-row">
+      <div class="date-lbl"><div class="date-day">${fmtDate(d)}</div></div>
+      <input type="number" class="step-input" id="asteps-${d}" value="${stepMap[d]||''}" placeholder="0" min="0"/>
+      <button class="save-row-btn" onclick="saveAdminSingleStep('${name}','${d}')">Save</button>
+    </div>`).join('');
+}
+
+async function saveAdminSingleStep(name,date){
+  const val=parseInt(document.getElementById(`asteps-${date}`).value||0);
+  try{
+    const patch=await fetch(`${SB_URL}/rest/v1/miles_steps?participant_name=eq.${encodeURIComponent(name)}&step_date=eq.${date}`,{
+      method:'PATCH',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+      body:JSON.stringify({steps:val})
+    });
+    const patched=await patch.json();
+    if(!patched||patched.length===0){
+      await fetch(`${SB_URL}/rest/v1/miles_steps`,{
+        method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+        body:JSON.stringify({participant_name:name,step_date:date,steps:val})
+      });
+    }
+    showToast('Saved! ✓');loadHome();
+  }catch(e){showToast('Error saving. Try again.');}
+}
+
+async function saveAllAdminSteps(){
+  const name=currentUser;
+  const dates=getEventDates();
+  let saved=0;
+  for(const d of dates){
+    const val=parseInt(document.getElementById(`asteps-${d}`)?.value||0);
+    if(val===0)continue;
+    const patch=await fetch(`${SB_URL}/rest/v1/miles_steps?participant_name=eq.${encodeURIComponent(name)}&step_date=eq.${d}`,{
+      method:'PATCH',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+      body:JSON.stringify({steps:val})
+    });
+    const patched=await patch.json();
+    if(!patched||patched.length===0){
+      await fetch(`${SB_URL}/rest/v1/miles_steps`,{
+        method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+        body:JSON.stringify({participant_name:name,step_date:d,steps:val})
+      });
+    }
+    saved++;
+  }
+  showToast(`${saved} day${saved!==1?'s':''} saved! ✓`);
+  loadHome();
+}
+
+async function loadUserList(){
+  const data=await sb('GET','miles_participants?select=*&order=name.asc');
+  const el=document.getElementById('user-list');
+  el.innerHTML=data.map(p=>`
+    <div class="user-list-row">
+      <div class="ul-av">${p.name.slice(0,2).toUpperCase()}</div>
+      <div class="ul-info">
+        <div class="ul-name">${p.name}</div>
+        <div class="ul-meta">${p.gender==='M'?'Male':'Female'} · ${p.is_vidial_member?'Vidial Member':'External'}</div>
+      </div>
+      <div class="ul-amount">Rs. ${(p.amount||0).toLocaleString('en-IN')}</div>
+      <button onclick="openEditModal(${p.id},'${p.name}','${p.gender}',${p.amount},${p.is_vidial_member})" style="padding:6px 10px;border-radius:8px;border:1px solid #1a2e1a;background:#162116;color:#7aad7a;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;">Edit</button>
+    </div>`).join('') || '<div style="text-align:center;padding:20px;color:#5a8a5a;">No participants yet</div>';
+}
+
+async function addParticipant(){
+  const name=document.getElementById('add-name').value.trim();
+  const gender=document.getElementById('add-gender').value;
+  const amount=parseInt(document.getElementById('add-amount').value||500);
+  const isVidial=document.getElementById('add-vidial').checked;
+  if(!name){showToast('Please enter a name');return;}
+  if(!gender){showToast('Please select gender');return;}
+  try{
+    await sb('POST','miles_participants',{name,gender,amount,is_vidial_member:isVidial});
+    showToast(name+' added! ✓');
+    document.getElementById('add-name').value='';
+    document.getElementById('add-gender').value='';
+    document.getElementById('add-amount').value='500';
+    document.getElementById('add-vidial').checked=false;
+    loadUserList();
+    loadHome();
+  }catch(e){showToast('Error: '+e.message.slice(0,40));}
+}
+
+function openEditModal(id,name,gender,amount,isVidial){
+  document.getElementById('edit-id').value=id;
+  document.getElementById('edit-name').value=name;
+  document.getElementById('edit-gender').value=gender;
+  document.getElementById('edit-amount').value=amount;
+  document.getElementById('edit-vidial').checked=isVidial;
+  document.getElementById('edit-modal').classList.add('active');
+}
+
+async function saveEditParticipant(){
+  const id=document.getElementById('edit-id').value;
+  const name=document.getElementById('edit-name').value.trim();
+  const gender=document.getElementById('edit-gender').value;
+  const amount=parseInt(document.getElementById('edit-amount').value||500);
+  const isVidial=document.getElementById('edit-vidial').checked;
+  if(!name){showToast('Please enter a name');return;}
+  try{
+    await fetch(`${SB_URL}/rest/v1/miles_participants?id=eq.${id}`,{
+      method:'PATCH',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({name,gender,amount,is_vidial_member:isVidial})
+    });
+    showToast('Updated! ✓');
+    closeModal('edit-modal');
+    loadUserList();
+    loadHome();
+  }catch(e){showToast('Error updating.');}
+}
+
+function filterNames(q){
+  document.querySelectorAll('#name-grid .name-btn').forEach(btn=>{
+    btn.style.display=btn.dataset.name.includes(q.toLowerCase())?'flex':'none';
+  });
+}
+
+function goHome(){currentUser=null;showPage('home-page');loadHome();}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('pwd-modal').classList.contains('active'))verifyAdminPwd();
+});
+
+// Init
+loadHome();
+</script>
+</body>
+</html>
