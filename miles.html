@@ -288,6 +288,24 @@ body{padding-bottom:40px;}
       <button class="save-all-btn" onclick="saveAllAdminSteps()">Save All Steps</button>
     </div>
     <div id="admin-users-panel" style="display:none;">
+      <!-- Payment summary tiles -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;" id="payment-summary">
+        <div style="background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;padding:10px;text-align:center;">
+          <div style="font-size:8px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Total Raised</div>
+          <div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:#4caf50;" id="pay-total">—</div>
+          <div style="font-size:9px;color:#5a8a5a;margin-top:2px;" id="pay-total-count"></div>
+        </div>
+        <div style="background:#0f1a0f;border:1px solid #2a1a00;border-radius:12px;padding:10px;text-align:center;">
+          <div style="font-size:8px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Snega</div>
+          <div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:#FF9933;" id="pay-snega">—</div>
+          <div style="font-size:9px;color:#5a8a5a;margin-top:2px;" id="pay-snega-count"></div>
+        </div>
+        <div style="background:#0f1a0f;border:1px solid #0a2a0a;border-radius:12px;padding:10px;text-align:center;">
+          <div style="font-size:8px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Deepa</div>
+          <div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:#4caf50;" id="pay-deepa">—</div>
+          <div style="font-size:9px;color:#5a8a5a;margin-top:2px;" id="pay-deepa-count"></div>
+        </div>
+      </div>
       <!-- Add user form -->
       <div class="add-user-form">
         <div style="font-size:13px;font-weight:700;color:#f0faf0;margin-bottom:12px;">+ Add Participant</div>
@@ -310,6 +328,12 @@ body{padding-bottom:40px;}
         <input type="number" class="finput" id="add-amount" placeholder="500" value="500" style="margin-bottom:12px;"/>
         <div class="flabel">Place</div>
         <input type="text" class="finput" id="add-place" placeholder="City or location" style="margin-bottom:12px;"/>
+        <div class="flabel">Payment received by</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+          <button type="button" id="pay-snega-btn" onclick="selectPayTo('snega')" style="padding:10px;border-radius:10px;border:1.5px solid #FF9933;background:rgba(255,153,51,0.1);color:#FF9933;font-size:13px;font-weight:600;cursor:pointer;">Snega</button>
+          <button type="button" id="pay-deepa-btn" onclick="selectPayTo('deepa')" style="padding:10px;border-radius:10px;border:1px solid #1a2e1a;background:#0f1a0f;color:#5a8a5a;font-size:13px;font-weight:600;cursor:pointer;">Deepa</button>
+        </div>
+        <input type="hidden" id="add-pay-to" value="snega"/>
         <div class="fcheckbox">
           <input type="checkbox" id="add-vidial"/>
           <label for="add-vidial">Vidial Member</label>
@@ -380,6 +404,12 @@ body{padding-bottom:40px;}
     <input type="number" class="finput" id="edit-amount" style="margin-bottom:12px;"/>
     <div class="flabel">Place</div>
     <input type="text" class="finput" id="edit-place" placeholder="City or location" style="margin-bottom:12px;"/>
+    <div class="flabel">Payment received by</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+      <button type="button" id="edit-pay-snega-btn" onclick="selectEditPayTo('snega')" style="padding:10px;border-radius:10px;border:1.5px solid #FF9933;background:rgba(255,153,51,0.1);color:#FF9933;font-size:13px;font-weight:600;cursor:pointer;">Snega</button>
+      <button type="button" id="edit-pay-deepa-btn" onclick="selectEditPayTo('deepa')" style="padding:10px;border-radius:10px;border:1px solid #1a2e1a;background:#0f1a0f;color:#5a8a5a;font-size:13px;font-weight:600;cursor:pointer;">Deepa</button>
+    </div>
+    <input type="hidden" id="edit-pay-to" value="snega"/>
     <div class="fcheckbox">
       <input type="checkbox" id="edit-vidial"/>
       <label for="edit-vidial">Vidial Member</label>
@@ -675,9 +705,24 @@ async function saveAllAdminSteps(){
 
 async function loadUserList(){
   const [data, stepsData] = await Promise.all([
-    sb('GET','miles_participants?select=id,name,alias_name,gender,participant_type,amount,place,is_vidial_member&order=name.asc'),
+    sb('GET','miles_participants?select=id,name,alias_name,gender,participant_type,amount,place,is_vidial_member,payment_to&order=name.asc'),
     sb('GET','miles_steps?select=participant_name,steps')
   ]);
+  // Payment summaries
+  const adults=data.filter(p=>p.participant_type!=='kid');
+  const snegaTotal=adults.filter(p=>p.payment_to==='snega').reduce((s,p)=>s+(p.amount||0),0);
+  const deepaTotal=adults.filter(p=>p.payment_to==='deepa').reduce((s,p)=>s+(p.amount||0),0);
+  const snegaCount=adults.filter(p=>p.payment_to==='snega').length;
+  const deepaCount=adults.filter(p=>p.payment_to==='deepa').length;
+  const grandTotal=snegaTotal+deepaTotal;
+  const el1=document.getElementById('pay-total');const el2=document.getElementById('pay-snega');const el3=document.getElementById('pay-deepa');
+  const ec1=document.getElementById('pay-total-count');const ec2=document.getElementById('pay-snega-count');const ec3=document.getElementById('pay-deepa-count');
+  if(el1)el1.textContent='Rs.'+grandTotal.toLocaleString('en-IN');
+  if(el2)el2.textContent='Rs.'+snegaTotal.toLocaleString('en-IN');
+  if(el3)el3.textContent='Rs.'+deepaTotal.toLocaleString('en-IN');
+  if(ec1)ec1.textContent=adults.length+' payments';
+  if(ec2)ec2.textContent=snegaCount+' payments';
+  if(ec3)ec3.textContent=deepaCount+' payments';
   // Sum steps per participant
   const stepsMap={};
   stepsData.forEach(r=>{
@@ -695,7 +740,10 @@ async function loadUserList(){
         <div style="font-size:11px;color:#4caf50;margin-top:3px;font-family:'DM Mono',monospace;">${totalSteps} steps · ${km} km</div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-        <div class="ul-amount">Rs. ${(p.amount||0).toLocaleString('en-IN')}</div>
+        <div style="text-align:right;flex-shrink:0;margin-right:4px;">
+        <div class="ul-amount">${p.participant_type==='kid'?'Free':'Rs.'+((p.amount||0).toLocaleString('en-IN'))}</div>
+        ${p.participant_type!=='kid'?`<div style="font-size:9px;padding:2px 6px;border-radius:999px;margin-top:2px;font-weight:600;${p.payment_to==='snega'?'background:rgba(255,153,51,0.12);color:#FF9933;':'background:rgba(76,175,80,0.12);color:#4caf50;'}">${p.payment_to==='snega'?'Snega':'Deepa'}</div>`:'<div style="font-size:9px;padding:2px 6px;border-radius:999px;margin-top:2px;color:#5a8a5a;">—</div>'}
+      </div>
         <button onclick="openEditModal(this)"
           data-id="${p.id}"
           data-name="${(p.name||'').replace(/'/g,'\'')}"
@@ -722,7 +770,8 @@ async function addParticipant(){
   if(!name){showToast('Please enter a name');return;}
   if(!gender){showToast('Please select gender');return;}
   try{
-    await sb('POST','miles_participants',{name,alias_name:alias||null,gender,participant_type:type,amount,place:place||null,is_vidial_member:isVidial});
+    const payTo=document.getElementById('add-pay-to').value;
+    await sb('POST','miles_participants',{name,alias_name:alias||null,gender,participant_type:type,amount,place:place||null,is_vidial_member:isVidial,payment_to:type==='kid'?null:payTo});
     showToast((alias||name)+' added! ✓');
     document.getElementById('add-name').value='';
     document.getElementById('add-alias').value='';
@@ -731,6 +780,7 @@ async function addParticipant(){
     document.getElementById('add-amount').value='500';
     document.getElementById('add-place').value='';
     document.getElementById('add-vidial').checked=false;
+    selectPayTo('snega');
     loadUserList();
     loadHome();
   }catch(e){showToast('Error: '+e.message.slice(0,40));}
@@ -746,6 +796,7 @@ function openEditModal(btn){
   document.getElementById('edit-amount').value=d.amount||0;
   document.getElementById('edit-place').value=d.place||'';
   document.getElementById('edit-vidial').checked=d.vidial==='true';
+  selectEditPayTo(d.payto||'snega');
   document.getElementById('edit-modal').classList.add('active');
 }
 
@@ -763,13 +814,39 @@ async function saveEditParticipant(){
     await fetch(`${SB_URL}/rest/v1/miles_participants?id=eq.${id}`,{
       method:'PATCH',
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
-      body:JSON.stringify({name,alias_name:alias||null,gender,participant_type:type,amount,place:place||null,is_vidial_member:isVidial})
+      body:JSON.stringify({name,alias_name:alias||null,gender,participant_type:type,amount,place:place||null,is_vidial_member:isVidial,payment_to:type==='kid'?null:document.getElementById('edit-pay-to').value})
     });
     showToast('Updated! ✓');
     closeModal('edit-modal');
     loadUserList();
     loadHome();
   }catch(e){showToast('Error updating.');}
+}
+
+function selectPayTo(who){
+  const sBtn=document.getElementById('pay-snega-btn');
+  const dBtn=document.getElementById('pay-deepa-btn');
+  document.getElementById('add-pay-to').value=who;
+  if(who==='snega'){
+    sBtn.style.borderColor='#FF9933';sBtn.style.background='rgba(255,153,51,0.1)';sBtn.style.color='#FF9933';
+    dBtn.style.borderColor='#1a2e1a';dBtn.style.background='#0f1a0f';dBtn.style.color='#5a8a5a';
+  }else{
+    dBtn.style.borderColor='#4caf50';dBtn.style.background='rgba(76,175,80,0.1)';dBtn.style.color='#4caf50';
+    sBtn.style.borderColor='#1a2e1a';sBtn.style.background='#0f1a0f';sBtn.style.color='#5a8a5a';
+  }
+}
+
+function selectEditPayTo(who){
+  const sBtn=document.getElementById('edit-pay-snega-btn');
+  const dBtn=document.getElementById('edit-pay-deepa-btn');
+  document.getElementById('edit-pay-to').value=who;
+  if(who==='snega'){
+    sBtn.style.borderColor='#FF9933';sBtn.style.background='rgba(255,153,51,0.1)';sBtn.style.color='#FF9933';
+    dBtn.style.borderColor='#1a2e1a';dBtn.style.background='#0f1a0f';dBtn.style.color='#5a8a5a';
+  }else{
+    dBtn.style.borderColor='#4caf50';dBtn.style.background='rgba(76,175,80,0.1)';dBtn.style.color='#4caf50';
+    sBtn.style.borderColor='#1a2e1a';sBtn.style.background='#0f1a0f';sBtn.style.color='#5a8a5a';
+  }
 }
 
 function filterNames(q){
