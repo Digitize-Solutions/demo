@@ -156,7 +156,9 @@ body{padding-bottom:40px;}
 .fcheckbox input{width:18px;height:18px;accent-color:#4caf50;}
 .fcheckbox label{font-size:13px;color:#e8f5e8;}
 
-.user-list-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;margin-bottom:8px;}
+.user-list-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#162116;border:1px solid #1a2e1a;border-radius:10px;margin-bottom:6px;}
+.pf-btn{padding:7px 4px;border-radius:9px;background:#0f1a0f;border:1px solid #1a2e1a;color:#5a8a5a;font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;}
+.pf-btn.pf-active{background:#162116;border-color:#4caf50;color:#4caf50;}
 .ul-av{width:36px;height:36px;border-radius:50%;background:#162116;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#4caf50;flex-shrink:0;border:1.5px solid #2a5a2a;}
 .ul-info{flex:1;}
 .ul-name{font-size:13px;font-weight:600;color:#e8f5e8;}
@@ -303,7 +305,7 @@ body{padding-bottom:40px;}
     </div>
     <div id="admin-users-panel" style="display:none;">
       <!-- Payment summary tiles -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;" id="payment-summary">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
         <div style="background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;padding:10px;text-align:center;">
           <div style="font-size:8px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Total Raised</div>
           <div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:#4caf50;" id="pay-total">—</div>
@@ -320,8 +322,15 @@ body{padding-bottom:40px;}
           <div style="font-size:9px;color:#5a8a5a;margin-top:2px;" id="pay-deepa-count"></div>
         </div>
       </div>
-      <!-- Add user form -->
-      <div class="add-user-form">
+
+      <!-- ADD - collapsible -->
+      <div style="background:#0f1a0f;border:1px solid #1a2e1a;border-radius:14px;overflow:hidden;margin-bottom:12px;">
+        <div onclick="toggleAddForm()" style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;">
+          <div style="font-size:13px;font-weight:700;color:#f0faf0;">+ Add Participant</div>
+          <span id="add-form-chevron" style="color:#5a8a5a;font-size:18px;transition:transform 0.2s;">›</span>
+        </div>
+        <div id="add-form-body" style="display:none;padding:0 16px 16px;">
+      <div class="add-user-form" style="background:none;border:none;padding:0;margin:0;">
         <div style="font-size:13px;font-weight:700;color:#f0faf0;margin-bottom:12px;">+ Add Participant</div>
         <div class="flabel">Name</div>
         <input type="text" class="finput" id="add-name" placeholder="Full name" style="margin-bottom:12px;"/>
@@ -354,9 +363,22 @@ body{padding-bottom:40px;}
         </div>
         <button class="save-all-btn" onclick="addParticipant()">Add Participant</button>
       </div>
-      <!-- User list -->
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#5a8a5a;margin-bottom:8px;">Registered Participants</div>
-      <div id="user-list"></div>
+        </div>
+      </div>
+
+      <!-- LIST with filter -->
+      <div style="background:#0f1a0f;border:1px solid #1a2e1a;border-radius:14px;overflow:hidden;">
+        <div style="padding:12px 14px;border-bottom:1px solid #1a2e1a;">
+          <div style="font-size:13px;font-weight:700;color:#f0faf0;margin-bottom:10px;">Participants</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;">
+            <button id="pf-all" onclick="setParticipantFilter('all')" class="pf-btn pf-active">All</button>
+            <button id="pf-M" onclick="setParticipantFilter('M')" class="pf-btn" style="color:#60a5fa;">🏃 Striders</button>
+            <button id="pf-F" onclick="setParticipantFilter('F')" class="pf-btn" style="color:#f9a8d4;">💃 Gliders</button>
+            <button id="pf-kid" onclick="setParticipantFilter('kid')" class="pf-btn" style="color:#fcd34d;">🌟 Mini</button>
+          </div>
+        </div>
+        <div id="user-list" style="padding:10px;"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -787,21 +809,8 @@ async function loadUserList(){
     sb('GET','miles_participants?select=id,name,alias_name,gender,participant_type,amount,place,is_vidial_member,payment_to&order=name.asc'),
     sb('GET','miles_steps?select=participant_name,steps')
   ]);
-  // Payment summaries
-  const adults=data.filter(p=>p.participant_type!=='kid');
-  const snegaTotal=adults.filter(p=>p.payment_to==='snega').reduce((s,p)=>s+(p.amount||0),0);
-  const deepaTotal=adults.filter(p=>p.payment_to==='deepa').reduce((s,p)=>s+(p.amount||0),0);
-  const snegaCount=adults.filter(p=>p.payment_to==='snega').length;
-  const deepaCount=adults.filter(p=>p.payment_to==='deepa').length;
-  const grandTotal=snegaTotal+deepaTotal;
-  const el1=document.getElementById('pay-total');const el2=document.getElementById('pay-snega');const el3=document.getElementById('pay-deepa');
-  const ec1=document.getElementById('pay-total-count');const ec2=document.getElementById('pay-snega-count');const ec3=document.getElementById('pay-deepa-count');
-  if(el1)el1.textContent='Rs.'+grandTotal.toLocaleString('en-IN');
-  if(el2)el2.textContent='Rs.'+snegaTotal.toLocaleString('en-IN');
-  if(el3)el3.textContent='Rs.'+deepaTotal.toLocaleString('en-IN');
-  if(ec1)ec1.textContent=adults.length+' payments';
-  if(ec2)ec2.textContent=snegaCount+' payments';
-  if(ec3)ec3.textContent=deepaCount+' payments';
+  window._stepsData=stepsData;
+  allParticipantData=data;
   // Sum steps per participant
   const stepsMap={};
   stepsData.forEach(r=>{
@@ -820,8 +829,8 @@ async function loadUserList(){
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
         <div style="text-align:right;flex-shrink:0;margin-right:4px;">
-        <div class="ul-amount">${p.participant_type==='kid'?'Free':'Rs.'+((p.amount||0).toLocaleString('en-IN'))}</div>
-        ${p.participant_type!=='kid'?`<div style="font-size:9px;padding:2px 6px;border-radius:999px;margin-top:2px;font-weight:600;${p.payment_to==='snega'?'background:rgba(255,153,51,0.12);color:#FF9933;':'background:rgba(76,175,80,0.12);color:#4caf50;'}">${p.payment_to==='snega'?'Snega':'Deepa'}</div>`:'<div style="font-size:9px;padding:2px 6px;border-radius:999px;margin-top:2px;color:#5a8a5a;">—</div>'}
+        <div class="ul-amount">${(!p.amount||p.amount===0)?'Free':'Rs.'+((p.amount||0).toLocaleString('en-IN'))}</div>
+        ${(p.amount&&p.amount>0)?`<div style="font-size:9px;padding:2px 6px;border-radius:999px;margin-top:2px;font-weight:600;${p.payment_to==='snega'?'background:rgba(255,153,51,0.12);color:#FF9933;':'background:rgba(76,175,80,0.12);color:#4caf50;'}">${p.payment_to==='snega'?'Snega':'Deepa'}</div>`:'<div style="font-size:9px;padding:2px 6px;border-radius:999px;margin-top:2px;color:#5a8a5a;">—</div>'}
       </div>
         <button onclick="openEditModal(this)"
           data-id="${p.id}"
@@ -926,6 +935,94 @@ function selectEditPayTo(who){
     dBtn.style.borderColor='#4caf50';dBtn.style.background='rgba(76,175,80,0.1)';dBtn.style.color='#4caf50';
     sBtn.style.borderColor='#1a2e1a';sBtn.style.background='#0f1a0f';sBtn.style.color='#5a8a5a';
   }
+}
+
+let participantFilter='all';
+let allParticipantData=[];
+
+function toggleAddForm(){
+  const body=document.getElementById('add-form-body');
+  const chev=document.getElementById('add-form-chevron');
+  const open=body.style.display==='none';
+  body.style.display=open?'block':'none';
+  chev.style.transform=open?'rotate(90deg)':'';
+}
+
+function setParticipantFilter(f){
+  participantFilter=f;
+  ['all','M','F','kid'].forEach(k=>{
+    const btn=document.getElementById('pf-'+k);
+    if(btn)btn.className='pf-btn'+(k===f?' pf-active':'');
+    if(k==='M'&&btn)btn.style.color=k===f?'#4caf50':'#60a5fa';
+    if(k==='F'&&btn)btn.style.color=k===f?'#4caf50':'#f9a8d4';
+    if(k==='kid'&&btn)btn.style.color=k===f?'#4caf50':'#fcd34d';
+  });
+  renderParticipantList(allParticipantData);
+}
+
+function renderParticipantList(data){
+  const stepsData=window._stepsData||[];
+  const stepsMap={};
+  stepsData.forEach(r=>{stepsMap[r.participant_name]=(stepsMap[r.participant_name]||0)+(r.steps||0);});
+  const filtered=data.filter(p=>{
+    if(participantFilter==='all')return true;
+    if(participantFilter==='kid')return p.participant_type==='kid';
+    return p.gender===participantFilter&&p.participant_type!=='kid';
+  });
+  const el=document.getElementById('user-list');
+  if(!el)return;
+  const snegaTotal=data.filter(p=>p.payment_to==='snega').reduce((s,p)=>s+(p.amount||0),0);
+  const deepaTotal=data.filter(p=>p.payment_to==='deepa').reduce((s,p)=>s+(p.amount||0),0);
+  const snegaCount=data.filter(p=>p.payment_to==='snega').length;
+  const deepaCount=data.filter(p=>p.payment_to==='deepa').length;
+  const grandTotal=snegaTotal+deepaTotal;
+  const el1=document.getElementById('pay-total');const el2=document.getElementById('pay-snega');const el3=document.getElementById('pay-deepa');
+  const ec1=document.getElementById('pay-total-count');const ec2=document.getElementById('pay-snega-count');const ec3=document.getElementById('pay-deepa-count');
+  if(el1)el1.textContent='Rs.'+grandTotal.toLocaleString('en-IN');
+  if(el2)el2.textContent='Rs.'+snegaTotal.toLocaleString('en-IN');
+  if(el3)el3.textContent='Rs.'+deepaTotal.toLocaleString('en-IN');
+  if(ec1)ec1.textContent=data.filter(p=>p.amount>0).length+' payments';
+  if(ec2)ec2.textContent=snegaCount+' payments';
+  if(ec3)ec3.textContent=deepaCount+' payments';
+  // Update filter counts
+  const btn=document.getElementById('pf-all');
+  if(btn)btn.textContent='All ('+data.length+')';
+  const bM=document.getElementById('pf-M');if(bM)bM.textContent='🏃 Striders ('+data.filter(p=>p.gender==='M'&&p.participant_type!=='kid').length+')';
+  const bF=document.getElementById('pf-F');if(bF)bF.textContent='💃 Gliders ('+data.filter(p=>p.gender==='F'&&p.participant_type!=='kid').length+')';
+  const bK=document.getElementById('pf-kid');if(bK)bK.textContent='🌟 Mini ('+data.filter(p=>p.participant_type==='kid').length+')';
+  el.innerHTML=filtered.map(p=>{
+    const totalSteps=stepsMap[p.name]||0;
+    const totalKm=Math.round(totalSteps/1300);
+    const displayName=p.alias_name||p.name;
+    const isKid=p.participant_type==='kid';
+    const avColor=isKid?'rgba(245,158,11,0.15)':p.gender==='F'?'rgba(236,72,153,0.12)':'rgba(59,130,246,0.12)';
+    const avBorder=isKid?'#f59e0b':p.gender==='F'?'#ec4899':'#3b82f6';
+    const nameColor=isKid?'#fcd34d':p.gender==='F'?'#f9a8d4':'#60a5fa';
+    const typeTag=isKid?'Kid':p.gender==='M'?'Male':'Female';
+    const placeTag=p.place?` · ${p.place}`:'';
+    return `<div class="user-list-row">
+      <div class="ul-av" style="background:${avColor};border-color:${avBorder};color:${nameColor};">${displayName.slice(0,2).toUpperCase()}</div>
+      <div class="ul-info">
+        <div class="ul-name" style="color:${nameColor};">${displayName}${p.alias_name?` <span style="font-size:10px;color:#5a8a5a;">(${p.name})</span>`:''}</div>
+        <div class="ul-meta">${typeTag}${placeTag}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;margin-right:4px;">
+        <div class="ul-amount">${(!p.amount||p.amount===0)?'Free':'Rs.'+((p.amount||0).toLocaleString('en-IN'))}</div>
+        ${(p.amount&&p.amount>0)?`<div style="font-size:9px;padding:2px 6px;border-radius:999px;margin-top:2px;font-weight:600;${p.payment_to==='snega'?'background:rgba(255,153,51,0.12);color:#FF9933;':'background:rgba(76,175,80,0.12);color:#4caf50;'}">${p.payment_to==='snega'?'Snega':'Deepa'}</div>`:'<div style="font-size:9px;padding:2px 6px;border-radius:999px;margin-top:2px;color:#5a8a5a;">—</div>'}
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:#4caf50;">${totalSteps.toLocaleString('en-IN')}</div>
+        <div style="font-size:10px;color:#5a8a5a;margin-top:1px;">${totalKm} km</div>
+      </div>
+      <button onclick="openEditModal(this)"
+        data-id="${p.id}" data-name="${(p.name||'').replace(/"/g,'&quot;')}"
+        data-alias="${(p.alias_name||'').replace(/"/g,'&quot;')}"
+        data-gender="${p.gender||''}" data-type="${p.participant_type||'adult'}"
+        data-amount="${p.amount||0}" data-place="${(p.place||'').replace(/"/g,'&quot;')}"
+        data-vidial="${p.is_vidial_member}" data-payto="${p.payment_to||'snega'}"
+        style="padding:5px 8px;border-radius:8px;border:1px solid #1a2e1a;background:#0f1a0f;color:#7aad7a;font-size:10px;font-weight:600;cursor:pointer;flex-shrink:0;">Edit</button>
+    </div>`;
+  }).join('')||'<div style="text-align:center;padding:20px;color:#5a8a5a;font-size:13px;">No participants found</div>';
 }
 
 function filterNames(q){
