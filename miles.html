@@ -26,7 +26,7 @@ body{padding-bottom:40px;}
 .stat-num{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:#4caf50;margin-bottom:3px;}
 .stat-lbl{font-size:9px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;}
 
-.new-tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.new-tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
 .new-tile{background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;padding:10px 10px;}
 .nt-label{font-size:8px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}
 .nt-val{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:#4caf50;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -102,6 +102,10 @@ body{padding-bottom:40px;}
 .modal-title{font-size:15px;font-weight:700;color:#f0faf0;}
 .modal-sub{font-size:12px;color:#5a8a5a;margin-top:3px;}
 .modal-close{background:rgba(255,255,255,0.06);border:none;color:#7aad7a;font-size:16px;cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nf-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:10px;background:#0f1a0f;border:1px solid #1a2e1a;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.nf-btn.nf-active{border-color:#4caf50;background:#162116;}
+.nf-lbl{font-size:9px;font-weight:600;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.04em;}
+.nf-btn.nf-active .nf-lbl{color:#4caf50;}
 .search-box{width:100%;padding:11px 14px;background:#162116;border:1.5px solid #1a2e1a;border-radius:10px;color:#e8f5e8;font-size:16px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;box-sizing:border-box;}
 .search-box:focus{border-color:#4caf50;}
 .name-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;max-height:55vh;overflow-y:auto;}
@@ -182,23 +186,33 @@ body{padding-bottom:40px;}
     <div class="stat"><div class="stat-num">3,300 km</div><div class="stat-lbl">Our Journey</div></div>
   </div>
 
-  <div class="new-tiles">
-    <div class="new-tile">
-      <div class="nt-label">Registered</div>
-      <div class="nt-val" id="registered-count">—</div>
-      <div class="nt-sub">participants</div>
+  <!-- 3 participant type tiles -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+    <div class="new-tile" style="text-align:center;">
+      <div style="font-size:9px;color:#60a5fa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">🏃 Striders</div>
+      <div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:#60a5fa;" id="count-male">—</div>
+      <div style="font-size:9px;color:#5a8a5a;margin-top:2px;">Male</div>
     </div>
-    <div class="new-tile">
-      <div class="nt-label">Amount raised</div>
-      <div class="nt-val" id="amount-raised">—</div>
-      <div class="nt-bar-track"><div class="nt-bar-fill" id="amount-bar" style="width:0%;"></div></div>
-      <div class="nt-sub" id="amount-pct">of Rs. 30,000 goal</div>
+    <div class="new-tile" style="text-align:center;">
+      <div style="font-size:9px;color:#f9a8d4;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">💃 Gliders</div>
+      <div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:#f9a8d4;" id="count-female">—</div>
+      <div style="font-size:9px;color:#5a8a5a;margin-top:2px;">Female</div>
     </div>
-    <div class="new-tile" onclick="openNameModal()" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-color:#2a5a2a;background:#0d1e0d;">
-      <div style="font-size:26px;margin-bottom:6px;">👣</div>
-      <div class="nt-label" style="color:#4caf50;">Enter your</div>
-      <div style="font-size:13px;font-weight:700;color:#81c784;">Steps</div>
+    <div class="new-tile" style="text-align:center;">
+      <div style="font-size:9px;color:#fcd34d;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">🌟 Mini Milers</div>
+      <div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:#fcd34d;" id="count-kid">—</div>
+      <div style="font-size:9px;color:#5a8a5a;margin-top:2px;">Kids</div>
     </div>
+  </div>
+  <!-- Enter Steps - full width CTA tile -->
+  <div onclick="openNameModal()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;margin-bottom:12px;border-radius:12px;background:linear-gradient(135deg,#1a4a1a,#0f3a0f);border:2px solid #4caf50;cursor:pointer;position:relative;overflow:hidden;text-align:center;">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(76,175,80,0.15),transparent 70%);pointer-events:none;"></div>
+    <span style="font-size:22px;">👣</span>
+    <div style="text-align:center;">
+      <div style="font-size:15px;font-weight:800;color:#f0faf0;letter-spacing:0.02em;">Enter Your Steps</div>
+      <div style="font-size:10px;color:#81c784;margin-top:1px;">Tap to log today's steps</div>
+    </div>
+    <span style="font-size:18px;color:#4caf50;">›</span>
   </div>
 
   <div class="prog-section">
@@ -320,7 +334,7 @@ body{padding-bottom:40px;}
           <option value="F">Female</option>
         </select>
         <div class="flabel">Type</div>
-        <select class="fselect" id="add-type" onchange="if(this.value==='kid'){document.getElementById('add-amount').value=0;document.getElementById('add-amount').disabled=true;}else{document.getElementById('add-amount').value=500;document.getElementById('add-amount').disabled=false;}">
+        <select class="fselect" id="add-type" onchange="if(this.value==='kid'){document.getElementById('add-amount').value=0;}else{document.getElementById('add-amount').value=500;}">
           <option value="adult">Adult</option>
           <option value="kid">Kid (Free)</option>
         </select>
@@ -356,6 +370,51 @@ body{padding-bottom:40px;}
       <button class="modal-close" onclick="closeModal('name-modal')">✕</button>
     </div>
     <input type="text" class="search-box" id="name-search" placeholder="Search name..." oninput="filterNames(this.value)"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:12px;">
+      <button id="nf-all" class="nf-btn nf-active" onclick="setNameFilter('all')">
+        <span style="font-size:16px;">👥</span>
+        <span class="nf-lbl">All</span>
+      </button>
+      <button id="nf-M" class="nf-btn" onclick="setNameFilter('M')">
+        <svg width="24" height="24" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="18" cy="10" r="7" fill="#1e3a5f"/>
+          <rect x="7" y="3" width="22" height="5" rx="2" fill="#2a5080"/>
+          <ellipse cx="18" cy="10" rx="6" ry="7" fill="#a0d4f0"/>
+          <ellipse cx="15.5" cy="9.5" rx="1" ry="1.2" fill="#1a3a5f"/>
+          <ellipse cx="20.5" cy="9.5" rx="1" ry="1.2" fill="#1a3a5f"/>
+          <path d="M15.5 12 Q18 13.5 20.5 12" stroke="#5090b0" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+          <path d="M9 24 Q9 18 18 17 Q27 18 27 24" fill="#185FA5" opacity="0.7"/>
+        </svg>
+        <span class="nf-lbl" style="color:#60a5fa;">Striders</span>
+      </button>
+      <button id="nf-F" class="nf-btn" onclick="setNameFilter('F')">
+        <svg width="24" height="24" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="18" cy="9" rx="8" ry="6" fill="#3a1020"/>
+          <ellipse cx="11" cy="13" rx="2.5" ry="6" fill="#3a1020"/>
+          <ellipse cx="25" cy="13" rx="2.5" ry="6" fill="#3a1020"/>
+          <ellipse cx="18" cy="14" rx="6.5" ry="7" fill="#f5c5a0"/>
+          <ellipse cx="15.5" cy="13" rx="1" ry="1.2" fill="#2a1a0a"/>
+          <ellipse cx="20.5" cy="13" rx="1" ry="1.2" fill="#2a1a0a"/>
+          <path d="M15.5 16.5 Q18 18 20.5 16.5" stroke="#c07050" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+          <circle cx="18" cy="10" r="0.8" fill="#ec4899"/>
+          <path d="M9 24 Q9 18 18 17 Q27 18 27 24" fill="#ec4899" opacity="0.6"/>
+        </svg>
+        <span class="nf-lbl" style="color:#f9a8d4;">Gliders</span>
+      </button>
+      <button id="nf-kid" class="nf-btn" onclick="setNameFilter('kid')">
+        <svg width="24" height="24" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="18" cy="11" rx="7" ry="7" fill="#2a1500"/>
+          <ellipse cx="18" cy="14" rx="6" ry="6.5" fill="#f5d0a0"/>
+          <ellipse cx="15.5" cy="13" rx="1" ry="1.1" fill="#2a1a0a"/>
+          <ellipse cx="20.5" cy="13" rx="1" ry="1.1" fill="#2a1a0a"/>
+          <path d="M15.5 16 Q18 17.5 20.5 16" stroke="#c07050" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+          <circle cx="14" cy="16" r="1.2" fill="#ffb7b7" opacity="0.6"/>
+          <circle cx="22" cy="16" r="1.2" fill="#ffb7b7" opacity="0.6"/>
+          <path d="M11 24 Q11 19 18 18 Q25 19 25 24" fill="#f59e0b" opacity="0.7"/>
+        </svg>
+        <span class="nf-lbl" style="color:#fcd34d;">Mini Milers</span>
+      </button>
+    </div>
     <div class="name-grid" id="name-grid"></div>
   </div>
 </div>
@@ -515,19 +574,38 @@ async function loadHome(){
     document.getElementById('prog-pct').textContent=pct+'%';
     buildMilestones(totalKm);
 
-    const participants=await sb('GET','miles_participants?select=name,alias_name,amount');
+    const participants=await sb('GET','miles_participants?select=name,gender,participant_type');
     allParticipants=participants;
-    document.getElementById('registered-count').textContent=participants.length;
-    const total=participants.reduce((s,r)=>s+(r.amount||0),0);
-    const amtPct=Math.min(100,Math.round(total/GOAL_AMOUNT*100));
-    const amtDisplay = total>=1000 ? 'Rs.'+Math.round(total/1000)+'k' : 'Rs.'+total;
-    document.getElementById('amount-raised').textContent=amtDisplay;
-    document.getElementById('amount-bar').style.width=amtPct+'%';
-    document.getElementById('amount-pct').textContent=amtPct+'% of 30k goal';
+    const males=participants.filter(p=>p.gender==='M'&&p.participant_type!=='kid').length;
+    const females=participants.filter(p=>p.gender==='F'&&p.participant_type!=='kid').length;
+    const kids=participants.filter(p=>p.participant_type==='kid').length;
+    const cm=document.getElementById('count-male');
+    const cf=document.getElementById('count-female');
+    const ck=document.getElementById('count-kid');
+    if(cm)cm.textContent=males;
+    if(cf)cf.textContent=females;
+    if(ck)ck.textContent=kids;
   }catch(e){console.warn(e);}
 }
 
 // ── NAME MODAL ──
+let nameFilter='all';
+
+function setNameFilter(f){
+  nameFilter=f;
+  ['all','M','F','kid'].forEach(k=>{
+    const btn=document.getElementById('nf-'+k);
+    if(btn) btn.classList.toggle('nf-active', k===f);
+  });
+  // filter the buttons
+  document.querySelectorAll('#name-grid .name-btn').forEach(btn=>{
+    const g=btn.dataset.gender;
+    const t=btn.dataset.type;
+    const show = f==='all' || (f==='M'&&g==='M'&&t!=='kid') || (f==='F'&&g==='F'&&t!=='kid') || (f==='kid'&&t==='kid');
+    btn.style.display=show?'flex':'none';
+  });
+}
+
 function openNameModal(){
   const grid=document.getElementById('name-grid');
   grid.innerHTML='<div style="text-align:center;color:#5a8a5a;font-size:13px;grid-column:span 2;">Loading...</div>';
@@ -539,10 +617,11 @@ function openNameModal(){
       const displayName=p.alias_name||p.name;
       const isKid=p.participant_type==='kid';
       const nameColor=isKid?'#fcd34d':p.gender==='F'?'#f9a8d4':'#60a5fa';
-      return `<button class="name-btn${isAdmin?' admin-tag':''}" onclick="selectUser('${p.name}')" data-name="${(p.alias_name||p.name).toLowerCase()}">
+      return `<button class="name-btn${isAdmin?' admin-tag':''}" onclick="selectUser('${p.name}')" data-name="${(p.alias_name||p.name).toLowerCase()}" data-gender="${p.gender||''}" data-type="${p.participant_type||'adult'}">
         <div class="n-name" style="color:${nameColor};">${displayName}</div>
       </button>`;
     }).join('');
+    setNameFilter('all');
   }).catch(()=>{grid.innerHTML='<div style="text-align:center;color:#ef5350;font-size:13px;grid-column:span 2;">Error loading. Try again.</div>';});
 }
 
