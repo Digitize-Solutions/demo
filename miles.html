@@ -243,6 +243,7 @@ body{padding-bottom:40px;}
     <div class="leg-item"><div class="leg-dot goal">★</div> Goal</div>
   </div>
 
+  <!-- Route -->
   <div class="route-section">
     <div class="route-title">District by District Route</div>
     <div class="ms-container" id="milestone-list">
@@ -298,6 +299,7 @@ body{padding-bottom:40px;}
     <div class="admin-tabs">
       <button class="admin-tab active" id="tab-steps" onclick="switchAdminTab('steps')">📅 Steps Data</button>
       <button class="admin-tab" id="tab-users" onclick="switchAdminTab('users')">👥 Participants</button>
+      <button class="admin-tab" id="tab-summary" onclick="switchAdminTab('summary')">📊 Summary</button>
     </div>
     <div id="admin-steps-panel">
       <div id="admin-date-rows"></div>
@@ -380,6 +382,13 @@ body{padding-bottom:40px;}
         <div id="user-list" style="padding:10px;"></div>
       </div>
     </div>
+
+    <!-- Summary Panel -->
+    <div id="admin-summary-panel" style="display:none;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#5a8a5a;margin-bottom:12px;">Daily Step Summary</div>
+      <div id="summary-list"></div>
+    </div>
+
   </div>
 </div>
 
@@ -742,10 +751,13 @@ async function openAdminPage(name){
 function switchAdminTab(tab){
   document.getElementById('admin-steps-panel').style.display=tab==='steps'?'block':'none';
   document.getElementById('admin-users-panel').style.display=tab==='users'?'block':'none';
+  document.getElementById('admin-summary-panel').style.display=tab==='summary'?'block':'none';
   document.getElementById('tab-steps').className='admin-tab'+(tab==='steps'?' active':'');
   document.getElementById('tab-users').className='admin-tab'+(tab==='users'?' active':'');
+  document.getElementById('tab-summary').className='admin-tab'+(tab==='summary'?' active':'');
   if(tab==='steps')loadAdminSteps();
-  else loadUserList();
+  else if(tab==='users')loadUserList();
+  else if(tab==='summary')loadSummary();
 }
 
 async function loadAdminSteps(){
@@ -990,6 +1002,91 @@ function renderParticipantList(data){
         style="padding:5px 8px;border-radius:8px;border:1px solid #1a2e1a;background:#0f1a0f;color:#7aad7a;font-size:10px;font-weight:600;cursor:pointer;flex-shrink:0;">Edit</button>
     </div>`;
   }).join('')||'<div style="text-align:center;padding:20px;color:#5a8a5a;font-size:13px;">No participants found</div>';
+}
+
+async function loadSummary(){
+  const el=document.getElementById('summary-list');
+  el.innerHTML='<div style="text-align:center;padding:20px;color:#5a8a5a;font-size:13px;">Loading...</div>';
+
+  // Fetch all steps and participants
+  const [allSteps, allParticipants] = await Promise.all([
+    sb('GET','miles_steps?select=participant_name,step_date,steps&order=step_date.asc,steps.desc'),
+    sb('GET','miles_participants?select=name,gender,participant_type&order=name.asc')
+  ]);
+
+  // Build participant lookup
+  const pMap={};
+  allParticipants.forEach(p=>pMap[p.name]={gender:p.gender,type:p.participant_type});
+
+  // Group by date
+  const byDate={};
+  allSteps.forEach(r=>{
+    if(!r.steps||r.steps===0)return;
+    if(!byDate[r.step_date])byDate[r.step_date]=[];
+    byDate[r.step_date].push(r);
+  });
+
+  const dates=Object.keys(byDate).sort();
+  if(!dates.length){
+    el.innerHTML='<div style="text-align:center;padding:20px;color:#5a8a5a;font-size:13px;">No steps logged yet</div>';
+    return;
+  }
+
+  el.innerHTML=dates.map(date=>{
+    const entries=byDate[date];
+    const totalSteps=entries.reduce((s,r)=>s+(r.steps||0),0);
+    const totalKm=Math.round(totalSteps/1300);
+    const count=entries.length;
+    const dt=new Date(date+'T00:00:00');
+    const dayLabel=dt.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+
+    const males=entries.filter(r=>pMap[r.participant_name]?.gender==='M'&&pMap[r.participant_name]?.type!=='kid').sort((a,b)=>b.steps-a.steps);
+    const females=entries.filter(r=>pMap[r.participant_name]?.gender==='F'&&pMap[r.participant_name]?.type!=='kid').sort((a,b)=>b.steps-a.steps);
+    const kidsM=entries.filter(r=>pMap[r.participant_name]?.type==='kid'&&pMap[r.participant_name]?.gender==='M').sort((a,b)=>b.steps-a.steps);
+    const kidsF=entries.filter(r=>pMap[r.participant_name]?.type==='kid'&&pMap[r.participant_name]?.gender==='F').sort((a,b)=>b.steps-a.steps);
+    const kids=[...kidsM,...kidsF];
+
+    const renderGroup=(label,color,group)=>{
+      if(!group.length)return'';
+      return `<div style="margin-bottom:8px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${color};margin-bottom:4px;">${label}</div>
+        ${group.map(r=>{
+          const km=Math.round(r.steps/1300*10)/10;
+          return `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #1a2e1a;">
+            <span style="font-size:12px;font-weight:500;color:#e8f5e8;">${r.participant_name}</span>
+            <span style="font-size:11px;color:#5a8a5a;font-family:'DM Mono',monospace;">${r.steps.toLocaleString('en-IN')} steps · ${km} km</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+    };
+
+    const uid='day-'+date.replace(/-/g,'');
+    return `<div style="background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;margin-bottom:8px;overflow:hidden;">
+      <!-- Header - clickable to collapse -->
+      <div onclick="toggleDay('${uid}')" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#f0faf0;">🗓️ ${dayLabel}</div>
+          <div style="font-size:11px;color:#5a8a5a;margin-top:2px;">${count} ${count===1?'person':'people'} logged · ${totalSteps.toLocaleString('en-IN')} steps · ${totalKm} km</div>
+        </div>
+        <div id="${uid}-chev" style="color:#5a8a5a;font-size:18px;transition:transform 0.2s;">›</div>
+      </div>
+      <!-- Collapsible body -->
+      <div id="${uid}" style="display:none;padding:0 14px 12px;">
+        <div style="height:1px;background:#1a2e1a;margin-bottom:10px;"></div>
+        ${renderGroup('🏃 Males','#60a5fa',males)}
+        ${renderGroup('💃 Females','#f9a8d4',females)}
+        ${renderGroup('🌟 Kids','#fcd34d',kids)}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDay(uid){
+  const body=document.getElementById(uid);
+  const chev=document.getElementById(uid+'-chev');
+  const open=body.style.display==='none';
+  body.style.display=open?'block':'none';
+  if(chev)chev.style.transform=open?'rotate(90deg)':'';
 }
 
 function filterNames(q){
