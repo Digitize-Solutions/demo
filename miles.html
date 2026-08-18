@@ -67,6 +67,9 @@ body{padding-bottom:40px;}
 .ms-dot.done{background:#0f2240;border:2px solid #4caf50;color:#4caf50;}
 .ms-dot.current{background:#0f2240;border:2px solid #81c784;color:#81c784;box-shadow:0 0 12px rgba(76,175,80,0.5);animation:gpulse 2s infinite;}
 @keyframes gpulse{0%,100%{box-shadow:0 0 8px rgba(76,175,80,0.4)}50%{box-shadow:0 0 18px rgba(76,175,80,0.7)}}
+.ms-dot.current-p2{background:#0f2040;border:2px solid #3b82f6;color:#3b82f6;box-shadow:0 0 12px rgba(59,130,246,0.5);animation:bpulse 2s infinite;}
+.badge.current-p2{background:rgba(59,130,246,0.1);color:#60a5fa;border:1px solid rgba(59,130,246,0.3);}
+@keyframes bpulse{0%,100%{box-shadow:0 0 8px rgba(59,130,246,0.4)}50%{box-shadow:0 0 18px rgba(59,130,246,0.7)}}
 .ms-dot.locked{background:#0a120a;border:2px solid #1a2e1a;color:#2a4a2a;}
 .ms-dot.goal{background:#1b5e20;border:2px solid #4caf50;color:#4caf50;}
 .ms-content{flex:1;}
@@ -206,31 +209,77 @@ body{padding-bottom:40px;}
       <div style="font-size:9px;color:#5a8a5a;margin-top:2px;">Kids</div>
     </div>
   </div>
-  <!-- Enter Steps - full width CTA tile -->
-  <div onclick="openNameModal()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;margin-bottom:12px;border-radius:12px;background:linear-gradient(135deg,#1a4a1a,#0f3a0f);border:2px solid #4caf50;cursor:pointer;position:relative;overflow:hidden;text-align:center;">
-    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(76,175,80,0.15),transparent 70%);pointer-events:none;"></div>
-    <span style="font-size:22px;">👣</span>
-    <div style="text-align:center;">
-      <div style="font-size:15px;font-weight:800;color:#f0faf0;letter-spacing:0.02em;">Enter Your Steps</div>
-      <div style="font-size:10px;color:#81c784;margin-top:1px;">Tap to log today's steps</div>
+  <!-- Enter Steps + Leaderboard row -->
+  <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:12px;">
+    <div onclick="openNameModal()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,#1a4a1a,#0f3a0f);border:2px solid #4caf50;cursor:pointer;position:relative;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(76,175,80,0.15),transparent 70%);pointer-events:none;"></div>
+      <span style="font-size:20px;">👣</span>
+      <div>
+        <div style="font-size:14px;font-weight:800;color:#f0faf0;">Enter Your Steps</div>
+        <div style="font-size:10px;color:#81c784;margin-top:1px;">Tap to log today's steps</div>
+      </div>
+      <span style="font-size:18px;color:#4caf50;margin-left:4px;">›</span>
     </div>
-    <span style="font-size:18px;color:#4caf50;">›</span>
+    <div onclick="openLeaderboard()" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14px 16px;border-radius:12px;background:#0f1a0f;border:1px solid #2a5a2a;cursor:pointer;min-width:72px;">
+      <span style="font-size:22px;">🏆</span>
+      <div style="font-size:10px;font-weight:700;color:#4caf50;text-align:center;">Leaders</div>
+    </div>
   </div>
 
   <div class="prog-section">
     <div class="prog-title">Our Journey Progress</div>
-    <div class="prog-km">
-      <span class="prog-km-num" id="km-covered">0</span>
-      <span class="prog-km-unit">km walked</span>
-      <span class="prog-km-total">of 3,300 km</span>
+
+    <!-- Phase 1 -->
+    <div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:10px;font-weight:700;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;">Phase 1</span>
+          <span style="font-size:10px;color:#5a8a5a;">Chennai → Kanyakumari</span>
+        </div>
+        <span style="font-size:10px;font-weight:700;color:#4caf50;" id="phase1-km-label">0 / 3,300 km</span>
+      </div>
+      <div class="prog-bar" style="margin-bottom:4px;">
+        <div class="prog-fill" id="prog-fill-p1" style="width:0%;"><div class="walker">🚶</div></div>
+      </div>
+      <div class="prog-labels">
+        <span class="prog-lbl">Chennai</span>
+        <span class="prog-pct" id="prog-pct-p1">0%</span>
+        <span class="prog-lbl">Kanyakumari</span>
+      </div>
     </div>
-    <div class="prog-bar">
-      <div class="prog-fill" id="prog-fill"><div class="walker">🚶</div></div>
+
+    <!-- Phase 2 -->
+    <div id="phase2-section" style="display:none;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:10px;font-weight:700;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;">Phase 2</span>
+          <span style="font-size:10px;color:#5a8a5a;">Kanyakumari → Chennai</span>
+        </div>
+        <span style="font-size:10px;font-weight:700;color:#3b82f6;" id="phase2-km-label">0 / 3,300 km</span>
+      </div>
+      <div class="prog-bar" style="margin-bottom:4px;">
+        <div style="height:100%;border-radius:999px;background:linear-gradient(90deg,#1d4ed8,#3b82f6,#60a5fa);width:0%;position:relative;transition:width 1s ease;" id="prog-fill-p2"><div class="walker">🚶</div></div>
+      </div>
+      <div class="prog-labels">
+        <span class="prog-lbl">Kanyakumari</span>
+        <span style="font-size:10px;color:#3b82f6;font-weight:700;" id="prog-pct-p2">0%</span>
+        <span class="prog-lbl">Chennai</span>
+      </div>
     </div>
-    <div class="prog-labels">
-      <span class="prog-lbl">Start · Chennai</span>
-      <span class="prog-pct" id="prog-pct">0%</span>
-      <span class="prog-lbl">Goal · Kanyakumari</span>
+
+    <!-- Total -->
+    <div style="border-top:1px solid #1a2e1a;padding-top:10px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:10px;color:#5a8a5a;">Total walked</div>
+        <div style="display:flex;align-items:baseline;gap:4px;">
+          <span style="font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:#4caf50;" id="km-covered">0</span>
+          <span style="font-size:12px;color:#5a8a5a;">km</span>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:10px;color:#5a8a5a;" id="total-km-label">of 3,300 km</div>
+        <div style="font-size:18px;font-weight:700;color:#4caf50;" id="prog-pct">0%</div>
+      </div>
     </div>
   </div>
 
@@ -269,6 +318,20 @@ body{padding-bottom:40px;}
     </div>
   </div>
   </div><!-- end wrap -->
+</div>
+
+<!-- ══ LEADERBOARD PAGE ══ -->
+<div id="leaderboard-page" class="page">
+  <div class="steps-page">
+    <div class="steps-hdr">
+      <div class="steps-hdr-left">
+        <h2>🏆 Leaderboard</h2>
+        <p>Top walkers by category</p>
+      </div>
+      <button class="back-btn" onclick="goHome()">← Back</button>
+    </div>
+    <div id="lb-content"></div>
+  </div>
 </div>
 
 <!-- ══ USER STEPS PAGE ══ -->
@@ -520,6 +583,23 @@ const DEFAULT_ADMIN='Prashant';
 const EVENT_START='2026-08-15';
 const EVENT_END='2026-08-30';
 const TOTAL_KM=3300;
+const TOTAL_KM_FULL=6600;
+const PHASE2_MILESTONES=[
+  {km:0,d:'Kanyakumari',n:38},{km:87,d:'Nagercoil',n:37},{km:174,d:'Thoothukudi',n:36},
+  {km:261,d:'Tirunelveli',n:35},{km:348,d:'Tenkasi',n:34},{km:435,d:'Virudhunagar',n:33},
+  {km:522,d:'Ramanathapuram',n:32},{km:609,d:'Sivaganga',n:31},{km:696,d:'Madurai',n:30},
+  {km:783,d:'Theni',n:29},{km:870,d:'Dindigul',n:28},{km:957,d:'Pudukottai',n:27},
+  {km:1044,d:'Thanjavur',n:26},{km:1131,d:'Tiruvarur',n:25},{km:1218,d:'Nagapattinam',n:24},
+  {km:1305,d:'Mayiladuthurai',n:23},{km:1392,d:'Cuddalore',n:22},{km:1479,d:'Villupuram',n:21},
+  {km:1566,d:'Kallakurichi',n:20},{km:1653,d:'Perambalur',n:19},{km:1740,d:'Ariyalur',n:18},
+  {km:1827,d:'Tiruchirappalli',n:17},{km:1914,d:'Karur',n:16},{km:2001,d:'The Nilgiris',n:15},
+  {km:2088,d:'Coimbatore',n:14},{km:2175,d:'Tiruppur',n:13},{km:2262,d:'Erode',n:12},
+  {km:2349,d:'Namakkal',n:11},{km:2436,d:'Salem',n:10},{km:2523,d:'Dharmapuri',n:9},
+  {km:2610,d:'Krishnagiri',n:8},{km:2697,d:'Tirupattur',n:7},{km:2784,d:'Vellore',n:6},
+  {km:2871,d:'Ranipet',n:5},{km:2958,d:'Kanchipuram',n:4},{km:3045,d:'Chengalpattu',n:3},
+  {km:3132,d:'Tiruvallur',n:2},{km:3300,d:'Chennai',n:1},
+];
+let activePhase=1;
 const GOAL_AMOUNT=30000;
 
 let currentUser=null;
@@ -575,22 +655,27 @@ const MILESTONES=[
 function buildMilestones(coveredKm){
   const container=document.getElementById('milestone-list');
   container.innerHTML='<div class="ms-spine"></div>';
+  const isPhase2=coveredKm>TOTAL_KM;
+  const milestones=activePhase===2&&isPhase2?PHASE2_MILESTONES:MILESTONES;
+  const phaseKm=activePhase===2?Math.max(0,coveredKm-TOTAL_KM):Math.min(coveredKm,TOTAL_KM);
+  const returnLabel=activePhase===2?' · Return':'';
   let currentSet=false;
-  MILESTONES.forEach((m,i)=>{
-    const isGoal=i===MILESTONES.length-1;
-    let status=isGoal?'goal':coveredKm>m.km?'done':(!currentSet?(currentSet=true,'current'):'locked');
-    if(isGoal&&coveredKm>=m.km)status='done';
+  milestones.forEach((m,i)=>{
+    const isGoal=i===milestones.length-1;
+    let status=isGoal?'goal':phaseKm>m.km?'done':(!currentSet?(currentSet=true,'current'):'locked');
+    if(isGoal&&phaseKm>=m.km)status='done';
     const badgeText=status==='done'?'Passed':status==='current'?'On the way':status==='goal'?'Goal':'Locked';
     const dotSymbol=status==='done'?'✓':status==='current'?'●':status==='goal'?'★':'○';
+    const dotClass=activePhase===2&&status==='current'?'current-p2':status;
     const row=document.createElement('div');row.className='ms-row';
-    row.innerHTML=`<div class="ms-dot ${status}">${dotSymbol}</div>
+    row.innerHTML=`<div class="ms-dot ${dotClass}">${dotSymbol}</div>
       <div class="ms-content">
         <div class="ms-district${status==='locked'?' locked':''}">${m.d}</div>
-        <div class="ms-meta">${m.km.toLocaleString('en-IN')} km · District ${m.n}</div>
+        <div class="ms-meta">${m.km.toLocaleString('en-IN')} km · District ${m.n}${returnLabel}</div>
       </div>
-      <div class="ms-badge-wrap"><span class="badge ${status}">${badgeText}</span></div>`;
+      <div class="ms-badge-wrap"><span class="badge ${dotClass}">${badgeText}</span></div>`;
     container.appendChild(row);
-    if(i<MILESTONES.length-1){const div=document.createElement('div');div.className='divider';container.appendChild(div);}
+    if(i<milestones.length-1){const div=document.createElement('div');div.className='divider';container.appendChild(div);}
   });
 }
 
@@ -599,10 +684,33 @@ async function loadHome(){
     const steps=await sb('GET','miles_steps?select=steps');
     const totalSteps=steps.reduce((s,r)=>s+(r.steps||0),0);
     const totalKm=Math.round(totalSteps/1300);
-    const pct=Math.min(100,Math.round(totalKm/TOTAL_KM*100));
+    // Phase 1
+    const p1Km=Math.min(totalKm,TOTAL_KM);
+    const p1Pct=Math.min(100,Math.round(p1Km/TOTAL_KM*100));
+    // Phase 2
+    const p2Km=Math.max(0,totalKm-TOTAL_KM);
+    const p2Pct=Math.min(100,Math.round(p2Km/TOTAL_KM*100));
+    const isPhase2=totalKm>=TOTAL_KM;
+
+    // Update Phase 1 bar
+    document.getElementById('prog-fill-p1').style.width=Math.max(1,p1Pct)+'%';
+    document.getElementById('prog-pct-p1').textContent=p1Pct+'%';
+    document.getElementById('phase1-km-label').textContent=p1Km.toLocaleString('en-IN')+' / 3,300 km';
+
+    // Show/hide phase 2
+    if(isPhase2){
+      document.getElementById('phase2-section').style.display='block';
+      document.getElementById('prog-fill-p2').style.width=Math.max(1,p2Pct)+'%';
+      document.getElementById('prog-pct-p2').textContent=p2Pct+'%';
+      document.getElementById('phase2-km-label').textContent=p2Km.toLocaleString('en-IN')+' / 3,300 km';
+      document.getElementById('phase2-tab').style.display='inline-block';
+    }
+
+    // Total
     document.getElementById('km-covered').textContent=totalKm.toLocaleString('en-IN');
-    document.getElementById('prog-fill').style.width=Math.max(1,pct)+'%';
-    document.getElementById('prog-pct').textContent=pct+'%';
+    document.getElementById('total-km-label').textContent='of '+(isPhase2?'6,600':'3,300')+' km';
+    document.getElementById('prog-pct').textContent=Math.min(100,Math.round(totalKm/(isPhase2?TOTAL_KM_FULL:TOTAL_KM)*100))+'%';
+
     buildMilestones(totalKm);
 
     const participants=await sb('GET','miles_participants?select=name,gender,participant_type');
@@ -1087,6 +1195,80 @@ function toggleDay(uid){
   const open=body.style.display==='none';
   body.style.display=open?'block':'none';
   if(chev)chev.style.transform=open?'rotate(90deg)':'';
+}
+
+function setPhase(phase){
+  activePhase=phase;
+  const p1=document.getElementById('phase1-tab');
+  const p2=document.getElementById('phase2-tab');
+  if(p1){p1.style.background=phase===1?'rgba(76,175,80,0.1)':'#0f1a0f';p1.style.borderColor=phase===1?'#4caf50':'#1a2e1a';p1.style.color=phase===1?'#4caf50':'#5a8a5a';}
+  if(p2){p2.style.background=phase===2?'rgba(59,130,246,0.1)':'#0f1a0f';p2.style.borderColor=phase===2?'#3b82f6':'#1a2e1a';p2.style.color=phase===2?'#3b82f6':'#5a8a5a';}
+  // Re-render with stored km
+  const km=parseInt(document.getElementById('km-covered').textContent.replace(/,/g,''))||0;
+  buildMilestones(km);
+}
+
+async function openLeaderboard(){
+  showPage('leaderboard-page');
+  await loadLeaderboard();
+}
+
+async function loadLeaderboard(){
+  const el=document.getElementById('lb-content');
+  el.innerHTML='<div style="text-align:center;padding:30px;color:#5a8a5a;font-size:13px;">Loading...</div>';
+
+  const [allSteps, allParticipants] = await Promise.all([
+    sb('GET','miles_steps?select=participant_name,steps'),
+    sb('GET','miles_participants?select=name,alias_name,gender,participant_type,place&order=name.asc')
+  ]);
+
+  // Sum steps per participant
+  const stepsMap={};
+  allSteps.forEach(r=>{stepsMap[r.participant_name]=(stepsMap[r.participant_name]||0)+(r.steps||0);});
+
+  // Build participant data with steps
+  const withSteps=allParticipants.map(p=>({
+    ...p,
+    displayName:p.alias_name||p.name,
+    totalSteps:stepsMap[p.name]||0,
+    totalKm:Math.round((stepsMap[p.name]||0)/1300*10)/10
+  })).filter(p=>p.totalSteps>0).sort((a,b)=>b.totalSteps-a.totalSteps);
+
+  const males=withSteps.filter(p=>p.gender==='M'&&p.participant_type!=='kid').slice(0,3);
+  const females=withSteps.filter(p=>p.gender==='F'&&p.participant_type!=='kid').slice(0,3);
+  const kids=withSteps.filter(p=>p.participant_type==='kid').slice(0,3);
+
+  const medals=['🥇','🥈','🥉'];
+  const goldColors=['#fbbf24','#9ca3af','#b45309'];
+
+  const renderSection=(title,sub,group,avClass)=>{
+    if(!group.length)return`<div style="text-align:center;padding:16px;color:#5a8a5a;font-size:12px;">No steps logged yet</div>`;
+    return`<div style="margin-bottom:18px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="font-size:14px;font-weight:700;color:#f0faf0;">${title}</div>
+        <div style="flex:1;height:1px;background:#1a2e1a;"></div>
+        <div style="font-size:10px;color:#5a8a5a;">${sub}</div>
+      </div>
+      ${group.map((p,i)=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;margin-bottom:6px;">
+          <div style="font-size:20px;width:28px;text-align:center;flex-shrink:0;">${medals[i]}</div>
+          <div style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;${i===0?avClass:'background:#162116;border:1.5px solid #1a2e1a;color:#5a8a5a;'}">${p.displayName.slice(0,2).toUpperCase()}</div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;color:#e8f5e8;">${p.displayName}</div>
+            <div style="font-size:10px;color:#5a8a5a;margin-top:1px;">${p.place||''}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:600;color:${goldColors[i]};">${p.totalSteps.toLocaleString('en-IN')}</div>
+            <div style="font-size:10px;color:#5a8a5a;margin-top:1px;">${p.totalKm} km</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  };
+
+  el.innerHTML=
+    renderSection('🏃 Striders','Top 3 · Males',males,'background:rgba(59,130,246,0.12);border:1.5px solid #3b82f6;color:#60a5fa;')+
+    renderSection('💃 Gliders','Top 3 · Females',females,'background:rgba(236,72,153,0.12);border:1.5px solid #ec4899;color:#f9a8d4;')+
+    renderSection('🌟 Mini Milers','Top 3 · Kids',kids,'background:rgba(245,158,11,0.12);border:1.5px solid #f59e0b;color:#fcd34d;');
 }
 
 function filterNames(q){
