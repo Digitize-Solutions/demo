@@ -1236,12 +1236,13 @@ async function loadLeaderboard(){
 
   const males=withSteps.filter(p=>p.gender==='M'&&p.participant_type!=='kid').slice(0,3);
   const females=withSteps.filter(p=>p.gender==='F'&&p.participant_type!=='kid').slice(0,3);
-  const kids=withSteps.filter(p=>p.participant_type==='kid').slice(0,3);
+  const kidBoys=withSteps.filter(p=>p.participant_type==='kid'&&p.gender==='M').slice(0,5);
+  const kidGirls=withSteps.filter(p=>p.participant_type==='kid'&&p.gender==='F').slice(0,5);
 
-  const medals=['🥇','🥈','🥉'];
-  const goldColors=['#fbbf24','#9ca3af','#b45309'];
+  const medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
+  const goldColors=['#fbbf24','#9ca3af','#b45309','#4caf50','#4caf50'];
 
-  const renderSection=(title,sub,group,avClass)=>{
+  const renderSection=(title,sub,group,avClass,limit=3)=>{
     if(!group.length)return`<div style="text-align:center;padding:16px;color:#5a8a5a;font-size:12px;">No steps logged yet</div>`;
     return`<div style="margin-bottom:18px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
@@ -1251,14 +1252,14 @@ async function loadLeaderboard(){
       </div>
       ${group.map((p,i)=>`
         <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;margin-bottom:6px;">
-          <div style="font-size:20px;width:28px;text-align:center;flex-shrink:0;">${medals[i]}</div>
+          <div style="font-size:20px;width:28px;text-align:center;flex-shrink:0;">${medals[i]||'·'}</div>
           <div style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;${i===0?avClass:'background:#162116;border:1.5px solid #1a2e1a;color:#5a8a5a;'}">${p.displayName.slice(0,2).toUpperCase()}</div>
           <div style="flex:1;">
             <div style="font-size:13px;font-weight:600;color:#e8f5e8;">${p.displayName}</div>
             <div style="font-size:10px;color:#5a8a5a;margin-top:1px;">${p.place||''}</div>
           </div>
           <div style="text-align:right;">
-            <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:600;color:${goldColors[i]};">${p.totalSteps.toLocaleString('en-IN')}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:600;color:${goldColors[i]||'#4caf50'};">${p.totalSteps.toLocaleString('en-IN')}</div>
             <div style="font-size:10px;color:#5a8a5a;margin-top:1px;">${p.totalKm} km</div>
           </div>
         </div>`).join('')}
@@ -1268,7 +1269,8 @@ async function loadLeaderboard(){
   el.innerHTML=
     renderSection('🏃 Striders','Top 3 · Males',males,'background:rgba(59,130,246,0.12);border:1.5px solid #3b82f6;color:#60a5fa;')+
     renderSection('💃 Gliders','Top 3 · Females',females,'background:rgba(236,72,153,0.12);border:1.5px solid #ec4899;color:#f9a8d4;')+
-    renderSection('🌟 Mini Milers','Top 3 · Kids',kids,'background:rgba(245,158,11,0.12);border:1.5px solid #f59e0b;color:#fcd34d;');
+    renderSection('🌟 Mini Milers — Boys','Top 5 · Kid Males',kidBoys,'background:rgba(245,158,11,0.12);border:1.5px solid #f59e0b;color:#fcd34d;',5)+
+    renderSection('🌟 Mini Milers — Girls','Top 5 · Kid Females',kidGirls,'background:rgba(245,158,11,0.12);border:1.5px solid #f59e0b;color:#fcd34d;',5);
 }
 
 function filterNames(q){
