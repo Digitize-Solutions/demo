@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@500;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{min-height:100%;background:#0a0f0a;font-family:'DM Sans',sans-serif;color:#e8f5e8;}
+body{padding-bottom:40px;}
+.wrap{max-width:480px;margin:0 auto;padding:0 16px;}
+
+
+
+/* Pages */
+.page{display:none;padding-top:16px;}
+.page.active{display:block;}
+
+/* Flag stripe */
+.flag-stripe{height:5px;background:linear-gradient(90deg,#FF9933 33.33%,#fff 33.33%,#fff 66.66%,#138808 66.66%);border-radius:999px;margin-bottom:20px;}
+
+/* Hero */
+.hero{text-align:center;padding:20px 0 16px;}
+.hero-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4caf50;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.25);border-radius:999px;padding:4px 14px;margin-bottom:12px;}
+.hero-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#f0faf0;line-height:1.2;margin-bottom:6px;}
+.hero-title span{color:#4caf50;}
+.hero-sub{font-size:12px;color:#7aad7a;line-height:1.6;max-width:320px;margin:0 auto;}
+
+/* Thank you card */
+.thanks-card{background:linear-gradient(135deg,#0f2a0f,#162116);border:1px solid #2a5a2a;border-radius:16px;padding:18px;text-align:center;margin-bottom:14px;}
+.thanks-icon{font-size:32px;margin-bottom:8px;}
+.thanks-title{font-size:15px;font-weight:700;color:#f0faf0;margin-bottom:6px;}
+.thanks-text{font-size:12px;color:#7aad7a;line-height:1.7;}
+
+/* Big stats */
+.big-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.big-stat{background:#0f1a0f;border:1px solid #1a2e1a;border-radius:14px;padding:14px;text-align:center;}
+.big-stat-num{font-family:'DM Mono',monospace;font-size:24px;font-weight:600;color:#4caf50;line-height:1.1;margin-bottom:4px;}
+.big-stat-lbl{font-size:9px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.08em;}
+
+.full-stat{background:#0f1a0f;border:1px solid #1a2e1a;border-radius:14px;padding:14px;text-align:center;margin-bottom:8px;}
+.full-stat-num{font-family:'DM Mono',monospace;font-size:28px;font-weight:600;margin-bottom:4px;}
+.full-stat-lbl{font-size:9px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.08em;}
+.full-stat-sub{font-size:11px;color:#4caf50;margin-top:4px;}
+
+/* Countries */
+.countries{background:#0f1a0f;border:1px solid #1a2e1a;border-radius:14px;padding:14px;margin-bottom:14px;}
+.countries-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#5a8a5a;margin-bottom:10px;}
+.flags{display:flex;justify-content:space-around;flex-wrap:wrap;gap:8px;}
+.flag-item{text-align:center;}
+.flag-emoji{font-size:22px;margin-bottom:3px;}
+.flag-name{font-size:9px;color:#5a8a5a;}
+
+/* Footer */
+.footer{text-align:center;padding:20px 0 8px;border-top:1px solid #1a2e1a;margin-top:20px;}
+.footer-title{font-size:13px;font-weight:700;color:#f0faf0;margin-bottom:4px;}
+.footer-sub{font-size:11px;color:#5a8a5a;line-height:1.6;}
+.footer-flag{height:4px;background:linear-gradient(90deg,#FF9933 33.33%,#fff 33.33%,#fff 66.66%,#138808 66.66%);border-radius:999px;margin-top:14px;}
+
+/* ── LEADERBOARD ── */
+.cat-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;}
+.cat-tabs::-webkit-scrollbar{display:none;}
+.cat-tab{padding:7px 14px;border-radius:999px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;border:1px solid #1a2e1a;background:#0f1a0f;color:#5a8a5a;flex-shrink:0;font-family:'DM Sans',sans-serif;}
+.cat-tab.active{background:rgba(76,175,80,0.1);border-color:#4caf50;color:#4caf50;}
+
+.summary-strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px;}
+.strip-item{background:#0f1a0f;border:1px solid #1a2e1a;border-radius:10px;padding:9px;text-align:center;}
+.strip-num{font-family:'DM Mono',monospace;font-size:15px;font-weight:600;color:#4caf50;}
+.strip-lbl{font-size:8px;color:#5a8a5a;text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;}
+
+.leader{display:flex;align-items:center;gap:10px;padding:11px 13px;background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px;margin-bottom:6px;}
+.leader.gold{border-color:rgba(251,191,36,0.4);background:rgba(251,191,36,0.03);}
+.leader.silver{border-color:rgba(156,163,175,0.25);}
+.leader.bronze{border-color:rgba(180,83,9,0.25);}
+.rank{font-family:'DM Mono',monospace;font-size:13px;font-weight:600;width:24px;text-align:center;flex-shrink:0;color:#3a5a3a;}
+.medal{font-size:18px;width:24px;text-align:center;flex-shrink:0;}
+.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.av.all{background:#162116;border:1.5px solid #2a5a2a;color:#4caf50;}
+.av.m{background:rgba(59,130,246,0.12);border:1.5px solid #3b82f6;color:#60a5fa;}
+.av.f{background:rgba(236,72,153,0.12);border:1.5px solid #ec4899;color:#f9a8d4;}
+.av.k{background:rgba(245,158,11,0.12);border:1.5px solid #f59e0b;color:#fcd34d;}
+.ldr-info{flex:1;}
+.ldr-name{font-size:13px;font-weight:600;color:#e8f5e8;}
+.ldr-meta{font-size:10px;color:#5a8a5a;margin-top:1px;}
+.ldr-right{text-align:right;flex-shrink:0;}
+.ldr-steps{font-family:'DM Mono',monospace;font-size:13px;font-weight:600;}
+.ldr-km{font-size:10px;color:#5a8a5a;margin-top:1px;}
+.loading{text-align:center;padding:30px;color:#5a8a5a;font-size:13px;}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes countUp{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes walkAnim{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+
+.anim-fade{animation:fadeUp 0.6s ease both;}
+.anim-fade-1{animation:fadeUp 0.6s ease 0.1s both;}
+.anim-fade-2{animation:fadeUp 0.6s ease 0.2s both;}
+.anim-fade-3{animation:fadeUp 0.6s ease 0.3s both;}
+.anim-fade-4{animation:fadeUp 0.6s ease 0.4s both;}
+.anim-fade-5{animation:fadeUp 0.6s ease 0.5s both;}
+.anim-fade-6{animation:fadeUp 0.6s ease 0.6s both;}
+
+.big-stat-num{animation:none;}
+.full-stat-num{animation:none;}
+
+.thanks-card{animation:fadeUp 0.7s ease 0.15s both;}
+.hero{animation:fadeUp 0.6s ease both;}
+
+/* Pulse on key numbers */
+.pulse{animation:pulse 2.5s ease-in-out infinite;}
+
+/* Shimmer on gold elements */
+.shimmer{background:linear-gradient(90deg,#FF9933 0%,#fbbf24 50%,#FF9933 100%);background-size:200% 100%;animation:shimmer 2.5s infinite;-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+/* Walking emoji animation */
+.walker-anim{display:inline-block;animation:walkAnim 1.2s ease-in-out infinite;}
+
+/* Leader rows slide in */
+.leader{animation:slideIn 0.4s ease both;}
+
+/* Flag stripe animation */
+.flag-stripe{animation:fadeUp 0.5s ease both;}
+
+/* Floating footsteps */
+@keyframes float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-8px) rotate(5deg)}}
+.float{animation:float 3s ease-in-out infinite;}
+</style>
+</head>
+<body>
+
+
+
+<!-- ══ RESULTS PAGE ══ -->
+<div id="results-page" class="page active">
+<div class="wrap">
+
+  <div class="flag-stripe anim-fade"></div>
+
+  <div class="hero anim-fade">
+    <div class="hero-tag">🎉 Event Complete · 30 Aug 2026</div>
+    <div class="hero-title">We Did It.<br/><span style="color:#4caf50;">Tamil Nadu Twice!</span> <span class="float" style="display:inline-block;">🎉</span></div>
+    <div class="hero-sub">From Chennai to Kanyakumari and back — together we walked for the Right to Education.</div>
+  </div>
+
+  <div class="thanks-card anim-fade-1">
+    <div class="thanks-icon float">🙏</div>
+    <div class="thanks-title">Thank You, Team!</div>
+    <div class="thanks-text">Every step you took, every rupee you contributed, every day you showed up — it all mattered. You didn't just walk Tamil Nadu. You changed lives. 📚</div>
+  </div>
+
+  <div class="big-stats anim-fade-2">
+    <div class="big-stat">
+      <div class="big-stat-num" id="r-km">—</div>
+      <div class="big-stat-lbl">🗺️ km walked</div>
+    </div>
+    <div class="big-stat">
+      <div class="big-stat-num" id="r-walkers">—</div>
+      <div class="big-stat-lbl">👣 Walkers</div>
+    </div>
+    <div class="big-stat">
+      <div class="big-stat-num">38</div>
+      <div class="big-stat-lbl">📍 Districts</div>
+    </div>
+    <div class="big-stat">
+      <div class="big-stat-num">16</div>
+      <div class="big-stat-lbl">📅 Days</div>
+    </div>
+  </div>
+
+  <div class="full-stat" onclick="openLeaderboard()" style="cursor:pointer;position:relative;border-color:#2a2a00;">
+    <div style="position:absolute;top:10px;right:12px;display:flex;align-items:center;gap:4px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:999px;padding:3px 10px;">
+      <span style="font-size:12px;">🏆</span>
+      <span style="font-size:9px;font-weight:700;color:#fbbf24;">Leaderboard</span>
+      <span style="font-size:11px;color:#fbbf24;">›</span>
+    </div>
+    <div class="full-stat-num pulse" style="color:#FF9933;" id="r-steps">—</div>
+    <div class="full-stat-lbl">🦶 Total Steps by the Group</div>
+    <div class="full-stat-sub"><span class="walker-anim">🚶</span> Tap to see full leaderboard 🏆</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+    <div class="full-stat" style="border-color:#2a5a2a;margin-bottom:0;padding:12px 8px;">
+      <div class="full-stat-num" style="color:#4caf50;font-size:16px;" id="r-funds">—</div>
+      <div class="full-stat-lbl">💰 Raised</div>
+    </div>
+    <div class="full-stat" style="border-color:#2a1a00;margin-bottom:0;padding:12px 8px;">
+      <div class="full-stat-num" style="color:#FF9933;font-size:16px;" id="r-pledge">—</div>
+      <div class="full-stat-lbl">🌟 Pledge</div>
+    </div>
+    <div class="full-stat" style="border-color:#1a2a3a;margin-bottom:0;padding:12px 8px;">
+      <div class="full-stat-num" style="color:#60a5fa;font-size:16px;" id="r-total">—</div>
+      <div class="full-stat-lbl">🏆 Total</div>
+    </div>
+  </div>
+
+  <div class="countries">
+    <div class="countries-title" id="r-cities">🌍 Countries & Cities</div>
+    <div class="flags">
+      <div class="flag-item"><div class="flag-emoji">🇮🇳</div><div class="flag-name">India</div></div>
+      <div class="flag-item"><div class="flag-emoji">🇺🇸</div><div class="flag-name">USA</div></div>
+      <div class="flag-item"><div class="flag-emoji">🇬🇧</div><div class="flag-name">UK</div></div>
+      <div class="flag-item"><div class="flag-emoji">🇦🇪</div><div class="flag-name">UAE</div></div>
+      <div class="flag-item"><div class="flag-emoji">🇨🇭</div><div class="flag-name">Switzerland</div></div>
+      <div class="flag-item"><div class="flag-emoji">🇧🇪</div><div class="flag-name">Belgium</div></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-title">Miles that Matter · 2026 🇮🇳</div>
+    <div class="footer-sub">Chennai → Kanyakumari → Chennai<br/>38 Districts · 6,600 km · For the Right to Education 📚</div>
+    <div class="footer-flag"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══ LEADERBOARD PAGE ══ -->
+<div id="leaderboard-page" class="page">
+<div class="wrap">
+
+  <!-- Back button -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-top:14px;">
+    <div style="font-size:16px;font-weight:800;color:#f0faf0;">🏆 Leaderboard</div>
+    <button onclick="closeLeaderboard()" style="padding:7px 16px;border-radius:999px;border:1px solid #1a2e1a;background:#0f1a0f;color:#7aad7a;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">← Back</button>
+  </div>
+
+  <!-- Category tabs -->
+  <div class="cat-tabs">
+    <div class="cat-tab active" onclick="switchCat('all',this)">👥 Overall</div>
+    <div class="cat-tab" onclick="switchCat('M',this)">🏃 Males</div>
+    <div class="cat-tab" onclick="switchCat('F',this)">💃 Females</div>
+    <div class="cat-tab" onclick="switchCat('MK',this)">🌟 Boy Kids</div>
+    <div class="cat-tab" onclick="switchCat('FK',this)">🌟 Girl Kids</div>
+  </div>
+
+  <!-- Summary strip -->
+  <div class="summary-strip">
+    <div class="strip-item"><div class="strip-num" id="lb-count">—</div><div class="strip-lbl">Walkers</div></div>
+    <div class="strip-item"><div class="strip-num" id="lb-steps">—</div><div class="strip-lbl">Total Steps</div></div>
+    <div class="strip-item"><div class="strip-num" id="lb-km">—</div><div class="strip-lbl">Total km</div></div>
+  </div>
+
+  <div id="lb-list"><div class="loading">Loading...</div></div>
+
+</div>
+</div>
+
+<script>
+const SB_URL='https://osunxzedvlpcmaplntub.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdW54emVkdmxwY21hcGxudHViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDE5MzAsImV4cCI6MjA5MDcxNzkzMH0.VgfNj_0LUfeTlT-07pSpf5lJk7uFQVuBW4VpE_PihAg';
+
+let allParticipants=[];
+let stepsMap={};
+let currentCat='all';
+
+async function sb(path){
+  const r=await fetch(`${SB_URL}/rest/v1/${path}`,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Cache-Control':'no-cache'}});
+  return await r.json();
+}
+
+async function loadData(){
+  const [parts,steps]=await Promise.all([
+    sb('miles_participants?select=name,alias_name,gender,participant_type,place&order=name.asc'),
+    sb('miles_steps?select=participant_name,steps')
+  ]);
+  allParticipants=parts;
+  stepsMap={};
+  steps.forEach(r=>{stepsMap[r.participant_name]=(stepsMap[r.participant_name]||0)+(r.steps||0);});
+
+  // Results stats
+  const totalSteps=Object.values(stepsMap).reduce((s,v)=>s+v,0);
+  const totalKm=Math.round(totalSteps/1300);
+  const snega=await sb('miles_participants?select=amount&payment_to=eq.snega');
+  const deepa=await sb('miles_participants?select=amount&payment_to=eq.deepa');
+  const totalFunds=[...snega,...deepa].reduce((s,p)=>s+(p.amount||0),0);
+  const places=new Set(parts.map(p=>p.place).filter(Boolean));
+
+  const rkm=document.getElementById('r-km');
+  const rw=document.getElementById('r-walkers');
+  const rs=document.getElementById('r-steps');
+  if(rkm)rkm.textContent=totalKm.toLocaleString('en-IN');
+  if(rw)rw.textContent=parts.length;
+  if(rs)rs.textContent=totalSteps.toLocaleString('en-IN');
+  document.getElementById('r-funds').textContent='Rs. '+totalFunds.toLocaleString('en-IN');
+  const pledgeMoney=totalKm*2;
+  const pledgeEl=document.getElementById('r-pledge');
+  if(pledgeEl)pledgeEl.textContent='Rs. '+pledgeMoney.toLocaleString('en-IN');
+  const totalEl=document.getElementById('r-total');
+  if(totalEl)totalEl.textContent='Rs. '+(totalFunds+pledgeMoney).toLocaleString('en-IN');
+  document.getElementById('r-cities').textContent=`🌍 6 Countries · ${places.size} Cities`;
+
+  renderLeaderboard('all');
+}
+
+function getFiltered(cat){
+  return allParticipants
+    .map(p=>({...p,displayName:p.alias_name||p.name,totalSteps:stepsMap[p.name]||0,totalKm:Math.round((stepsMap[p.name]||0)/1300)}))
+    .filter(p=>{
+      if(cat==='all') return true;
+      if(cat==='M') return p.gender==='M'&&p.participant_type!=='kid';
+      if(cat==='F') return p.gender==='F'&&p.participant_type!=='kid';
+      if(cat==='MK') return p.participant_type==='kid'&&p.gender==='M';
+      if(cat==='FK') return p.participant_type==='kid'&&p.gender==='F';
+    })
+    .sort((a,b)=>b.totalSteps-a.totalSteps);
+}
+
+function getAvClass(p){
+  if(p.participant_type==='kid') return 'k';
+  return p.gender==='M'?'m':'f';
+}
+
+function renderLeaderboard(cat){
+  currentCat=cat;
+  const data=getFiltered(cat);
+  const totalSteps=data.reduce((s,p)=>s+p.totalSteps,0);
+  const totalKm=Math.round(totalSteps/1300);
+
+  document.getElementById('lb-count').textContent=data.length;
+  document.getElementById('lb-steps').textContent=totalSteps>=1000000?(Math.round(totalSteps/100000)/10)+'M':totalSteps.toLocaleString('en-IN');
+  document.getElementById('lb-km').textContent=totalKm.toLocaleString('en-IN');
+
+  const medals=['🥇','🥈','🥉'];
+  const medalColors=['#fbbf24','#9ca3af','#b45309'];
+  const classes=['gold','silver','bronze'];
+
+  const el=document.getElementById('lb-list');
+  if(!data.length){el.innerHTML='<div class="loading">No steps logged yet</div>';return;}
+
+  el.innerHTML=data.map((p,i)=>{ const delay=Math.min(i*0.05,0.5);
+    const isTop3=i<3;
+    const color=isTop3?medalColors[i]:'#4caf50';
+    const avClass=getAvClass(p);
+    const catTag=p.participant_type==='kid'?'Kid':p.gender==='M'?'Male':'Female';
+    return `<div class="leader${isTop3?' '+classes[i]:''}" style="animation-delay:${delay}s">
+      ${isTop3?`<div class="medal">${medals[i]}</div>`:`<div class="rank">${i+1}</div>`}
+      <div class="av ${avClass}">${p.displayName.slice(0,2).toUpperCase()}</div>
+      <div class="ldr-info">
+        <div class="ldr-name">${p.displayName}</div>
+        <div class="ldr-meta">${catTag} · ${p.place||'—'}</div>
+      </div>
+      <div class="ldr-right">
+        <div class="ldr-steps" style="color:${color};">${p.totalSteps.toLocaleString('en-IN')}</div>
+        <div class="ldr-km">${p.totalKm} km</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function switchCat(cat,btn){
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderLeaderboard(cat);
+}
+
+function openLeaderboard(){
+  document.getElementById('results-page').classList.remove('active');
+  document.getElementById('leaderboard-page').classList.add('active');
+  window.scrollTo(0,0);
+}
+function closeLeaderboard(){
+  document.getElementById('leaderboard-page').classList.remove('active');
+  document.getElementById('results-page').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+loadData();
+</script>
+</body>
+</html>
