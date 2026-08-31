@@ -253,12 +253,27 @@ const SB_URL='https://osunxzedvlpcmaplntub.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdW54emVkdmxwY21hcGxudHViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDE5MzAsImV4cCI6MjA5MDcxNzkzMH0.VgfNj_0LUfeTlT-07pSpf5lJk7uFQVuBW4VpE_PihAg';
 
 let allParticipants=[];
+const CERT_MAP={"Aarav":"1_r7sLdo9wHkG7DOs1jCX_Aw1oxBha-Hz","Aarthi":"1M3aaxLa3HhdEc3lVub-ceEG6CI_38I91","Abinaya V":"1uasRg60OCwCDttnc0XYYX9c-cZKPBxg4","Agaran":"1L0IG0ByCmx8bU7jelaHYhwud3SNB8eXc","Alan":"10Et2MnMdYRxZbZH9goiJIh021ABXiyLx","Amirtha":"10ZoS7slARrhUV7vO99cPhaecHU6z3q6H","Amy":"1hQX8Glijb5y7Bq32VFUse29vv0-VG34b","Andrea":"1AN7UEQREt1fEFisbITNXXOsXyrOjcb6h","Anuj Garg":"1otfROfQGosCNUhmXnwmB5jtlQBDbXkAq","Arul":"1sL-5IV-ny0YKH8mTzizBzoGXibAkzzMZ","Arun Nandha":"1UmYXInB0hFKQy4yryxjQkl4Wyp_-4onw","Aryan":"1l6T6IjEuwRS_SjVG2FDVF3vrO27ny2vP","Balakavitha":"1FVhSJvbW1Jma3fCyuApBj2D5_jkBvWr0","Bhuvan":"1ODHLBEP46fh9o4ku2sCHtvprLmpurzL0","Boologaraja":"1NAPMP-xMokXR2LXzPtiuYu0CKxQk2HrB","Christopher":"1xqhh88tGWF0cHov2KZOKJl0Jyy7dUxXp","Deepa":"12CJQIwgC7YRa3tQXvv8AI9N_fe7S8QUW","Deepti":"1WhFsCGhIBsx9AOl09oFfrSSjsWLeFCpr","Dharini":"1k1KP5o5TgJ99TCdV22coGotxTZIFmnP-","Dhivya":"1ELM4Irg4pVoZN2eNCVYRG-slrhQft1XJ","Diyaashri":"16Ib8CVl7MwUhOephPPVdJZS0SRllRJhv","Harish":"1l37oxiETYi2vAXtHdWXiuAteH0fB1LhZ","Harsh":"1ZwvDza3V1NiyvrfsiQcfgeHWorCHmQQ6","Jaganathan":"17N942wnaUdyAs_9kwcgTJXlx1TrBAMhe","Kalairani":"1G0mz5KQoY1VcPX8JcZckbhUmuJ6_ZOQO","Khan":"1NRM_QcaJ68LircgoYYm_57KYAycgfXLA","Lakshmi":"1e5ZkNuVGxCwIKnqJCq5_mwlzUijXgrYY","Mahesh":"1yPDTcCivYgtPwhYj1cs9tKXIIpf_P1yR","Mano":"1E3s4bomTndwPxYQkDq-QbbJN2n-v_1ay","Manoraj":"1L7K6pgN2pssuWDKl0gG2yW65ZKmfVf7h","Muthukrishnan":"1BEEet04Ph_yj8jmEN7bzjFhtto5dt2Rx","Naresh":"1xJQ243Z_TIj0HyS7WTOvUuh4fFBfXKjP","Nilan":"1AumRLJF0dxpK4YCFfr-G7agy13lcehDD","Niranjan":"13KKxVnp4dOT_WPPYjRxIBaXTTs2HIC8T","Nish":"1JeAdQC9g9yrKydN7qsk2Rw3zYeKLi9Ix","Oviya":"1M7cxvZRLCuYBAjGzuq2J5-dWRXDccTdD","Pirjit":"1oaA5uvK9x2yPdCfXrRlhwdGoHstsCL-M","Prakati":"1vMMocfoHcBEISZESMqQSdbypnqn6tuGt","Prarthana":"1wciF52jAQmDAo8X_a3AoX0hHWwjf4PlO","Prashant":"1uTAwUjte1dygriyCpD-mWtF8i9PB9GpR","Preethi":"1KXFEsWg4waJAI8TppU_D4RqSbVC4UAf6","Prisha":"1lAv593RDZbfLarwF0sgLJrACOF5ISQGa","Raghav":"1K3izBs9R7kjl1BsuTd-a4ON4hGiSZwdY","Ramprasath":"1LDTmH8q1fsqqyHUcNG4o7xOfu9ov0uQZ","Ramya":"1nu45MMSurP95f7SN_qo3gn_lPHhhbVDI","Reny":"1QpRrb_ZKcXusraP3fcFnnBjQp-G2NK5k","Sajjayan":"1eloRPeE3t_6_TQtrfHpFJP-PRVVAONkD","Saradha":"1WHV9WCOLgXiyVX0AE6mws-EeRXx_Y6Xa","Shriram":"1ijA8P65oSnksCrlzxioUSUF551FyuVEC","Snega":"1UfewYH1T-6C--HcoLNM-5huoZIUcETY8","Subathra":"1Y8VzbuXrb3UClcAcsgE-Kbc65mCfpz84","Sudha":"1JGJTLUgSf_gUteJeUEQ6ly3Urbs3cVN2","Suriya R":"1ek9U2nu_dHWiMSAQ0p1AxGqB6XY1zT17","Thanvia":"1seYflTA0q73rvLE7r4NdfQszoBvdblU9","Tharani":"1bJV0iamOVgIUtsCtq7xY06lCQnMWuTMf","Uthra V":"1C1gDb0pN9UyH9keLRPAYCktLlobkJB0Z","Vaishnavi":"1uRI6bSunBod0GxT_sc2Je4tdHeQuG-pX","Victoria":"1Eey0c-WAqkscTge2ic9xztt6tK5m9jdk","Vijaya":"1N_fSj-39vN50g1Gu5l3hZzvBaxYot9PM","Vivek(Suriya)":"1QwjkDg_UlyDH3PIvtosl7EzOj4QBoqAc"};
+function getCertLink(name){
+  const id=CERT_MAP[name];
+  return id?`https://drive.google.com/file/d/${id}/view`:null;
+}
 let stepsMap={};
 let currentCat='all';
 
 async function sb(path){
-  const r=await fetch(`${SB_URL}/rest/v1/${path}`,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Cache-Control':'no-cache'}});
-  return await r.json();
+  const h={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Cache-Control':'no-cache','Prefer':'count=none'};
+  let all=[], offset=0, batch=1000;
+  while(true){
+    const sep=path.includes('?')?'&':'?';
+    const r=await fetch(`${SB_URL}/rest/v1/${path}${sep}offset=${offset}&limit=${batch}`,{headers:h});
+    const rows=await r.json();
+    if(!Array.isArray(rows)||rows.length===0)break;
+    all=[...all,...rows];
+    if(rows.length<batch)break;
+    offset+=batch;
+  }
+  return all;
 }
 
 async function loadData(){
@@ -335,12 +350,15 @@ function renderLeaderboard(cat){
     const color=isTop3?medalColors[i]:'#4caf50';
     const avClass=getAvClass(p);
     const catTag=p.participant_type==='kid'?'Kid':p.gender==='M'?'Male':'Female';
+    const certLink=getCertLink(p.name)||getCertLink(p.displayName);
+    const dlBtn=certLink?`<a href="${certLink}" target="_blank" style="display:inline-block;margin-top:4px;font-size:9px;font-weight:700;color:#fbbf24;text-decoration:none;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:999px;padding:2px 8px;">📜 Certificate</a>`:'';
     return `<div class="leader${isTop3?' '+classes[i]:''}" style="animation-delay:${delay}s">
       ${isTop3?`<div class="medal">${medals[i]}</div>`:`<div class="rank">${i+1}</div>`}
       <div class="av ${avClass}">${p.displayName.slice(0,2).toUpperCase()}</div>
       <div class="ldr-info">
         <div class="ldr-name">${p.displayName}</div>
         <div class="ldr-meta">${catTag} · ${p.place||'—'}</div>
+        ${dlBtn}
       </div>
       <div class="ldr-right">
         <div class="ldr-steps" style="color:${color};">${p.totalSteps.toLocaleString('en-IN')}</div>
